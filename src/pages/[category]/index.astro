@@ -146,16 +146,89 @@ const GUIDE_TOPICS = [
 ] as const;
 const guideTopics = GUIDE_TOPICS.map((t) => ({ ...t, items: pick(t.reads) }));
 
+/** 机场百科的六大分类：术语按名称匹配术语表，文章只链接已发布的真实文章；安装与排错类内容指向使用教程 */
+const WIKI_SECTIONS = [
+  {
+    id: 'basics',
+    label: '基础知识',
+    icon: 'book',
+    blurb: '机场、节点、订阅链接与官方客户端分别是什么，套餐里的倍率、流量重置与不限时流量包怎么理解。',
+    terms: ['机场', '节点', '订阅链接', '官方客户端', '倍率', '流量重置', '不限时流量包'],
+    reads: [{ slug: 'shenme-shi-jichang-xinshou-bidu', focus: '新手入门：节点、订阅、客户端与套餐表怎么看' }],
+    tutorials: [],
+  },
+  {
+    id: 'lines',
+    label: '线路架构',
+    icon: 'server',
+    blurb: 'IEPL / IPLC 专线、BGP 中转与直连在路径、成本与晚高峰表现上的差别，以及用户侧怎么验证服务商的说法。',
+    terms: ['IEPL', 'IPLC', 'BGP 中转 / BGP 智能路由', '直连'],
+    reads: [
+      { slug: 'iepl-iplc-bgp-zhilian-quebie', focus: '四种线路的原理、体验差异与验证方法' },
+      { slug: 'wending-jichang-zenme-xuan', focus: '重点看“线路类型与稳定的关系”' },
+    ],
+    tutorials: [],
+  },
+  {
+    id: 'protocols',
+    label: '代理协议',
+    icon: 'shield',
+    blurb: '客户端与节点之间传输数据的约定：Shadowsocks、VMess / VLESS、Trojan、Hysteria / TUIC 各自的特点与适用环境。',
+    terms: ['代理协议', 'Shadowsocks', 'VMess / VLESS', 'Trojan', 'Hysteria / TUIC'],
+    reads: [],
+    tutorials: [{ slug: 'windows-kehuduan-changjian-wenti', focus: '系统时间误差导致握手失败等连接问题的排查' }],
+  },
+  {
+    id: 'client',
+    label: '客户端原理',
+    icon: 'device',
+    blurb: '系统代理与 TUN 模式决定哪些流量被接管，规则 / 全局 / 直连决定流量去向；官方客户端的“智能分流”对应什么。',
+    terms: ['TUN 模式', '系统代理', '规则分流'],
+    reads: [{ slug: 'tun-moshi-yu-quanju-daili', focus: '接管方式与去向规则的组合与推荐' }],
+    tutorials: [
+      { slug: 'clash-verge-rev-jiaocheng', focus: '系统代理与 TUN 的实际开启步骤' },
+      { slug: 'android-shiyong-jiaocheng', focus: 'Android 的 VPN 权限与分应用代理' },
+    ],
+  },
+  {
+    id: 'dns-ip',
+    label: 'DNS 与 IP',
+    icon: 'globe',
+    blurb: 'DNS 泄露的真正含义、原生 IP 与住宅 IP 的区别，以及 UDP / NAT 类型对游戏与通话的影响。',
+    terms: ['DNS 泄露', '原生 IP / 住宅 IP', 'UDP / FullCone NAT'],
+    reads: [],
+    tutorials: [{ slug: 'dns-xielou-jiance-paicha', focus: 'DNS 泄露的检测站点与 Clash 系 dns 段设置' }],
+  },
+  {
+    id: 'speed',
+    label: '测速与解锁',
+    icon: 'speed',
+    blurb: '延迟、抖动、丢包、满载延迟与晚高峰各测什么，Mbps 与 MB/s 怎么换算，“解锁”为什么会随时变化。',
+    terms: ['延迟 / Ping', '抖动', '丢包率', '满载延迟', '晚高峰', 'TLS RTT 与 HTTPS 延迟', 'Mbps 与 MB/s', '解锁'],
+    reads: [{ slug: 'jiedian-di-yanchi-que-sudu-man', focus: '延迟低却速度慢的八个原因与排查顺序' }],
+    tutorials: [{ slug: 'jiedian-cesu-fangfa-nekospeed-speedtest', focus: '三类测速工具的记录规范与单位换算' }],
+  },
+] as const;
+const termIndex = new Map(glossary.map((g, i) => [g.term, i + 1] as const));
+const wikiSections = WIKI_SECTIONS.map((s) => ({
+  ...s,
+  termLinks: s.terms
+    .map((t) => ({ term: t as string, id: termIndex.get(t) }))
+    .filter((t): t is { term: string; id: number } => typeof t.id === 'number'),
+  items: pick(s.reads),
+  tutorialItems: pick(s.tutorials),
+}));
+
 const titles: Record<CategoryKey, string> = {
   tutorials: '2026 机场使用教程大全｜Clash 配置、订阅导入与客户端指南',
   guides: '2026 机场选购指南｜预算、流量、节点与线路怎么选？',
-  wiki: '机场百科：IEPL / IPLC / BGP、TUN、DNS 泄露等术语与原理',
+  wiki: '2026 机场知识百科｜IEPL/IPLC、BGP、DNS、TUN 与网络代理原理',
   news: '资讯与更新日志：站点动态、内容更新与数据更正记录',
 };
 const descriptions: Record<CategoryKey, string> = {
   tutorials: `从零学习机场客户端：${articles.length} 篇教程按 Windows、macOS、Android、iOS、订阅与节点管理、故障排查六类整理，覆盖 Clash Verge Rev、Clash Meta、Shadowrocket 的安装与订阅导入、节点切换、规则模式、TUN、DNS 设置与连接故障排查，只写可复现的步骤。`,
   guides: `第一次买机场怎么选：${articles.length} 篇原创指南按预算、流量、节点地区、线路类型、客户端兼容性与购买避坑六个专题整理，用本站 ${brands.length} 个品牌的真实套餐与政策举例，帮你看懂套餐区别、避开常见误区，不含评分。`,
-  wiki: `${glossary.length} 条术语解释与 ${articles.length} 篇原理文章：机场、节点、订阅链接、IEPL / IPLC / BGP / 直连、倍率、原生 IP、TUN 模式、DNS 泄露、晚高峰、TLS RTT、Mbps 与 MB/s 等。`,
+  wiki: `系统整理机场与网络加速的基础知识与技术原理：${glossary.length} 条术语与 ${articles.length} 篇原理文章，按基础知识、线路架构、代理协议、客户端原理、DNS 与 IP、测速与解锁六类归档，解释 IEPL / IPLC、BGP、DNS、TUN、代理协议、原生 IP 与流媒体解锁，不涉及具体品牌评价。`,
   news: `机场指南的站点动态、内容更新与数据更正记录。更新日志逐条列出新增品牌、新增测速报告与修正项，发布日期均为真实日期。`,
 };
 const jsonLd: Record<string, unknown>[] = [
@@ -174,6 +247,10 @@ const HERO: Partial<Record<CategoryKey, { title: string; lead: string }>> = {
   guides: {
     title: titles.guides,
     lead: '第一次购买机场不知道怎么选择？本指南从预算价格、每月流量、节点地区、线路类型、客户端支持及付费周期出发，分析不同使用场景下的选购要点，帮助你看懂机场套餐区别，避开常见选购误区，找到符合个人需求的网络加速服务。',
+  },
+  wiki: {
+    title: titles.wiki,
+    lead: '系统整理机场与网络加速相关的基础知识、专业术语和技术原理，涵盖 IEPL、IPLC、BGP、DNS、TUN、代理协议、节点线路、住宅 IP、原生 IP 及流媒体解锁等常见概念。通过通俗易懂的解释，帮助新手理解机场服务的运行机制、网络线路区别及客户端功能。',
   },
 };
 const heroTitle = HERO[category]?.title ?? meta.label;
@@ -291,6 +368,73 @@ const heroLead = HERO[category]?.lead ?? meta.description;
             ))}
           </ol>
         </section>
+      )
+    }
+
+    {
+      category === 'wiki' && (
+        <>
+          <nav class="group-jump small" aria-label="按知识分类跳转">
+            {wikiSections.map((s) => (
+              <a href={`#wiki-${s.id}`}>{s.label}<span class="gj-count">{s.items.length + s.termLinks.length}</span></a>
+            ))}
+          </nav>
+          <section class="card section" aria-labelledby="wiki-cats-title">
+            <h2 class="section-title" id="wiki-cats-title"><Icon name="layers" size={20} />六大知识分类</h2>
+            <p class="small muted">每个分类列出本站已发布的原理文章与对应术语；安装步骤与故障排查不在百科展开，统一指向使用教程栏目。暂无专文的分类只提供术语解释，不生成空白链接。</p>
+            <div class="group-grid topic-grid">
+              {wikiSections.map((s) => (
+                <section class="group topic" id={`wiki-${s.id}`} aria-labelledby={`wiki-${s.id}-title`}>
+                  <h3 id={`wiki-${s.id}-title`}><Icon name={s.icon} size={18} />{s.label}</h3>
+                  <p class="g-blurb">{s.blurb}</p>
+                  {s.items.length ? (
+                    <>
+                      <p class="g-sub">原理文章</p>
+                      <ul class="g-list">
+                        {s.items.map((it) => (
+                          <li>
+                            <a href={articleUrl(it.article)}>
+                              {it.article.data.title}
+                              {it.article.data.category !== 'wiki' && <span class="g-cat">{categoryLabel(it.article.data.category)}</span>}
+                            </a>
+                            {it.focus && <span class="small muted">{it.focus}</span>}
+                          </li>
+                        ))}
+                      </ul>
+                    </>
+                  ) : (
+                    <p class="small muted">该分类暂无专文，先看下方术语解释。</p>
+                  )}
+                  {s.termLinks.length > 0 && (
+                    <>
+                      <p class="g-sub">术语解释（{s.termLinks.length} 条）</p>
+                      <ul class="g-terms">
+                        {s.termLinks.map((t) => (
+                          <li>
+                            <a href={`#term-${t.id}`}>{t.term}</a>
+                          </li>
+                        ))}
+                      </ul>
+                    </>
+                  )}
+                  {s.tutorialItems.length > 0 && (
+                    <p class="g-more small">
+                      操作与排错见教程：
+                      {s.tutorialItems.map((it, i) => (
+                        <>
+                          {i > 0 && ' · '}
+                          <a href={articleUrl(it.article)} title={it.article.data.title}>
+                            {it.focus ?? it.article.data.title}
+                          </a>
+                        </>
+                      ))}
+                    </p>
+                  )}
+                </section>
+              ))}
+            </div>
+          </section>
+        </>
       )
     }
 
@@ -501,6 +645,31 @@ const heroLead = HERO[category]?.lead ?? meta.description;
     background: var(--surface-3);
     color: var(--muted);
     vertical-align: middle;
+  }
+
+  .g-terms {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+
+  .g-terms a {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 999px;
+    border: 1px solid var(--border);
+    background: var(--surface);
+    font-size: 0.8rem;
+    color: var(--text-2);
+    text-decoration: none;
+  }
+
+  .g-terms a:hover {
+    border-color: var(--primary);
+    color: var(--primary);
   }
 
   @media (max-width: 1023px) {

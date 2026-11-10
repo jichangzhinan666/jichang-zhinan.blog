@@ -737,6 +737,17 @@
     "vision": "成为值得用户信赖的国际网络连接服务品牌，持续完善全球节点布局、网络基础设施与服务体验。",
     "values": "稳定至上、用户为本、专业可靠、持续创新、开放连接。",
     "slogan": "隐于无形，连接无限。",
+    "intro": {
+      "heading": "隐形人 INVISIBLE NETWORK",
+      "slogan": "隐于无形，连接世界。",
+      "paragraphs": [
+        "隐形人（Invisible Network）是一款主打专线网络优化、多地区节点与便捷客户端体验的全球网络加速服务，以 IEPL/IPLC 专线、灵活流量套餐及跨平台使用场景为主要特色，面向注重网络连接品质与操作便利性的用户。",
+        "隐形人提供香港、日本、新加坡、台湾、美国等热门地区节点，满足日常网页浏览、海外 AI 工具、高清流媒体、在线学习与跨境办公等多样化网络需求。",
+        "从适合轻度用户的年付流量套餐，到面向高频使用者的大流量月付方案，隐形人为不同预算与使用频率的用户提供灵活选择。"
+      ],
+      "tagline": "隐形人——低调连接全球，让每一次网络访问更加从容。",
+      "source": "品牌介绍文案由站长于 2026-11-10 提供，属宣传性描述；线路以资料所述“IEPL 专线、BGP 智能优化”为准，套餐、节点与测速数据以下方资料为准"
+    },
     "officialWebsite": null,
     "affiliateUrl": "https://varnexa.invisibleaff.com/#/?code=PoecAA0c",
     "logo": null,
@@ -811,7 +822,8 @@
     "sourceRecords": [
       { "sourceType": "user-supplied-official", "sourceFile": "source-materials/brands/隐形人.txt", "sourceLocation": "全文（一至九节）", "verifiedAt": "2026-11-09" },
       { "sourceType": "independently-measured", "sourceFile": "source-materials/evidence/reports/隐形人_香港节点_实测报告.png", "sourceLocation": "站长实测报告图（2026-11-10 11:43）", "verifiedAt": "2026-11-10" },
-      { "sourceType": "unverified", "sourceFile": "source-materials/brands/隐形人-客户端补充.txt", "sourceLocation": "第三方客户端说明", "verifiedAt": "2026-11-10", "note": "站长补充，兼容范围需通过客服确认，本站未独立验证" }
+      { "sourceType": "unverified", "sourceFile": "source-materials/brands/隐形人-客户端补充.txt", "sourceLocation": "第三方客户端说明", "verifiedAt": "2026-11-10", "note": "站长补充，兼容范围需通过客服确认，本站未独立验证" },
+      { "sourceType": "unverified", "sourceFile": "source-materials/brands/隐形人-品牌介绍.txt", "sourceLocation": "品牌介绍文案（页首展示）", "verifiedAt": "2026-11-10", "note": "站长提供的品牌介绍文案，属宣传性描述；文中“IPLC”未见于原资料（资料为 IEPL 专线、BGP 智能优化），不作为事实依据" }
     ],
     "lastVerifiedAt": "2026-11-10",
     "editorialStatus": "published",

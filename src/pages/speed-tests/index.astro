@@ -27,8 +27,8 @@ const crumbs = [
   { name: '实测评测', href: '/reviews/' },
   { name: '节点测速报告', href: '/speed-tests/' },
 ];
-const title = `机场节点测速报告总览：${owner.length} 份站长实测 + ${records.length + screenshots.length} 份资料记录`;
-const description = `机场指南测速报告总览：${owner.length} 份 2026-11-10 站长实测报告（IPCheck.ing，含出口、服务器与时间），${records.length} 份晚高峰文字记录，${screenshots.length} 份用户提供的 MiaoKo / SpeedCentre 截图。每份报告注明工具、网络环境与局限，并标注未测试的品牌。`;
+const title = '2026 机场节点测速报告｜延迟、速度、线路与运营商分析';
+const description = `汇总 2026 年机场节点测速报告与网络性能记录：${owner.length} 份站长实测（IPCheck.ing）、${records.length} 份文字记录与 ${screenshots.length} 份用户截图，覆盖香港、日本、新加坡、台湾、美国等节点地区，整理延迟、下载速度、线路与出口运营商信息。结果仅代表对应时间与网络环境，不作跨品牌排名。`;
 const jsonLd = [
   collectionPageLd(title, '/speed-tests/', description),
   breadcrumbLd(crumbs),
@@ -36,13 +36,17 @@ const jsonLd = [
 ];
 ---
 
-<BaseLayout title="机场节点测速报告总览（站长实测与资料记录）" description={description} jsonLd={jsonLd}>
+<BaseLayout title={title} titleSuffix={false} description={description} jsonLd={jsonLd}>
   <div class="container">
     <Breadcrumbs crumbs={crumbs} />
-    <header class="page-hero">
-      <h1>节点测速报告总览</h1>
+    <header class="page-hero speed-hero">
+      <p class="speed-eyebrow">2026 机场指南 · 节点测速中心</p>
+      <h1>{title}</h1>
       <p class="lead">
-        共 {reports.length} 份已发布记录，按证据等级分组。所有数值直接来自站长报告图、资料文字记录或用户提供的截图；本站不做推算、不做跨品牌排名。测速方法与记录规范见<a href="/methodology/">方法说明</a>与<a href="/tutorials/jiedian-cesu-fangfa-nekospeed-speedtest/">测速方法教程</a>。
+        汇总 2026 年机场节点测速报告与网络性能记录，涵盖香港、日本、新加坡、台湾、美国等常见节点地区。整理延迟、下载速度、线路信息、出口运营商及可用的网络稳定性指标，帮助读者了解不同机场节点的测试表现与使用环境。
+      </p>
+      <p class="speed-meta small">
+        已收录 {reports.length} 份测速记录 · 按证据来源分类 · 测试结果仅代表对应时间及网络环境，不作为跨品牌性能排名 · 方法见<a href="/methodology/">方法说明</a>与<a href="/tutorials/jiedian-cesu-fangfa-nekospeed-speedtest/">测速方法教程</a>
       </p>
     </header>
 
@@ -119,6 +123,21 @@ const jsonLd = [
 </BaseLayout>
 
 <style>
+  .speed-eyebrow {
+    margin: 0 0 6px;
+    font-size: 0.8125rem;
+    font-weight: 600;
+    color: var(--primary);
+  }
+
+  .speed-meta {
+    margin: 14px 0 0;
+    padding-top: 12px;
+    border-top: 1px solid var(--border);
+    color: var(--muted);
+    max-width: 820px;
+  }
+
   .report-grid {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));

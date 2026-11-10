@@ -525,7 +525,7 @@
         { "platforms": "第三方订阅", "client": "支持情况待核实", "kind": "unverified", "source": "原资料写明“不推荐导入 Clash、小火箭等”，兼容性未经核实" }
       ],
       "subscriptionLink": "不推荐使用，避免订阅外泄被他人盗用导致节点拥挤",
-      "thirdPartyClients": "第三方订阅支持情况待核实（原资料：不推荐导入 Clash、小火箭等）",
+      "thirdPartyClients": "支持情况待核实（第三方订阅；原资料：不推荐导入 Clash、小火箭等）",
       "downloadChannel": "仅限官网；网上出售的订阅链接或网盘分发的客户端均非官方渠道",
       "note": "官网客户端由官方统一发布和更新，同样可以安全使用；iOS / iPadOS 通过 Nextin 登录（依据公开教程，待官方确认）"
     },

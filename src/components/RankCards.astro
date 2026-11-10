@@ -140,21 +140,10 @@ const cards = ranking.map((r) => {
               <dt>线路类型</dt>
               <dd>{lines.length ? lines.map((l) => <span class="tag">{l}</span>) : '资料未说明'}</dd>
             </div>
-            <div class="rc-client-row">
+            <div>
               <dt>客户端</dt>
-              <dd class="rc-client">
-                {b.clientPolicy.platformsDetail ? (
-                  <span class="client-tags">
-                    {b.clientPolicy.platformsDetail.map((p) => (
-                      <span class={`ctag ctag-${p.kind}`} title={p.source}>
-                        <span class="ctag-os">{p.platforms}</span>
-                        <span class="ctag-client">{p.client}</span>
-                      </span>
-                    ))}
-                  </span>
-                ) : (
-                  b.clientPolicy.thirdPartyClients.split('（')[0]
-                )}
+              <dd class="rc-client" title={b.clientPolicy.platformsDetail ? b.clientPolicy.platformsDetail.map((p) => `${p.platforms}：${p.client}`).join('；') : undefined}>
+                {b.clientPolicy.thirdPartyClients.split('（')[0]}
               </dd>
             </div>
           </dl>
@@ -317,62 +306,10 @@ const cards = ranking.map((r) => {
   }
 
   .rc-client {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
     overflow: hidden;
-  }
-
-  .rc-client-row {
-    grid-column: 1 / -1;
-  }
-
-  .client-tags {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 6px;
-  }
-
-  .ctag {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    padding: 3px 10px;
-    border-radius: 999px;
-    border: 1px solid var(--border);
-    background: var(--surface);
-    font-size: 0.78rem;
-    line-height: 1.5;
-    max-width: 100%;
-  }
-
-  .ctag-os {
-    color: var(--muted);
-  }
-
-  .ctag-client {
-    font-weight: 600;
-    color: var(--text);
-  }
-
-  .ctag-brand {
-    border-color: var(--primary-100);
-    background: var(--primary-50);
-  }
-
-  .ctag-brand .ctag-client {
-    color: var(--primary-700);
-  }
-
-  .ctag-unverified {
-    border-style: dashed;
-    background: var(--surface-3);
-  }
-
-  .ctag-unverified .ctag-client {
-    color: var(--muted);
-    font-weight: 500;
-  }
-
-  :global(:root[data-theme="dark"]) .ctag-brand .ctag-client {
-    color: #93c5fd;
   }
 
   .rc-evidence {

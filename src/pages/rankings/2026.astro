@@ -168,37 +168,41 @@ const jsonLd = [
     <section class="card section" aria-labelledby="table-title">
       <h2 class="section-title" id="table-title"><Icon name="compare" size={20} />关键参数速查表</h2>
       <div class="table-wrap">
-        <table class="data">
+        <table class="data quick-table">
           <thead>
             <tr>
-              <th>#</th>
+              <th class="num">#</th>
               <th>品牌</th>
               <th>入门档</th>
               <th class="num">月付</th>
               <th class="num">月流量</th>
               <th class="num">每 GB</th>
-              <th>地区</th>
+              <th class="num">地区</th>
               <th>线路</th>
               <th>第三方客户端</th>
-              <th>证据</th>
+              <th>测速证据</th>
             </tr>
           </thead>
           <tbody>
             {
               ranking.map((r) => {
                 const e = getEntryPlan(r.brand.id);
+                const tp = r.brand.clientPolicy.thirdPartyClients;
+                const client = /支持导入|可导入/.test(tp) && !/不支持/.test(tp) ? (/客服/.test(tp) ? '可导入（需申请）' : '可导入 Clash') : /不支持/.test(tp) ? '不支持导入' : /不推荐/.test(tp) ? '不推荐导入' : '资料未提供';
+                const line = [...new Set(r.brand.lineTypes.map((l) => l.replace(/^[^：]+：/, '')))].join(' / ');
+                const ev = r.reasons.find((x) => x.startsWith('证据等级：'))?.replace('证据等级：', '') ?? '—';
                 return (
                   <tr>
-                    <td>{r.position}</td>
+                    <td class="num">{r.position}</td>
                     <td><a href={`/reviews/${r.brand.slug}/`}>{r.brand.displayName}</a></td>
                     <td>{e?.planName ?? '—'}</td>
                     <td class="num">{e ? formatPrice(e.price) : '—'}</td>
                     <td class="num">{e ? formatTraffic(e.trafficGB) : '—'}</td>
                     <td class="num">{e ? formatPerGB(e.pricePerGB) : '—'}</td>
-                    <td>{r.regionCount} 个</td>
-                    <td class="small">{r.brand.lineTypes[0]}</td>
-                    <td class="small">{r.brand.clientPolicy.thirdPartyClients.split('（')[0]}</td>
-                    <td class="small">{r.reasons[0].replace('证据等级：', '')}</td>
+                    <td class="num">{r.regionCount} 个</td>
+                    <td class="qt-line" title={r.brand.lineTypes.join('；')}>{line}</td>
+                    <td>{client}</td>
+                    <td>{ev}</td>
                   </tr>
                 );
               })
@@ -226,6 +230,19 @@ const jsonLd = [
 <style>
   .rank-hero .lead {
     margin-bottom: 12px;
+  }
+
+  .quick-table th,
+  .quick-table td {
+    white-space: nowrap;
+    vertical-align: middle;
+    padding: 10px 14px;
+  }
+
+  .quick-table td.qt-line {
+    max-width: 220px;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 
   .rank-meta {

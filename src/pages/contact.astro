@@ -1,8 +1,7 @@
 ---
 import StaticPageLayout from '@/layouts/StaticPageLayout.astro';
+import ContactChannels from '@/components/ContactChannels.astro';
 import { SITE } from '@/lib/site';
-
-const email = SITE.contactEmail;
 ---
 
 <StaticPageLayout
@@ -13,18 +12,9 @@ const email = SITE.contactEmail;
   lead="发现价格过时、数据错误或链接失效？告诉我们，核实后 7 天内更正。"
 >
   <h2>一、联系方式</h2>
-  {
-    email ? (
-      <p>
-        邮箱：<a href={`mailto:${email}`}>{email}</a>（仅用于接收反馈，不会用于营销或订阅）。
-      </p>
-    ) : (
-      <div class="callout callout-warn">
-        <p><strong>联系邮箱尚未配置。</strong>站长设置邮箱后会在此处显示；在此之前本站不会展示任何未经确认的联系方式。配置方法见仓库 <code>.env.example</code> 中的 <code>PUBLIC_CONTACT_EMAIL</code>。</p>
-      </div>
-    )
-  }
-  <p>本站目前没有评论区、留言板或社交账号；如将来开通，会在本页与<a href="/news/">资讯页</a>公布。</p>
+  <p>以下渠道由站长 {SITE.author.name}（社交平台昵称“{SITE.author.alias}”）本人维护，仅用于接收反馈、资料与纠错，不会用于营销或订阅。邮箱可一键发送或复制地址；Facebook 与 Telegram 在新标签页打开。</p>
+  <ContactChannels />
+  <p>本站没有评论区或留言板；作者简介与代表文章见<a href="/author/">作者介绍</a>。</p>
 
   <h2>二、提交纠错时请附上</h2>
   <ul>

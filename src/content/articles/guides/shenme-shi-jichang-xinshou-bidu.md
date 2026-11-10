@@ -4,7 +4,7 @@ description: "用十分钟搞清楚“机场”到底是什么：节点、订阅
 category: guides
 primaryKeyword: "什么是机场"
 tags: ["新手入门", "机场基础", "订阅链接", "官方客户端"]
-author: "机场指南编辑部"
+author: "机场阿南"
 publishedAt: "2026-11-10"
 updatedAt: "2026-11-10"
 status: published

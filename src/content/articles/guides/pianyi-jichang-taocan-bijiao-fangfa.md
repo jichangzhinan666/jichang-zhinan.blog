@@ -4,7 +4,7 @@ description: "“便宜”有三种含义：月付低、每 GB 低、年总价�
 category: guides
 primaryKeyword: "便宜机场"
 tags: ["便宜机场", "每 GB 单价", "年付小包", "不限时流量包", "优惠码"]
-author: "机场指南编辑部"
+author: "机场阿南"
 publishedAt: "2026-11-10"
 updatedAt: "2026-11-10"
 status: published

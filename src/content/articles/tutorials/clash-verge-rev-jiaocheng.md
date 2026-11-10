@@ -4,7 +4,7 @@ description: "面向新手的 Clash Verge Rev 图文步骤：从 GitHub Releases
 category: tutorials
 primaryKeyword: "Clash Verge Rev 教程"
 tags: ["Clash Verge Rev", "Clash", "订阅导入", "Windows", "macOS", "Linux", "新手教程"]
-author: "机场指南编辑部"
+author: "机场阿南"
 publishedAt: "2026-11-10"
 updatedAt: "2026-11-10"
 status: published

@@ -19,8 +19,18 @@ export const SITE = {
     '机场指南（jichang-zhinan.blog）整理 2026 机场推荐榜单、品牌资料库、节点测速报告、Clash 等客户端教程与选购指南。所有价格、节点与测速数据均注明来源与核实时间，不虚构评分。',
   locale: 'zh-CN',
   author: {
-    name: '机场指南编辑部',
-    url: '/about/',
+    name: '机场阿南',
+    /** 社交平台昵称 */
+    alias: '孟南子',
+    url: '/author/',
+    role: '机场推荐、VPN 测评、网络节点测速与客户端使用教程内容创作者',
+    bio: [
+      '大家好，我是机场阿南，一名专注于机场推荐、VPN 测评、网络节点测速及客户端使用教程的内容创作者。',
+      '我创建机场指南，希望通过整理机场品牌资料、套餐价格、线路信息、真实测速记录以及新手使用教程，帮助读者更清楚地了解不同网络加速服务。',
+      '我的分享内容涵盖机场推荐排行榜、品牌资料、节点测速、Clash 使用教程、Windows、Android 和 iOS 客户端配置等。',
+      '欢迎读者向我提供建议、最新资料及文章纠错信息，让机场指南持续完善。',
+    ],
+    focus: ['机场推荐排行榜', '品牌资料整理', '节点测速记录', 'Clash 使用教程', 'Windows / Android / iOS 客户端配置', 'VPN 与网络加速测评'],
   },
   /** 本站上线日期（真实） */
   launchedAt: '2026-11-10',
@@ -81,6 +91,24 @@ export const SOCIAL_LINKS: { id: 'telegram' | 'github'; label: string; href: str
   { id: 'github', label: 'GitHub', href: null },
 ];
 
+/**
+ * 联系与纠错渠道（站长提供）。邮箱走 mailto，一键发送；主页类链接新标签页打开。
+ * href 为 null 时页面显示“链接待补充”，不生成虚假链接。
+ */
+export const CONTACT_CHANNELS: {
+  id: 'gmail' | 'protonmail' | 'facebook';
+  label: string;
+  icon: string;
+  kind: 'email' | 'profile';
+  value: string;
+  display: string;
+  href: string | null;
+}[] = [
+  { id: 'gmail', label: 'Gmail', icon: 'gmail', kind: 'email', value: 'jichangzhinan666@gmail.com', display: 'jichangzhinan666@gmail.com', href: 'mailto:jichangzhinan666@gmail.com' },
+  { id: 'protonmail', label: 'Proton Mail', icon: 'protonmail', kind: 'email', value: 'jichangzhinan666@proton.me', display: 'jichangzhinan666@proton.me', href: 'mailto:jichangzhinan666@proton.me' },
+  { id: 'facebook', label: 'Facebook', icon: 'facebook', kind: 'profile', value: '孟南子｜机场阿南', display: '孟南子｜机场阿南', href: 'https://www.facebook.com/profile.php?id=61596343863401' },
+];
+
 /** 首页快捷入口（六个） */
 export const QUICK_LINKS = [
   { label: '机场推荐榜单', sub: '2026 年度版 · 编辑整理', href: '/rankings/2026/', icon: 'trophy' },
@@ -114,6 +142,7 @@ export const STATIC_PAGES: Record<string, { title: string; lastmod: string; chan
   '/tutorials/': { title: '2026 机场使用教程大全', lastmod: '2026-11-10', changefreq: 'weekly' },
   '/guides/': { title: '2026 机场选购指南', lastmod: '2026-11-10', changefreq: 'weekly' },
   '/wiki/': { title: '2026 机场知识百科', lastmod: '2026-11-10', changefreq: 'monthly' },
+  '/author/': { title: '作者介绍：机场阿南', lastmod: '2026-11-10', changefreq: 'monthly' },
   '/news/': { title: '资讯与更新', lastmod: '2026-11-10', changefreq: 'weekly' },
   '/about/': { title: '关于机场指南', lastmod: '2026-11-10', changefreq: 'yearly' },
   '/methodology/': { title: '测评、排序与测速方法', lastmod: '2026-11-10', changefreq: 'yearly' },

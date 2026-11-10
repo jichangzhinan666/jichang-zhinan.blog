@@ -158,8 +158,11 @@ const crumbs = [
 
       <section class="card section" id="author" aria-labelledby="author-title">
         <h2 class="section-title" id="author-title"><Icon name="user" size={20} />作者介绍</h2>
-        <p class="small">{SITE.author.name}维护本站的品牌资料、测速报告与教程：榜单为编辑推荐、不含评分，所有价格与测速数据注明来源与核实日期。</p>
-        <a class="btn btn-outline btn-sm" href="/about/">查看关于本站与作者 →</a>
+        <p class="small">{SITE.author.name}（社交平台昵称“{SITE.author.alias}”），{SITE.author.role}。榜单为编辑推荐、不含评分，所有价格与测速数据注明来源与核实日期。</p>
+        <div class="me-actions">
+          <a class="btn btn-outline btn-sm" href="/author/">查看作者介绍 →</a>
+          <a class="btn btn-outline btn-sm" href="/contact/">联系与纠错</a>
+        </div>
       </section>
     </div>
   </div>

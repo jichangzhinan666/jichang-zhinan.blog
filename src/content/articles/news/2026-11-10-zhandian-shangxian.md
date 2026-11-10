@@ -4,7 +4,7 @@ description: "机场指南（jichang-zhinan.blog）于 2026-11-10 上线。首�
 category: news
 primaryKeyword: "机场指南上线"
 tags: ["站点动态", "更新日志", "2026 年度版"]
-author: "机场指南编辑部"
+author: "机场阿南"
 publishedAt: "2026-11-10"
 updatedAt: "2026-11-10"
 status: published

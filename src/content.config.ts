@@ -18,7 +18,7 @@ const articles = defineCollection({
     category: z.enum(['tutorials', 'guides', 'wiki', 'news']),
     primaryKeyword: z.string().optional(),
     tags: z.array(z.string()).default([]),
-    author: z.string().default('机场指南编辑部'),
+    author: z.string().default('机场阿南'),
     publishedAt: dateString,
     updatedAt: dateString,
     coverImage: z.string().nullable().default(null),

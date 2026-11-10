@@ -4,7 +4,7 @@ description: "解释机场常见的四种线路类型：IEPL 与 IPLC 专线、B
 category: wiki
 primaryKeyword: "IEPL IPLC 区别"
 tags: ["IEPL", "IPLC", "BGP", "直连", "专线", "线路类型"]
-author: "机场指南编辑部"
+author: "机场阿南"
 publishedAt: "2026-11-10"
 updatedAt: "2026-11-10"
 status: published

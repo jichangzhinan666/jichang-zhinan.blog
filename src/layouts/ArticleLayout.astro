@@ -73,7 +73,7 @@ if (data.faq.length) jsonLd.push(faqLd(data.faq));
           <h1>{data.title}</h1>
           <p class="lead">{data.description}</p>
           <div class="article-meta">
-            <span><Icon name="user" size={14} /><a href="/about/">{data.author}</a></span>
+            <span><Icon name="user" size={14} /><a href={SITE.author.url} rel="author">{data.author}</a></span>
             <span><Icon name="calendar" size={14} />发布 <time datetime={data.publishedAt}>{data.publishedAt}</time></span>
             {data.updatedAt !== data.publishedAt && <span><Icon name="edit" size={14} />更新 <time datetime={data.updatedAt}>{data.updatedAt}</time></span>}
             <span><Icon name="clock" size={14} />约 {minutes} 分钟 · {words} 字</span>

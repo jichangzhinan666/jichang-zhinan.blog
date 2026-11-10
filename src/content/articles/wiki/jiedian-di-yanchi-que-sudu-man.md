@@ -4,7 +4,7 @@ description: "延迟 50 ms 却只能跑 5 Mbps，问题出在哪？本文解释�
 category: wiki
 primaryKeyword: "机场延迟低速度慢"
 tags: ["延迟", "带宽", "丢包", "晚高峰", "测速", "排查"]
-author: "机场指南编辑部"
+author: "机场阿南"
 publishedAt: "2026-11-10"
 updatedAt: "2026-11-10"
 status: published

@@ -1,0 +1,228 @@
+---
+/**
+ * 联系与纠错渠道卡片：Gmail / Proton Mail（mailto 一键发送 + 复制地址）、Facebook（新标签页打开主页）、Telegram（可选）。
+ * 数据来自 src/lib/site.ts 的 CONTACT_CHANNELS 与 SOCIAL_LINKS；未配置链接的项显示“链接待补充”。
+ */
+import Icon from './Icon.astro';
+import { CONTACT_CHANNELS, SOCIAL_LINKS } from '@/lib/site';
+
+interface Props {
+  showTelegram?: boolean;
+}
+
+const { showTelegram = true } = Astro.props;
+const telegram = SOCIAL_LINKS.find((s) => s.id === 'telegram' && s.href);
+---
+
+<ul class="contact-channels" aria-label="联系方式">
+  {
+    CONTACT_CHANNELS.map((c) => (
+      <li class={`cc-card cc-${c.id}`}>
+        <span class="cc-icon" aria-hidden="true">
+          <Icon name={c.icon} size={22} />
+        </span>
+        <div class="cc-body">
+          <span class="cc-label">{c.label}</span>
+          <span class="cc-value">{c.display}</span>
+        </div>
+        <div class="cc-actions">
+          {c.kind === 'email' ? (
+            <>
+              <a class="btn btn-primary btn-sm" href={`mailto:${c.value}`}>
+                <Icon name="mail" size={14} />
+                发送邮件
+              </a>
+              <button type="button" class="btn btn-outline btn-sm cc-copy" data-copy={c.value} aria-label={`复制邮箱地址 ${c.value}`}>
+                <Icon name="file" size={14} />
+                <span class="cc-copy-label">复制地址</span>
+              </button>
+            </>
+          ) : c.href ? (
+            <a class="btn btn-primary btn-sm" href={c.href} target="_blank" rel="noopener noreferrer">
+              <Icon name="external" size={14} />
+              打开主页
+            </a>
+          ) : (
+            <span class="badge badge-none">链接待补充</span>
+          )}
+        </div>
+      </li>
+    ))
+  }
+  {
+    showTelegram && telegram && (
+      <li class="cc-card cc-telegram">
+        <span class="cc-icon" aria-hidden="true">
+          <Icon name="telegram" size={22} />
+        </span>
+        <div class="cc-body">
+          <span class="cc-label">Telegram</span>
+          <span class="cc-value">{telegram.label}</span>
+        </div>
+        <div class="cc-actions">
+          <a class="btn btn-primary btn-sm" href={telegram.href!} target="_blank" rel="noopener noreferrer">
+            <Icon name="external" size={14} />
+            加入群组
+          </a>
+        </div>
+      </li>
+    )
+  }
+</ul>
+<p class="cc-status small muted" aria-live="polite"></p>
+
+<style>
+  .contact-channels {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 12px;
+  }
+
+  .cc-card {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 16px;
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--border);
+    background: var(--surface);
+    transition: border-color 0.15s ease, box-shadow 0.15s ease, transform 0.15s ease;
+  }
+
+  .cc-card:hover {
+    border-color: var(--primary-100);
+    box-shadow: 0 8px 22px rgba(21, 94, 239, 0.1);
+    transform: translateY(-1px);
+  }
+
+  .cc-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+    background: var(--primary-50);
+    color: var(--primary);
+  }
+
+  .cc-gmail .cc-icon {
+    color: #c5221f;
+    background: #fdecea;
+  }
+
+  .cc-protonmail .cc-icon {
+    color: #6d4aff;
+    background: #efeaff;
+  }
+
+  .cc-facebook .cc-icon {
+    color: #0866ff;
+    background: #e7f0ff;
+  }
+
+  .cc-telegram .cc-icon {
+    color: #26a5e4;
+    background: #e6f5fc;
+  }
+
+  :global(:root[data-theme="dark"]) .cc-gmail .cc-icon,
+  :global(:root[data-theme="dark"]) .cc-protonmail .cc-icon,
+  :global(:root[data-theme="dark"]) .cc-facebook .cc-icon,
+  :global(:root[data-theme="dark"]) .cc-telegram .cc-icon {
+    background: var(--surface-2);
+  }
+
+  .cc-body {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 0;
+  }
+
+  .cc-label {
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: var(--muted);
+  }
+
+  .cc-value {
+    font-weight: 600;
+    overflow-wrap: anywhere;
+  }
+
+  .cc-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: auto;
+  }
+
+  .cc-actions .btn {
+    text-decoration: none;
+    gap: 6px;
+  }
+
+  .cc-status {
+    margin: 8px 0 0;
+    min-height: 1.2em;
+  }
+
+  .cc-status:empty {
+    display: none;
+  }
+
+  @media (max-width: 479px) {
+    .cc-actions .btn {
+      flex: 1 1 120px;
+      justify-content: center;
+      min-height: 40px;
+    }
+  }
+</style>
+
+<script>
+  const status = document.querySelector<HTMLElement>('.cc-status');
+
+  const fallbackCopy = (text: string): boolean => {
+    const ta = document.createElement('textarea');
+    ta.value = text;
+    ta.setAttribute('readonly', '');
+    ta.style.position = 'fixed';
+    ta.style.opacity = '0';
+    document.body.append(ta);
+    ta.select();
+    let ok = false;
+    try {
+      ok = document.execCommand('copy');
+    } catch {
+      ok = false;
+    }
+    ta.remove();
+    return ok;
+  };
+
+  document.querySelectorAll<HTMLButtonElement>('.cc-copy').forEach((btn) => {
+    btn.addEventListener('click', async () => {
+      const text = btn.dataset.copy || '';
+      let ok = false;
+      try {
+        await navigator.clipboard.writeText(text);
+        ok = true;
+      } catch {
+        ok = fallbackCopy(text);
+      }
+      const label = btn.querySelector<HTMLElement>('.cc-copy-label');
+      if (label) {
+        label.textContent = ok ? '已复制' : '复制失败';
+        window.setTimeout(() => {
+          label.textContent = '复制地址';
+        }, 2000);
+      }
+      if (status) status.textContent = ok ? `已复制 ${text}` : `无法自动复制，请手动复制：${text}`;
+    });
+  });
+</script>

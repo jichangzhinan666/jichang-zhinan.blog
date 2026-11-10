@@ -4,7 +4,7 @@ description: "厘清三个经常被混用的概念：系统代理与 TUN 模式�
 category: wiki
 primaryKeyword: "TUN 模式"
 tags: ["TUN 模式", "系统代理", "全局代理", "规则模式", "Clash", "分流"]
-author: "机场指南编辑部"
+author: "机场阿南"
 publishedAt: "2026-11-10"
 updatedAt: "2026-11-10"
 status: published

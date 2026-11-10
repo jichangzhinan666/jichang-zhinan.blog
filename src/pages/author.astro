@@ -1,0 +1,233 @@
+---
+/**
+ * 作者公开资料页（可索引，登记在 STATIC_PAGES）。只写站长提供的信息，不虚构经历、认证或测评结论。
+ */
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import Breadcrumbs from '@/components/Breadcrumbs.astro';
+import Icon from '@/components/Icon.astro';
+import ContactChannels from '@/components/ContactChannels.astro';
+import ArticleCard from '@/components/ArticleCard.astro';
+import { SITE, STATIC_PAGES, SOCIAL_LINKS, CONTACT_CHANNELS, absoluteUrl } from '@/lib/site';
+import { getFeaturedArticles, getPublishedArticles } from '@/lib/articles';
+import { getStats } from '@/lib/data';
+import { breadcrumbLd, webPageLd } from '@/lib/seo';
+
+const author = SITE.author;
+const stats = getStats();
+const lastmod = STATIC_PAGES['/author/'].lastmod;
+const featured = await getFeaturedArticles();
+const all = await getPublishedArticles();
+const picks = (featured.length ? featured : all).slice(0, 6);
+
+const title = `作者介绍：${author.name}（${author.alias}）｜机场推荐、VPN 测评与节点测速内容创作者`;
+const description = `${author.name}（社交平台昵称“${author.alias}”）是机场指南的创建者与作者：整理 ${stats.brands} 个机场品牌资料、套餐价格与线路信息，发布真实测速记录与 Clash、Windows、Android、iOS 客户端教程。本页提供作者简介、专注领域、代表文章与联系纠错渠道。`;
+const crumbs = [
+  { name: '首页', href: '/' },
+  { name: '作者介绍', href: '/author/' },
+];
+const sameAs = [...CONTACT_CHANNELS.filter((c) => c.kind === 'profile' && c.href).map((c) => c.href!), ...SOCIAL_LINKS.filter((s) => s.href).map((s) => s.href!)];
+const personLd = {
+  '@type': 'Person',
+  '@id': absoluteUrl('/author/#person'),
+  name: author.name,
+  alternateName: author.alias,
+  url: absoluteUrl('/author/'),
+  description: author.role,
+  jobTitle: '内容创作者',
+  knowsAbout: author.focus,
+  sameAs,
+  worksFor: { '@type': 'Organization', name: SITE.name, url: SITE.url },
+};
+const jsonLd = [webPageLd(title, '/author/', description, lastmod), breadcrumbLd(crumbs), personLd];
+---
+
+<BaseLayout title={title} titleSuffix={false} description={description} canonicalPath="/author/" jsonLd={jsonLd} modifiedTime={lastmod}>
+  <div class="container author">
+    <Breadcrumbs crumbs={crumbs} />
+
+    <header class="author-hero card">
+      <div class="author-avatar" aria-hidden="true">南</div>
+      <div class="author-id">
+        <p class="author-eyebrow">机场指南作者</p>
+        <h1>{author.name}</h1>
+        <p class="author-alias">社交平台昵称：{author.alias}</p>
+        <p class="author-role">{author.role}</p>
+        <ul class="author-focus" aria-label="专注领域">
+          {author.focus.map((f) => <li>{f}</li>)}
+        </ul>
+      </div>
+    </header>
+
+    <div class="author-grid">
+      <section class="card section" id="bio" aria-labelledby="bio-title">
+        <h2 class="section-title" id="bio-title"><Icon name="user" size={20} />作者简介</h2>
+        <div class="author-bio">
+          {author.bio.map((p) => <p>{p}</p>)}
+        </div>
+        <p class="small muted">本页信息由作者本人提供；本站不虚构工作经历、测评结论或专业认证，所有数据与结论以站内注明来源与核实日期的资料为准。</p>
+      </section>
+
+      <section class="card section" id="focus" aria-labelledby="focus-title">
+        <h2 class="section-title" id="focus-title"><Icon name="layers" size={20} />在本站做什么</h2>
+        <ul class="author-work">
+          <li><Icon name="trophy" size={16} /><span>维护<a href="/rankings/2026/">2026 机场推荐榜单</a>：编辑推荐顺序、不含评分，每个名次附证据等级与入门价。</span></li>
+          <li><Icon name="chart" size={16} /><span>整理 {stats.brands} 个品牌、{stats.tiers} 档套餐的<a href="/reviews/">资料库</a>与<a href="/compare/">套餐价格对比</a>，标注来源与核实日期。</span></li>
+          <li><Icon name="speed" size={16} /><span>发布 {stats.ownerReports} 份站长实测与用户提供的<a href="/speed-tests/">节点测速记录</a>，注明工具、出口与时间。</span></li>
+          <li><Icon name="book" size={16} /><span>撰写 Clash、Windows、Android、iOS 的<a href="/tutorials/">客户端教程</a>、<a href="/guides/">选购指南</a>与<a href="/wiki/">知识百科</a>。</span></li>
+        </ul>
+      </section>
+
+      <section class="card section author-span" id="articles" aria-labelledby="articles-title">
+        <div class="section-head">
+          <h2 class="section-title" id="articles-title"><Icon name="file" size={20} />代表文章</h2>
+          <a class="section-link" href="/news/">全部更新 →</a>
+        </div>
+        {picks.length ? <div class="author-articles">{picks.map((a) => <ArticleCard article={a} layout="tile" />)}</div> : <p class="empty">暂无文章</p>}
+      </section>
+
+      <section class="card section author-span" id="contact" aria-labelledby="contact-title">
+        <h2 class="section-title" id="contact-title"><Icon name="mail" size={20} />联系与纠错</h2>
+        <p class="small">欢迎提供建议、最新资料与文章纠错信息。邮箱可一键发送或复制地址；Facebook 与 Telegram 在新标签页打开。提交纠错时请附页面地址、具体字段与可核对的来源，流程见<a href="/contact/">联系与纠错</a>页。</p>
+        <ContactChannels />
+      </section>
+    </div>
+  </div>
+</BaseLayout>
+
+<style>
+  .author-hero {
+    display: flex;
+    gap: 20px;
+    align-items: flex-start;
+    margin-top: 16px;
+    padding: 24px;
+    background: linear-gradient(160deg, var(--primary-50) 0%, var(--surface) 60%);
+  }
+
+  .author-avatar {
+    flex: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 84px;
+    height: 84px;
+    border-radius: 50%;
+    background: linear-gradient(145deg, #3b82f6, var(--primary));
+    color: #fff;
+    font-size: 2rem;
+    font-weight: 700;
+    box-shadow: 0 8px 20px rgba(21, 94, 239, 0.3);
+  }
+
+  .author-eyebrow {
+    margin: 0 0 4px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--primary);
+  }
+
+  .author-id h1 {
+    margin: 0 0 2px;
+    font-size: 1.6rem;
+  }
+
+  .author-alias {
+    margin: 0 0 6px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: var(--muted);
+  }
+
+  .author-role {
+    margin: 0 0 10px;
+    color: var(--text-2);
+  }
+
+  .author-focus {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+
+  .author-focus li {
+    padding: 3px 10px;
+    border-radius: 999px;
+    border: 1px solid var(--primary-100);
+    background: var(--surface);
+    color: var(--primary-700, var(--primary));
+    font-size: 0.8rem;
+    font-weight: 600;
+  }
+
+  .author-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px;
+  }
+
+  .author-grid .section {
+    margin: 0;
+  }
+
+  .author-span {
+    grid-column: 1 / -1;
+  }
+
+  .author-bio p {
+    margin: 0 0 10px;
+    line-height: 1.8;
+  }
+
+  .author-work {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    font-size: 0.925rem;
+  }
+
+  .author-work li {
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+  }
+
+  .author-work li :global(svg) {
+    color: var(--primary);
+    flex: none;
+    margin-top: 3px;
+  }
+
+  .author-articles {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 14px;
+  }
+
+  @media (max-width: 1023px) {
+    .author-articles {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  @media (max-width: 767px) {
+    .author-grid,
+    .author-articles {
+      grid-template-columns: 1fr;
+    }
+
+    .author-hero {
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .author-id h1 {
+      font-size: 1.35rem;
+    }
+  }
+</style>

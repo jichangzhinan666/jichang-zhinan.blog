@@ -4,7 +4,7 @@ description: "长周期折扣看起来划算，但要先算折合月付，再评
 category: guides
 primaryKeyword: "机场年付划算吗"
 tags: ["付费周期", "年付", "季付", "月付", "长周期折扣"]
-author: "机场指南编辑部"
+author: "机场阿南"
 publishedAt: "2026-11-10"
 updatedAt: "2026-11-10"
 status: published

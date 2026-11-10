@@ -4,7 +4,7 @@ description: "一份可以照着做的机场选购流程：先定用途，再估
 category: guides
 primaryKeyword: "2026 机场选购指南"
 tags: ["选购指南", "机场推荐", "每 GB 单价", "官方客户端", "2026"]
-author: "机场指南编辑部"
+author: "机场阿南"
 publishedAt: "2026-11-10"
 updatedAt: "2026-11-10"
 status: published

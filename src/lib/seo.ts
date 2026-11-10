@@ -81,8 +81,10 @@ export function articleLd(input: ArticleLdInput): JsonLd {
     dateModified: input.dateModified,
     inLanguage: SITE.locale,
     author: {
-      '@type': 'Organization',
+      '@type': 'Person',
+      '@id': absoluteUrl(`${SITE.author.url}#person`),
       name: SITE.author.name,
+      alternateName: SITE.author.alias,
       url: absoluteUrl(SITE.author.url),
     },
     publisher: { '@id': `${SITE.url}/#organization` },

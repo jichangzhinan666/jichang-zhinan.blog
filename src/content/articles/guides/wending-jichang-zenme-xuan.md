@@ -4,7 +4,7 @@ description: "“稳定”不是形容词而是四个可测量的指标：延迟
 category: guides
 primaryKeyword: "稳定机场怎么选"
 tags: ["稳定性", "晚高峰", "延迟", "抖动", "丢包"]
-author: "机场指南编辑部"
+author: "机场阿南"
 publishedAt: "2026-11-10"
 updatedAt: "2026-11-10"
 status: published

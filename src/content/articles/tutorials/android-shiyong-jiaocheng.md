@@ -4,7 +4,7 @@ description: "Android 手机上使用机场的步骤：从 GitHub 或官网获�
 category: tutorials
 primaryKeyword: "Android 机场教程"
 tags: ["Android", "Clash Meta for Android", "FlClash", "订阅导入", "分应用代理", "后台保活"]
-author: "机场指南编辑部"
+author: "机场阿南"
 publishedAt: "2026-11-10"
 updatedAt: "2026-11-10"
 status: published

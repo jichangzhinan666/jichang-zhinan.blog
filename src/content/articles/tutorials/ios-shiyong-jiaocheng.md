@@ -4,7 +4,7 @@ description: "iPhone 和 iPad 上使用机场的完整流程：为什么中国�
 category: tutorials
 primaryKeyword: "iOS 机场教程"
 tags: ["iOS", "iPhone", "iPad", "Shadowrocket", "订阅导入", "Apple ID"]
-author: "机场指南编辑部"
+author: "机场阿南"
 publishedAt: "2026-11-10"
 updatedAt: "2026-11-10"
 status: published

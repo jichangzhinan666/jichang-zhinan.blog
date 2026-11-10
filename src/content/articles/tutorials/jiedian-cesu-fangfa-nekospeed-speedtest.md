@@ -4,7 +4,7 @@ description: "三类测速工具各测什么：客户端“测试延迟”只测
 category: tutorials
 primaryKeyword: "机场测速方法"
 tags: ["测速", "Speedtest", "IPCheck.ing", "MiaoKo", "SpeedCentre", "延迟", "记录规范"]
-author: "机场指南编辑部"
+author: "机场阿南"
 publishedAt: "2026-11-10"
 updatedAt: "2026-11-10"
 status: published

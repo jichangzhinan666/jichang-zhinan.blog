@@ -4,7 +4,7 @@ description: "节点地区决定延迟、可用的流媒体片库与 AI 服务�
 category: guides
 primaryKeyword: "机场节点怎么选"
 tags: ["节点地区", "香港节点", "日本节点", "新加坡节点", "美国节点", "延迟"]
-author: "机场指南编辑部"
+author: "机场阿南"
 publishedAt: "2026-11-10"
 updatedAt: "2026-11-10"
 status: published

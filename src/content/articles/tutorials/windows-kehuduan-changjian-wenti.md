@@ -4,7 +4,7 @@ description: "按“现象 → 原因 → 处理”整理三大平台最常见�
 category: tutorials
 primaryKeyword: "机场客户端常见问题"
 tags: ["常见问题", "排错", "Windows", "iOS", "Android", "系统代理", "TUN"]
-author: "机场指南编辑部"
+author: "机场阿南"
 publishedAt: "2026-11-10"
 updatedAt: "2026-11-10"
 status: published

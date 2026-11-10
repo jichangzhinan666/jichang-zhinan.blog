@@ -4,7 +4,7 @@ description: "解释 DNS 泄露的真正含义（不是所有本地 DNS 都算�
 category: tutorials
 primaryKeyword: "DNS 泄露检测"
 tags: ["DNS 泄露", "隐私", "Clash", "Mihomo", "fake-ip", "IPv6"]
-author: "机场指南编辑部"
+author: "机场阿南"
 publishedAt: "2026-11-10"
 updatedAt: "2026-11-10"
 status: published

@@ -103,7 +103,7 @@ export const STATIC_PAGES: Record<string, { title: string; lastmod: string; chan
   '/speed-tests/': { title: '2026 机场节点测速报告', lastmod: '2026-11-10', changefreq: 'weekly' },
   '/compare/': { title: '2026 机场套餐价格对比', lastmod: '2026-11-10', changefreq: 'weekly' },
   '/tutorials/': { title: '2026 机场使用教程大全', lastmod: '2026-11-10', changefreq: 'weekly' },
-  '/guides/': { title: '选购指南', lastmod: '2026-11-10', changefreq: 'weekly' },
+  '/guides/': { title: '2026 机场选购指南', lastmod: '2026-11-10', changefreq: 'weekly' },
   '/wiki/': { title: '机场百科', lastmod: '2026-11-10', changefreq: 'monthly' },
   '/news/': { title: '资讯与更新', lastmod: '2026-11-10', changefreq: 'weekly' },
   '/about/': { title: '关于机场指南', lastmod: '2026-11-10', changefreq: 'yearly' },

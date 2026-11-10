@@ -4,7 +4,8 @@ import Breadcrumbs from '@/components/Breadcrumbs.astro';
 import ArticleCard from '@/components/ArticleCard.astro';
 import Icon from '@/components/Icon.astro';
 import { CATEGORY_META, STATIC_PAGES, type CategoryKey } from '@/lib/site';
-import { getPublishedArticles, articleUrl, articleSlug } from '@/lib/articles';
+import { getPublishedArticles, articleUrl, articleSlug, categoryLabel, type Article } from '@/lib/articles';
+import { getBrands, getEntryPlan, formatPrice } from '@/lib/data';
 import { breadcrumbLd, collectionPageLd, itemListLd } from '@/lib/seo';
 import glossary from '@/data/glossary.json';
 import changelog from '@/data/changelog.json';
@@ -32,18 +33,128 @@ const TUTORIAL_GROUPS = [
   { id: 'subscription', label: '订阅与节点管理', icon: 'list', blurb: '订阅链接导入与更新、节点切换、规则模式，以及客户端延迟测试与节点测速的记录方法。', slugs: ['clash-verge-rev-jiaocheng', 'jiedian-cesu-fangfa-nekospeed-speedtest'] },
   { id: 'troubleshooting', label: '故障排查', icon: 'tool', blurb: '连不上、订阅失败、部分应用不走代理、系统时间误差、DNS 泄露检测与 Clash 系 DNS 设置。', slugs: ['windows-kehuduan-changjian-wenti', 'dns-xielou-jiance-paicha'] },
 ] as const;
-const bySlug = new Map(articles.map((a) => [articleSlug(a), a] as const));
+/** 全站已发布文章按 slug 索引：分类与专题只链接真实存在的文章 */
+const allArticles = await getPublishedArticles();
+const bySlug = new Map(allArticles.map((a) => [articleSlug(a), a] as const));
 const tutorialGroups = TUTORIAL_GROUPS.map((g) => ({ ...g, items: g.slugs.map((s) => bySlug.get(s)).filter((a): a is NonNullable<typeof a> => Boolean(a)) }));
+
+type Ref = { slug: string; focus?: string };
+function pick(refs: readonly Ref[]): { article: Article; focus?: string }[] {
+  const out: { article: Article; focus?: string }[] = [];
+  for (const r of refs) {
+    const a = bySlug.get(r.slug);
+    if (a) out.push({ article: a, focus: r.focus });
+  }
+  return out;
+}
+
+/** 选购指南的六个专题：决策要点为编辑整理，数字取自品牌与套餐资料；文章只链接已发布的原创文章 */
+const brands = getBrands();
+const entryPlans = brands.map((b) => getEntryPlan(b.id)).filter((p): p is NonNullable<typeof p> => Boolean(p));
+const entryPrices = entryPlans.map((p) => p.price);
+const entryTraffic = entryPlans.map((p) => p.trafficGB).filter((n): n is number => typeof n === 'number');
+const range = (nums: number[], fmt: (n: number) => string) => (nums.length ? `${fmt(Math.min(...nums))}–${fmt(Math.max(...nums))}` : '资料未提供');
+const commonRegions = ['香港', '台湾', '日本', '新加坡', '美国'].filter((r) => brands.every((b) => b.nodeRegions.includes(r)));
+const GUIDE_TOPICS = [
+  {
+    id: 'budget',
+    label: '预算选择',
+    icon: 'tag',
+    question: '每月愿意花多少钱？',
+    fact: `本站收录的 ${brands.length} 个品牌，入门档月付为 ${range(entryPrices, formatPrice)}（名义价，不含优惠码）。`,
+    points: ['先按每 GB 单价比较，而不是只看月付数字。', '优惠码只对资料注明的档位有效，实付以品牌结算页为准。', '长周期折扣先折算成月付，再评估服务变化的风险。'],
+    reads: [
+      { slug: 'pianyi-jichang-taocan-bijiao-fangfa', focus: '重点看“每 GB 单价”与“低价背后的隐藏成本”' },
+      { slug: 'yuefu-jifu-nianfu-zenme-bijiao', focus: '重点看“折合月付怎么算”与“什么时候年付才合理”' },
+      { slug: '2026-jichang-xuangou-zhinan', focus: '重点看“第三步：算每 GB 单价”' },
+    ],
+    tool: { href: '/compare/', label: '查看套餐价格对比与每 GB 计算器' },
+  },
+  {
+    id: 'traffic',
+    label: '流量需求',
+    icon: 'speed',
+    question: '每月大概用多少 GB？',
+    fact: `入门档月流量为 ${range(entryTraffic, (n) => `${n} GB`)}；流量是否每月重置、是否结转，以各品牌资料为准。`,
+    points: ['先按用途估算：看视频、用 AI 工具与日常办公的用量差别很大，最好以一个月的实际用量为准。', '用量小可以看年付小包或不限时流量包；用量大就比较每 GB 单价与顶档流量。', '是否限速、是否多设备共享流量等限制，只以品牌资料写明的内容为准。'],
+    reads: [
+      { slug: '2026-jichang-xuangou-zhinan', focus: '重点看“第二步：估算月流量”' },
+      { slug: 'pianyi-jichang-taocan-bijiao-fangfa', focus: '重点看“年付小包”与“不限时流量包”两种方法' },
+      { slug: 'yuefu-jifu-nianfu-zenme-bijiao', focus: '重点看“不限时流量包是另一种长周期”' },
+    ],
+    tool: { href: '/compare/', label: '按月流量筛选套餐' },
+  },
+  {
+    id: 'regions',
+    label: '节点地区',
+    icon: 'globe',
+    question: '常用的服务在哪个地区？',
+    fact: commonRegions.length ? `${commonRegions.join('、')}为全部 ${brands.length} 个品牌都覆盖的地区；其他地区以各品牌页为准。` : '各品牌覆盖的地区以品牌页为准。',
+    points: ['延迟主要看物理距离，流媒体片库与 AI 服务的可用性看地区政策。', '不要只依赖客户端的“自动选择”，手动试几个地区并记录延迟。', '本站实测只覆盖单节点、单时段，不能当作地区之间或品牌之间的速度比较。'],
+    reads: [
+      { slug: 'butong-diqu-jiedian-zenme-xuan', focus: '逐个地区说明用途与注意事项' },
+      { slug: 'jiedian-di-yanchi-que-sudu-man', focus: '为什么延迟低不等于速度快' },
+      { slug: 'wending-jichang-zenme-xuan', focus: '重点看“用真实数据理解这些指标”' },
+    ],
+    tool: { href: '/speed-tests/', label: '查看节点测速报告' },
+  },
+  {
+    id: 'lines',
+    label: '线路类型',
+    icon: 'server',
+    question: 'IEPL、IPLC、BGP、直连有什么区别？',
+    fact: '资料中的线路表述来自各品牌自述，本站未逐一验证；品牌页会原样标注并注明来源。',
+    points: ['专线（IEPL / IPLC）、BGP 中转与直连的差别主要在路径与晚高峰表现。', '不要只看名字，要看延迟形态与晚高峰是否衰减。', '月付期内先自测，再决定是否长期付费。'],
+    reads: [
+      { slug: 'iepl-iplc-bgp-zhilian-quebie', focus: '四种线路的原理、体验差异与验证方法' },
+      { slug: 'wending-jichang-zenme-xuan', focus: '重点看“线路类型与稳定的关系”' },
+      { slug: 'shenme-shi-jichang-xinshou-bidu', focus: '重点看“线路类型一句话”' },
+    ],
+    tool: { href: '/reviews/', label: '查看各品牌资料所述的线路类型' },
+  },
+  {
+    id: 'client',
+    label: '客户端兼容性',
+    icon: 'device',
+    question: '你的设备能用吗？',
+    fact: '部分品牌只提供官方客户端、不发放订阅链接；第三方客户端的支持情况按品牌资料归类，未核实的标为待核实。',
+    points: ['先确认是用官方客户端还是导入订阅链接，这决定了能否使用 Clash 等第三方客户端。', 'iOS 通常需要非大陆地区 Apple ID 或品牌指定的客户端，购买前先确认。', '设备数限制与多设备共享流量的规则，以品牌资料为准。'],
+    reads: [
+      { slug: 'shenme-shi-jichang-xinshou-bidu', focus: '重点看“两种使用方式：官方客户端还是订阅链接”' },
+      { slug: '2026-jichang-xuangou-zhinan', focus: '重点看“第五步：确认使用方式、设备与退款”' },
+      { slug: 'clash-verge-rev-jiaocheng', focus: '电脑端导入订阅的实际步骤' },
+      { slug: 'ios-shiyong-jiaocheng', focus: 'iPhone / iPad 的客户端与 Apple ID 说明' },
+    ],
+    tool: { href: '/tutorials/', label: '按设备查看使用教程' },
+  },
+  {
+    id: 'pitfalls',
+    label: '购买避坑',
+    icon: 'shield',
+    question: '下单前要确认什么？',
+    fact: '退款、试用与客服政策以品牌资料和结算页为准；资料未写明的内容本站标注“资料未提供”，不应视为承诺。',
+    points: ['先月付或最小套餐试用，晚高峰多用几天再考虑长周期。', '只通过官网注册购买；多数品牌资料提醒网上出售的订阅链接并非官方渠道。', '把资料里的流量规则、设备限制与优惠码范围逐条核对一遍再付款。'],
+    reads: [
+      { slug: 'shenme-shi-jichang-xinshou-bidu', focus: '重点看“新手最常踩的六个坑”' },
+      { slug: '2026-jichang-xuangou-zhinan', focus: '重点看“买前验证清单”与“常见误区”' },
+      { slug: 'pianyi-jichang-taocan-bijiao-fangfa', focus: '重点看“低价背后的隐藏成本”' },
+      { slug: 'yuefu-jifu-nianfu-zenme-bijiao', focus: '重点看“长周期的三种风险”' },
+      { slug: 'wending-jichang-zenme-xuan', focus: '重点看“7 天自测表”' },
+    ],
+    tool: { href: '/methodology/', label: '了解本站的资料核实方法' },
+  },
+] as const;
+const guideTopics = GUIDE_TOPICS.map((t) => ({ ...t, items: pick(t.reads) }));
 
 const titles: Record<CategoryKey, string> = {
   tutorials: '2026 机场使用教程大全｜Clash 配置、订阅导入与客户端指南',
-  guides: '机场选购指南 2026：新手入门、稳定性、价格与付费周期怎么选',
+  guides: '2026 机场选购指南｜预算、流量、节点与线路怎么选？',
   wiki: '机场百科：IEPL / IPLC / BGP、TUN、DNS 泄露等术语与原理',
   news: '资讯与更新日志：站点动态、内容更新与数据更正记录',
 };
 const descriptions: Record<CategoryKey, string> = {
   tutorials: `从零学习机场客户端：${articles.length} 篇教程按 Windows、macOS、Android、iOS、订阅与节点管理、故障排查六类整理，覆盖 Clash Verge Rev、Clash Meta、Shadowrocket 的安装与订阅导入、节点切换、规则模式、TUN、DNS 设置与连接故障排查，只写可复现的步骤。`,
-  guides: `${articles.length} 篇选购指南：什么是机场、2026 机场怎么选、稳定机场的判断方法（延迟、丢包、晚高峰）、便宜套餐的比较方法、不同地区节点的用途、月付/季付/年付怎么比。结论均可在站内资料库中核对。`,
+  guides: `第一次买机场怎么选：${articles.length} 篇原创指南按预算、流量、节点地区、线路类型、客户端兼容性与购买避坑六个专题整理，用本站 ${brands.length} 个品牌的真实套餐与政策举例，帮你看懂套餐区别、避开常见误区，不含评分。`,
   wiki: `${glossary.length} 条术语解释与 ${articles.length} 篇原理文章：机场、节点、订阅链接、IEPL / IPLC / BGP / 直连、倍率、原生 IP、TUN 模式、DNS 泄露、晚高峰、TLS RTT、Mbps 与 MB/s 等。`,
   news: `机场指南的站点动态、内容更新与数据更正记录。更新日志逐条列出新增品牌、新增测速报告与修正项，发布日期均为真实日期。`,
 };
@@ -54,14 +165,22 @@ const jsonLd: Record<string, unknown>[] = [
 if (articles.length) {
   jsonLd.push(itemListLd(meta.label, articles.map((a) => ({ name: a.data.title, url: articleUrl(a), description: a.data.description }))));
 }
-const heroTitle = category === 'tutorials' ? titles.tutorials : meta.label;
-const heroLead =
-  category === 'tutorials'
-    ? '从零开始学习机场客户端的安装与使用，涵盖 Windows、Android、iOS、macOS 等设备，提供 Clash Verge Rev、Clash Meta、Shadowrocket 等客户端的配置指南，以及订阅链接导入、节点切换、规则模式、TUN、DNS 设置与连接故障排查教程，帮助新手快速掌握机场服务的使用方法。'
-    : meta.description;
+/** 栏目页自定义的 H1 与导语（未登记的栏目沿用 CATEGORY_META） */
+const HERO: Partial<Record<CategoryKey, { title: string; lead: string }>> = {
+  tutorials: {
+    title: titles.tutorials,
+    lead: '从零开始学习机场客户端的安装与使用，涵盖 Windows、Android、iOS、macOS 等设备，提供 Clash Verge Rev、Clash Meta、Shadowrocket 等客户端的配置指南，以及订阅链接导入、节点切换、规则模式、TUN、DNS 设置与连接故障排查教程，帮助新手快速掌握机场服务的使用方法。',
+  },
+  guides: {
+    title: titles.guides,
+    lead: '第一次购买机场不知道怎么选择？本指南从预算价格、每月流量、节点地区、线路类型、客户端支持及付费周期出发，分析不同使用场景下的选购要点，帮助你看懂机场套餐区别，避开常见选购误区，找到符合个人需求的网络加速服务。',
+  },
+};
+const heroTitle = HERO[category]?.title ?? meta.label;
+const heroLead = HERO[category]?.lead ?? meta.description;
 ---
 
-<BaseLayout title={titles[category]} titleSuffix={category !== 'tutorials'} description={descriptions[category]} canonicalPath={meta.href} jsonLd={jsonLd} modifiedTime={lastmod}>
+<BaseLayout title={titles[category]} titleSuffix={!HERO[category]} description={descriptions[category]} canonicalPath={meta.href} jsonLd={jsonLd} modifiedTime={lastmod}>
   <div class="container">
     <Breadcrumbs crumbs={crumbs} />
     <header class="page-hero">
@@ -99,6 +218,57 @@ const heroLead =
                   )}
                   <p class="g-more small">
                     其他分类：{tutorialGroups.filter((o) => o.id !== g.id).map((o, i) => <>{i > 0 && ' · '}<a href={`#tut-${o.id}`}>{o.label}</a></>)}
+                  </p>
+                </section>
+              ))}
+            </div>
+          </section>
+        </>
+      )
+    }
+
+    {
+      category === 'guides' && (
+        <>
+          <nav class="group-jump small" aria-label="按选购专题跳转">
+            {guideTopics.map((t) => (
+              <a href={`#topic-${t.id}`}>{t.label}<span class="gj-count">{t.items.length}</span></a>
+            ))}
+          </nav>
+          <section class="card section" aria-labelledby="topics-title">
+            <h2 class="section-title" id="topics-title"><Icon name="tag" size={20} />六个选购专题</h2>
+            <p class="small muted">每个专题先给出决策要点，再链接到本站已发布的原创文章；数字取自品牌与套餐资料，性能、退款与套餐限制中未经核实的内容不作为确定事实。排行榜与套餐数据不在此重复，请使用对应页面。</p>
+            <div class="group-grid topic-grid">
+              {guideTopics.map((t) => (
+                <section class="group topic" id={`topic-${t.id}`} aria-labelledby={`topic-${t.id}-title`}>
+                  <h3 id={`topic-${t.id}-title`}><Icon name={t.icon} size={18} />{t.label}</h3>
+                  <p class="g-q">{t.question}</p>
+                  <p class="g-fact small">{t.fact}</p>
+                  <ul class="g-points">
+                    {t.points.map((p) => (
+                      <li>{p}</li>
+                    ))}
+                  </ul>
+                  {t.items.length ? (
+                    <>
+                      <p class="g-sub">延伸阅读</p>
+                      <ul class="g-list">
+                        {t.items.map((it) => (
+                          <li>
+                            <a href={articleUrl(it.article)}>
+                              {it.article.data.title}
+                              {it.article.data.category !== 'guides' && <span class="g-cat">{categoryLabel(it.article.data.category)}</span>}
+                            </a>
+                            {it.focus && <span class="small muted">{it.focus}</span>}
+                          </li>
+                        ))}
+                      </ul>
+                    </>
+                  ) : (
+                    <p class="small muted">该专题暂无已发布文章。</p>
+                  )}
+                  <p class="g-more small">
+                    <a href={t.tool.href}>{t.tool.label} →</a>
                   </p>
                 </section>
               ))}
@@ -284,6 +454,55 @@ const heroLead =
     color: var(--muted);
   }
 
+  .topic-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .g-q {
+    margin: -2px 0 0;
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--primary);
+  }
+
+  .g-fact {
+    margin: 0;
+    padding: 8px 10px;
+    border-radius: var(--radius-sm);
+    background: var(--primary-50);
+    border: 1px solid var(--primary-100);
+    color: var(--text-2);
+  }
+
+  .g-points {
+    margin: 0;
+    padding-left: 1.2em;
+    font-size: 0.875rem;
+    color: var(--text-2);
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .g-sub {
+    margin: 4px 0 0;
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: var(--muted);
+  }
+
+  .g-cat {
+    display: inline-block;
+    margin-left: 6px;
+    padding: 0 6px;
+    border-radius: 999px;
+    font-size: 0.7rem;
+    font-weight: 500;
+    background: var(--surface-3);
+    color: var(--muted);
+    vertical-align: middle;
+  }
+
   @media (max-width: 1023px) {
     .group-grid {
       grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -291,7 +510,8 @@ const heroLead =
   }
 
   @media (max-width: 639px) {
-    .group-grid {
+    .group-grid,
+    .topic-grid {
       grid-template-columns: 1fr;
     }
   }

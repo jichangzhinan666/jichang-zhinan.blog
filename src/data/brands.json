@@ -123,6 +123,16 @@
     "vision": "成为用户最放心、最省心的跨境网络连接品牌，让工作、学习和娱乐不再被网络限制。",
     "values": "省心、安全、稳定、透明、尊重。",
     "slogan": "中国人能飞，网速也要飞",
+    "intro": {
+      "heading": "飞V FLYV",
+      "slogan": "品牌定位：专线品质与透明流量兼备的全球网络加速服务。",
+      "paragraphs": [
+        "飞V（FlyV）定位于高性价比专线网络加速市场，以 IEPL/IPLC 专线、BGP 智能路由、全节点 1 倍率及多设备连接为核心特色，面向注重网络品质、流量透明度与跨平台使用体验的用户。",
+        "飞V 致力于满足海外 AI 工具、高清流媒体、日常网络访问、跨境办公及多设备使用需求，通过多地区节点、官方客户端及不同级别流量套餐，为个人与商务用户提供灵活的网络连接选择。"
+      ],
+      "tagline": "飞V——连接世界，自由无界。",
+      "source": "品牌介绍文案由站长于 2026-11-10 提供，属宣传性描述；套餐、节点与测速数据以下方资料为准"
+    },
     "officialWebsite": "https://flyv.site",
     "affiliateUrl": "https://varnexa.flyvaff.com/#/?code=1mq17Z8C",
     "logo": null,
@@ -194,7 +204,8 @@
     ],
     "sourceRecords": [
       { "sourceType": "user-supplied-official", "sourceFile": "source-materials/brands/FLYV.txt", "sourceLocation": "全文（一至九节）", "verifiedAt": "2026-11-09" },
-      { "sourceType": "independently-measured", "sourceFile": "source-materials/evidence/reports/FlyV_新加坡节点_实测报告.png", "sourceLocation": "站长实测报告图（2026-11-10 12:09）", "verifiedAt": "2026-11-10" }
+      { "sourceType": "independently-measured", "sourceFile": "source-materials/evidence/reports/FlyV_新加坡节点_实测报告.png", "sourceLocation": "站长实测报告图（2026-11-10 12:09）", "verifiedAt": "2026-11-10" },
+      { "sourceType": "unverified", "sourceFile": "source-materials/brands/飞V-品牌介绍.txt", "sourceLocation": "品牌介绍文案（页首展示）", "verifiedAt": "2026-11-10", "note": "站长提供的品牌介绍文案，属宣传性描述，不作为价格、节点或测速的事实依据；线路、倍率与设备说法与登记资料一致" }
     ],
     "lastVerifiedAt": "2026-11-10",
     "editorialStatus": "published",

@@ -63,6 +63,15 @@
     "relatedBrandIds": ["twilight"]
   },
   {
+    "id": "src-flyv-intro",
+    "file": "source-materials/brands/飞V-品牌介绍.txt",
+    "sourceType": "unverified",
+    "collectedAt": "2026-11-10",
+    "description": "飞V 品牌介绍文案（标题、定位语、两段介绍与结语），用于品牌页页首展示",
+    "credibility": "站长提供的宣传性文案，不作为价格、节点或测速的事实依据；线路、倍率与设备说法与登记资料一致。",
+    "relatedBrandIds": ["flyv"]
+  },
+  {
     "id": "src-dalaoyun-intro",
     "file": "source-materials/brands/大佬云-品牌介绍.txt",
     "sourceType": "unverified",

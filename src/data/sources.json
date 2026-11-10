@@ -54,6 +54,15 @@
     "relatedBrandIds": ["twilight"]
   },
   {
+    "id": "src-twilight-client-note",
+    "file": "source-materials/brands/暮光加速-客户端补充.txt",
+    "sourceType": "unverified",
+    "collectedAt": "2026-11-10",
+    "description": "暮光加速客户端补充：Windows / macOS / Android 为品牌客户端，iOS / iPadOS 通过 Nextin，第三方订阅支持情况待核实",
+    "credibility": "站长依据公开教程整理，本站未独立验证；不改变套餐、价格与排序。",
+    "relatedBrandIds": ["twilight"]
+  },
+  {
     "id": "src-breezenet-txt",
     "file": "source-materials/brands/微风网络.txt",
     "sourceType": "user-supplied-official",

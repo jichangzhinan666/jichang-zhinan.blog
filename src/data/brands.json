@@ -519,10 +519,15 @@
     ],
     "clientPolicy": {
       "officialClient": true,
+      "platformsDetail": [
+        { "platforms": "Windows / macOS / Android", "client": "品牌客户端", "kind": "brand", "source": "依据公开教程（站长 2026-11-10 补充）" },
+        { "platforms": "iOS / iPadOS", "client": "Nextin", "kind": "third", "source": "依据公开教程（站长 2026-11-10 补充）" },
+        { "platforms": "第三方订阅", "client": "支持情况待核实", "kind": "unverified", "source": "原资料写明“不推荐导入 Clash、小火箭等”，兼容性未经核实" }
+      ],
       "subscriptionLink": "不推荐使用，避免订阅外泄被他人盗用导致节点拥挤",
-      "thirdPartyClients": "不推荐导入 Clash、小火箭等",
+      "thirdPartyClients": "第三方订阅支持情况待核实（原资料：不推荐导入 Clash、小火箭等）",
       "downloadChannel": "仅限官网；网上出售的订阅链接或网盘分发的客户端均非官方渠道",
-      "note": "官网客户端由官方统一发布和更新，同样可以安全使用"
+      "note": "官网客户端由官方统一发布和更新，同样可以安全使用；iOS / iPadOS 通过 Nextin 登录（依据公开教程，待官方确认）"
     },
     "coupon": {
       "code": "mm88",
@@ -551,10 +556,12 @@
     "speedTests": { "reportSlugs": [], "evidenceStatus": "none", "latestDatedTest": null },
     "dataCaveats": [
       "资料未给出各地区节点数。",
-      "不限时流量包是否适用优惠码资料未说明。"
+      "不限时流量包是否适用优惠码资料未说明。",
+      "iOS / iPadOS 通过 Nextin 使用的说法来自站长依据公开教程的补充，本站未独立验证；第三方订阅兼容性待核实，原资料为“不推荐导入”。"
     ],
     "sourceRecords": [
-      { "sourceType": "user-supplied-official", "sourceFile": "source-materials/brands/暮光加速.txt", "sourceLocation": "全文（一至十节）", "verifiedAt": "2026-11-09" }
+      { "sourceType": "user-supplied-official", "sourceFile": "source-materials/brands/暮光加速.txt", "sourceLocation": "全文（一至十节）", "verifiedAt": "2026-11-09" },
+      { "sourceType": "unverified", "sourceFile": "source-materials/brands/暮光加速-客户端补充.txt", "sourceLocation": "客户端按系统说明", "verifiedAt": "2026-11-10", "note": "站长依据公开教程整理，未独立验证" }
     ],
     "lastVerifiedAt": "2026-11-09",
     "editorialStatus": "published",

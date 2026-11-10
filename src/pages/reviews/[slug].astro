@@ -259,6 +259,35 @@ const jsonLd = [
             <div><dt>下载渠道</dt><dd>{brand.clientPolicy.downloadChannel}</dd></div>
             {brand.clientPolicy.note && <div><dt>说明</dt><dd>{brand.clientPolicy.note}</dd></div>}
           </dl>
+          {
+            brand.clientPolicy.platformsDetail && (
+              <>
+                <h3>按系统的客户端说明</h3>
+                <div class="table-wrap">
+                  <table class="data">
+                    <thead>
+                      <tr><th>系统</th><th>客户端</th><th>状态</th><th>资料来源</th></tr>
+                    </thead>
+                    <tbody>
+                      {brand.clientPolicy.platformsDetail.map((p) => (
+                        <tr>
+                          <td class="nowrap">{p.platforms}</td>
+                          <td>{p.client}</td>
+                          <td class="nowrap">
+                            <span class={`badge ${p.kind === 'brand' ? 'badge-medium' : p.kind === 'third' ? 'badge-strong' : 'badge-none'}`}>
+                              {p.kind === 'brand' ? '品牌客户端' : p.kind === 'third' ? '第三方客户端' : '待核实'}
+                            </span>
+                          </td>
+                          <td class="small">{p.source}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+                <p class="small muted">“待核实”表示本站没有可靠依据判断兼容性，既不标记为已支持，也不标记为不支持；核实后会更新并记录在更新日志。</p>
+              </>
+            )
+          }
           <p class="small muted">想了解官方客户端与 Clash 等第三方客户端的区别，可阅读<a href="/tutorials/clash-verge-rev-jiaocheng/">Clash Verge Rev 教程</a>与<a href="/wiki/tun-moshi-yu-quanju-daili/">TUN 模式与全局代理</a>。</p>
         </section>
 

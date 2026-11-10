@@ -44,9 +44,20 @@ export interface CouponInfo {
   usage: string;
 }
 
+/** 按系统列出的客户端（用于卡片上的简洁标签） */
+export interface ClientPlatform {
+  platforms: string;
+  client: string;
+  /** 'brand' 品牌客户端 / 'third' 第三方 / 'unverified' 待核实 */
+  kind: 'brand' | 'third' | 'unverified';
+  source: string;
+}
+
 export interface ClientPolicy {
   /** 是否以官方客户端为主要使用方式 */
   officialClient: boolean;
+  /** 可选：按系统的客户端标签；缺省时页面使用 thirdPartyClients 文本 */
+  platformsDetail?: ClientPlatform[];
   /** 订阅链接政策原文（资料原话整理） */
   subscriptionLink: string;
   /** 第三方客户端政策原文 */

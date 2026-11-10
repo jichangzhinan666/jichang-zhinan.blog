@@ -15,7 +15,7 @@ const crumbs = [
   { name: '机场推荐', href: '/rankings/' },
 ];
 const title = '2026 机场分类榜单｜低价机场、大流量套餐与节点地区指南';
-const description = `汇总 2026 年机场分类榜单与专题指南，涵盖低价机场套餐、大流量机场、节点地区及线路类型等实用信息。通过 ${stats.brands} 个品牌的真实套餐资料进行价格、流量与地区分类对比，帮助读者快速找到符合预算和使用需求的机场服务，不含评分。`;
+const description = `精选 2026 年机场分类榜单与专题对比，覆盖低价机场套餐、大流量方案、节点覆盖地区和线路类型。依据收录的 ${stats.brands} 个品牌套餐价格、流量及地区资料分类整理，帮助读者根据预算和使用需求快速筛选合适的机场服务，不含评分。`;
 const jsonLd = [
   collectionPageLd(title, '/rankings/', description),
   breadcrumbLd(crumbs),
@@ -28,8 +28,8 @@ const jsonLd = [
     <Breadcrumbs crumbs={crumbs} />
     <header class="page-hero">
       <h1>{title}</h1>
-      <p class="lead">汇总 2026 年机场分类榜单与专题指南，涵盖低价机场套餐、大流量机场、节点地区及线路类型等实用信息。通过真实套餐资料进行价格、流量与地区分类对比，帮助读者快速找到符合预算和使用需求的机场服务。</p>
-      <p class="lead lead-note">年度总榜采用站长编辑推荐顺序，专题榜依据套餐数据分类整理，不代表实际速度排名。数据更新：{lastmod}。</p>
+      <p class="lead">精选 2026 年机场分类榜单与专题对比，覆盖低价机场套餐、大流量方案、节点覆盖地区和线路类型。依据收录的套餐价格、流量及地区资料分类整理，帮助读者根据预算和使用需求快速筛选合适的机场服务。</p>
+      <p class="lead lead-note"><strong>榜单说明：</strong>年度总榜采用站长编辑推荐顺序，专题榜根据套餐数据分类展示，均不代表实际测速性能排名。资料持续更新（最近更新 {lastmod}），具体价格与服务以品牌实际结算页面为准。</p>
     </header>
 
     <section class="card section annual" aria-labelledby="annual-title">

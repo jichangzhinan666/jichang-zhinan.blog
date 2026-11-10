@@ -148,6 +148,23 @@ function isActive(href: string): boolean {
           <a role="menuitem" tabindex="-1" href="/me/#history"><Icon name="clock" size={16} />阅读记录<span class="am-count" data-count="history"></span></a>
           <a role="menuitem" tabindex="-1" href="/me/"><Icon name="user" size={16} />个人中心</a>
           <a role="menuitem" tabindex="-1" href="/me/#prefs"><Icon name="tool" size={16} />偏好设置</a>
+          <div class="am-social" aria-label="社交入口">
+            {
+              SOCIAL_LINKS.map((s) =>
+                s.href ? (
+                  <a href={s.href} target="_blank" rel="noopener noreferrer" title={s.label}>
+                    <Icon name={s.id} size={16} />
+                    {s.label}
+                  </a>
+                ) : (
+                  <span class="is-pending" aria-disabled="true" title={`${s.label} 链接待补充`}>
+                    <Icon name={s.id} size={16} />
+                    {s.label}
+                  </span>
+                ),
+              )
+            }
+          </div>
         </div>
       </div>
       <button class="icon-btn nav-burger" type="button" id="nav-burger" aria-expanded="false" aria-controls="main-nav" aria-label="打开菜单">
@@ -274,8 +291,14 @@ function isActive(href: string): boolean {
     color: var(--text-2);
     font-weight: 600;
     font-size: 0.95rem;
+    line-height: 1.2;
+    white-space: nowrap;
     text-decoration: none;
     transition: background 0.15s ease, color 0.15s ease;
+  }
+
+  .nav-link :global(.icon) {
+    flex: none;
   }
 
   .nav-link:hover {
@@ -529,6 +552,51 @@ function isActive(href: string): boolean {
     display: none;
   }
 
+  /* 社交入口：只在页头图标被隐藏的宽度下显示在菜单里 */
+  .am-social {
+    display: none;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 6px;
+    padding: 10px 10px 4px;
+    border-top: 1px solid var(--border);
+  }
+
+  .am-social a,
+  .am-social span {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    min-height: 36px;
+    padding: 4px 12px;
+    border-radius: 999px;
+    border: 1px solid var(--border);
+    background: var(--surface);
+    color: var(--text-2);
+    font-size: 0.8rem;
+    font-weight: 600;
+    text-decoration: none;
+  }
+
+  .am-social a:hover {
+    background: var(--primary-50);
+    color: var(--primary);
+    border-color: var(--primary-100);
+    text-decoration: none;
+  }
+
+  .am-social .is-pending {
+    opacity: 0.5;
+    border-style: dashed;
+    cursor: not-allowed;
+  }
+
+  @media (max-width: 639px), (min-width: 1024px) and (max-width: 1279px) {
+    .am-social {
+      display: flex;
+    }
+  }
+
   .theme-icon-sun,
   .burger-close {
     display: none;
@@ -656,8 +724,31 @@ function isActive(href: string): boolean {
     font-size: 0.9rem;
   }
 
-  @media (max-width: 1279px) {
-    .header-tagline {
+  /* 页头副标题：容器最宽 1400px，放不下完整导航与右侧按钮，故不再显示（保留标记供将来宽屏使用） */
+  .header-tagline {
+    display: none;
+  }
+
+  /* 中等宽度：导航只显示文字、社交图标收进个人中心菜单，保证每项一行 */
+  @media (min-width: 1024px) and (max-width: 1279px) {
+    .nav-list {
+      gap: 2px;
+    }
+
+    .nav-link {
+      padding: 8px 10px;
+      font-size: 0.9rem;
+    }
+
+    .nav-link :global(.icon) {
+      display: none;
+    }
+
+    .header-actions {
+      gap: 6px;
+    }
+
+    .header-actions .social-btn {
       display: none;
     }
   }

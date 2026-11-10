@@ -26,6 +26,10 @@ const oneTime = getPlanTiers().filter((t) => t.category === 'one-time');
 const dedicated = getPlanTiers().filter((t) => t.category === 'dedicated');
 const periods = ['monthly', 'quarterly', 'half-yearly', 'yearly', 'two-yearly', 'three-yearly'] as const;
 const flat = flattenPlans();
+// 资料核实日期范围：直接取自各档套餐记录，不随构建日期变化
+const verifiedDates = [...new Set(getPlanTiers().map((t) => t.verifiedAt).filter((d): d is string => Boolean(d)))].sort();
+const verifiedRange =
+  verifiedDates.length > 1 ? `${verifiedDates[0]} 至 ${verifiedDates[verifiedDates.length - 1]}` : (verifiedDates[0] ?? '资料未提供');
 
 function perGBMonthly(t: (typeof periodic)[number]): number | null {
   const p = flat.find((f) => f.id === `${t.id}--monthly`);
@@ -43,20 +47,41 @@ const crumbs = [
   { name: '机场推荐', href: '/rankings/' },
   { name: '套餐对比', href: '/compare/' },
 ];
-const title = `机场套餐对比 2026：${stats.brands} 个品牌价格、流量、每 GB 单价一览`;
-const description = `横向比较 ${stats.brands} 个机场品牌共 ${stats.tiers} 档套餐：周期套餐的月付/季付/半年付/年付价格、月流量与每 GB 单价，年付小包、不限时流量包与定制线路；支持按品牌筛选与排序，并附每 GB 单价计算器。数据更新 ${lastmod}，价格以结算页为准。`;
+const title = '2026 机场套餐价格对比｜月付费用、流量与每 GB 单价';
+const description = `汇总 ${stats.brands} 个机场品牌、${stats.tiers} 档套餐资料，对比月付费用、套餐流量、每 GB 单价与不同付款周期，覆盖周期套餐、年付小包、不限时流量包与定制线路。支持按预算、流量与品牌筛选排序，附单价计算器。资料核实 ${verifiedRange}，实付以结算页为准。`;
 const jsonLd = [webPageLd(title, '/compare/', description, lastmod), breadcrumbLd(crumbs)];
 ---
 
-<BaseLayout title={`机场套餐对比 2026：${stats.brands} 个品牌价格与每 GB 单价`} description={description} jsonLd={jsonLd}>
+<BaseLayout title={title} titleSuffix={false} description={description} jsonLd={jsonLd}>
   <div class="container">
     <Breadcrumbs crumbs={crumbs} />
     <header class="page-hero">
-      <h1>机场套餐对比</h1>
+      <h1>{title}</h1>
       <p class="lead">
-        {stats.brands} 个品牌、{stats.tiers} 档套餐的名义价格（人民币，不含优惠码）。表中“每 GB”按月付价 ÷ 月流量计算；一次性流量包按总价 ÷ 总流量。资料核实日期 2026-11-09 / 2026-11-10，实付以各品牌结算页为准。
+        汇总 {stats.brands} 个机场品牌、{stats.tiers} 档套餐资料，全面对比机场月付价格、套餐流量、每 GB 单价及不同付款周期。支持按预算、流量与套餐类型筛选，帮助读者更直观地比较各品牌的套餐成本与适用场景。
       </p>
     </header>
+
+    <aside class="callout callout-info calc-note" aria-labelledby="calc-note-title">
+      <Icon name="info" size={20} />
+      <div>
+        <p class="calc-note-title" id="calc-note-title">价格计算说明</p>
+        <ul class="calc-note-list">
+          <li><strong>周期套餐</strong>：每 GB = 月付价 ÷ 每月流量；季付、年付等长周期列出的是该周期总价。</li>
+          <li><strong>年付小包</strong>：折合月付 = 年付价 ÷ 12；每 GB = 折合月付 ÷ 每月流量。</li>
+          <li><strong>不限时流量包</strong>：每 GB = 总价 ÷ 总流量，流量不按月重置。</li>
+        </ul>
+        <p class="small calc-note-meta">表中为人民币名义价格，不含优惠码；各档资料核实日期见“核实”列（{verifiedRange}），实付以各品牌结算页为准。</p>
+      </div>
+    </aside>
+
+    <nav class="cmp-jump small" aria-label="本页表格">
+      <a href="#periodic-title">周期套餐</a>
+      <a href="#annual-title">年付小包</a>
+      <a href="#onetime-title">不限时流量包</a>
+      <a href="#dedicated-title">独享 / 定制线路</a>
+      <a href="#calculator">单价计算器</a>
+    </nav>
 
     <section class="card section" aria-labelledby="periodic-title">
       <div class="section-head">
@@ -111,7 +136,7 @@ const jsonLd = [webPageLd(title, '/compare/', description, lastmod), breadcrumbL
               <th>套餐</th>
               <th class="num">月流量</th>
               {periods.map((p) => <th class="num">{PERIOD_LABEL[p]}</th>)}
-              <th class="num">每 GB（月付）</th>
+              <th class="num" title="月付价 ÷ 每月流量">每 GB（月付）</th>
               <th>设备</th>
               <th>优惠码</th>
               <th>核实</th>
@@ -137,7 +162,7 @@ const jsonLd = [webPageLd(title, '/compare/', description, lastmod), breadcrumbL
                     </td>
                     <td class="num">{formatTraffic(t.trafficGB)}</td>
                     {periods.map((p) => <td class="num">{t.prices[p] !== undefined ? formatPrice(t.prices[p]!) : '—'}</td>)}
-                    <td class="num">{formatPerGB(pg)}</td>
+                    <td class="num pergb">{formatPerGB(pg)}</td>
                     <td class="nowrap">{deviceLabel(t.deviceLimit)}</td>
                     <td class="nowrap">{t.couponEligible === true ? (b.coupon ? b.coupon.code : '适用') : t.couponEligible === false ? '不适用' : '未说明'}</td>
                     <td class="nowrap small">{t.verifiedAt}</td>
@@ -180,7 +205,7 @@ const jsonLd = [webPageLd(title, '/compare/', description, lastmod), breadcrumbL
       <h2 class="section-title" id="annual-title"><Icon name="calendar" size={20} />年付小包（{annual.length} 档）</h2>
       <div class="table-wrap">
         <table class="data">
-          <thead><tr><th>品牌</th><th>套餐</th><th class="num">每月流量</th><th class="num">年付</th><th class="num">折合月付</th><th class="num">每 GB</th><th>刷新规则</th><th>优惠码</th></tr></thead>
+          <thead><tr><th>品牌</th><th>套餐</th><th class="num">每月流量</th><th class="num">年付</th><th class="num">折合月付</th><th class="num">每 GB</th><th>刷新规则</th><th>优惠码</th><th>核实</th></tr></thead>
           <tbody>
             {annual.map((t) => {
               const b = getBrand(t.brandId)!;
@@ -196,6 +221,7 @@ const jsonLd = [webPageLd(title, '/compare/', description, lastmod), breadcrumbL
                   <td class="num">{t.trafficGB ? formatPerGB(round3(m / t.trafficGB)) : '—'}</td>
                   <td class="small">{t.trafficNote}</td>
                   <td class="nowrap">{t.couponEligible === true ? '适用' : t.couponEligible === false ? '不适用' : '未说明'}</td>
+                  <td class="nowrap small">{t.verifiedAt ?? '未提供'}</td>
                 </tr>
               );
             })}
@@ -208,7 +234,7 @@ const jsonLd = [webPageLd(title, '/compare/', description, lastmod), breadcrumbL
       <h2 class="section-title" id="onetime-title"><Icon name="download" size={20} />不限时流量包（{oneTime.length} 档）</h2>
       <div class="table-wrap">
         <table class="data">
-          <thead><tr><th>品牌</th><th>套餐</th><th class="num">总流量</th><th class="num">价格</th><th class="num">每 GB</th><th>设备</th><th>说明</th></tr></thead>
+          <thead><tr><th>品牌</th><th>套餐</th><th class="num">总流量</th><th class="num">价格</th><th class="num">每 GB</th><th>设备</th><th>说明</th><th>核实</th></tr></thead>
           <tbody>
             {oneTime
               .slice()
@@ -225,6 +251,7 @@ const jsonLd = [webPageLd(title, '/compare/', description, lastmod), breadcrumbL
                     <td class="num">{t.trafficGB ? formatPerGB(round3(p / t.trafficGB)) : '—'}</td>
                     <td class="nowrap">{deviceLabel(t.deviceLimit)}</td>
                     <td class="small">{[t.trafficNote, ...t.features, t.note].filter(Boolean).join('；')}</td>
+                    <td class="nowrap small">{t.verifiedAt ?? '未提供'}</td>
                   </tr>
                 );
               })}
@@ -238,7 +265,7 @@ const jsonLd = [webPageLd(title, '/compare/', description, lastmod), breadcrumbL
       <h2 class="section-title" id="dedicated-title"><Icon name="server" size={20} />独享 / 定制线路（{dedicated.length} 档）</h2>
       <div class="table-wrap">
         <table class="data">
-          <thead><tr><th>品牌</th><th>套餐</th><th class="num">月流量</th><th class="num">月付</th><th>说明</th></tr></thead>
+          <thead><tr><th>品牌</th><th>套餐</th><th class="num">月流量</th><th class="num">月付</th><th>说明</th><th>核实</th></tr></thead>
           <tbody>
             {dedicated.map((t) => {
               const b = getBrand(t.brandId)!;
@@ -249,6 +276,7 @@ const jsonLd = [webPageLd(title, '/compare/', description, lastmod), breadcrumbL
                   <td class="num">{formatTraffic(t.trafficGB)}</td>
                   <td class="num">{t.prices.monthly !== undefined ? formatPrice(t.prices.monthly) : '—'}</td>
                   <td class="small">{[...t.features, t.note].filter(Boolean).join('；')}</td>
+                  <td class="nowrap small">{t.verifiedAt ?? '未提供'}</td>
                 </tr>
               );
             })}
@@ -271,6 +299,97 @@ const jsonLd = [webPageLd(title, '/compare/', description, lastmod), breadcrumbL
 </BaseLayout>
 
 <style>
+  .calc-note {
+    margin: 18px 0 12px;
+    align-items: flex-start;
+  }
+
+  .calc-note-title {
+    font-weight: 700;
+    margin-bottom: 6px;
+  }
+
+  .calc-note-list {
+    margin: 0 0 8px;
+    padding-left: 1.1em;
+    font-size: 0.9rem;
+  }
+
+  .calc-note-list li + li {
+    margin-top: 2px;
+  }
+
+  .calc-note-meta {
+    color: var(--text-2);
+    margin: 0;
+  }
+
+  .cmp-jump {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 20px;
+  }
+
+  .cmp-jump a {
+    padding: 6px 12px;
+    border-radius: 999px;
+    border: 1px solid var(--border);
+    background: var(--surface);
+    color: var(--text-2);
+    text-decoration: none;
+  }
+
+  .cmp-jump a:hover {
+    border-color: var(--primary);
+    color: var(--primary);
+  }
+
+  /* 表格可读性：数值不换行，品牌列在横向滚动时固定 */
+  .section table.data td.num,
+  .section table.data th.num {
+    white-space: nowrap;
+  }
+
+  .section table.data td.pergb {
+    font-weight: 600;
+    color: var(--primary);
+  }
+
+  .section table.data th:first-child,
+  .section table.data td:first-child {
+    white-space: nowrap;
+    position: sticky;
+    left: 0;
+    z-index: 1;
+    background: var(--surface);
+    box-shadow: 1px 0 0 var(--border);
+  }
+
+  .section table.data th:first-child {
+    background: var(--surface-2);
+    z-index: 2;
+  }
+
+  .section table.data tbody tr:hover td:first-child {
+    background: var(--surface-2);
+  }
+
+  @media (max-width: 767px) {
+    .section table.data {
+      font-size: 0.84rem;
+    }
+
+    .section table.data th,
+    .section table.data td {
+      padding: 8px 10px;
+    }
+
+    .calc-note-list {
+      font-size: 0.86rem;
+    }
+  }
+
   .cmp-filters {
     display: flex;
     flex-direction: column;
@@ -349,6 +468,16 @@ const jsonLd = [webPageLd(title, '/compare/', description, lastmod), breadcrumbL
     color: var(--text-2);
   }
 
+  .calc label {
+    min-width: 0;
+  }
+
+  .calc input,
+  .calc select {
+    width: 100%;
+    min-width: 0;
+  }
+
   .cmp-row select,
   .calc input,
   .calc select {
@@ -365,7 +494,9 @@ const jsonLd = [webPageLd(title, '/compare/', description, lastmod), breadcrumbL
   .cell-note {
     font-size: 0.72rem;
     color: var(--muted);
-    max-width: 28ch;
+    min-width: 22ch;
+    max-width: 40ch;
+    margin-top: 2px;
   }
 
   .calc {

@@ -49,10 +49,17 @@ const speedRows = reports
       .filter((rr) => rr.downloadMbps !== null)
       .map((rr) => ({ report: r, rr, brand: getBrand(r.brandId)! })),
   )
+  // 按榜单（站长编辑推荐）顺序排列品牌，同品牌内按测试时间倒序
+  .sort(
+    (a, b) =>
+      a.brand.editorialRank - b.brand.editorialRank ||
+      (b.report.testedAt ?? '').localeCompare(a.report.testedAt ?? ''),
+  )
   .slice(0, 8);
 
 const ownerBars = reports
   .filter((r) => r.ownerReport)
+  .sort((a, b) => getBrand(a.brandId)!.editorialRank - getBrand(b.brandId)!.editorialRank)
   .map((r) => ({
     label: `${getBrand(r.brandId)!.displayName} · ${r.ownerReport!.testedNode?.split('（')[0] ?? ''}`,
     sublabel: `${formatTestedAt(r)} · ${r.ownerReport!.testServer ?? ''}`,
@@ -224,7 +231,7 @@ const homeTitle = `${SITE.name}｜${SITE.tagline}`;
           />
         </div>
         <div class="table-wrap">
-          <table class="data">
+          <table class="data speed-overview">
             <caption class="visually-hidden">有下载速度数值的测速记录</caption>
             <thead>
               <tr>
@@ -246,7 +253,7 @@ const homeTitle = `${SITE.name}｜${SITE.tagline}`;
                         {brand.displayName} · {report.ownerReport?.testedNode?.split('（')[0] ?? rr.region}
                       </a>
                     </td>
-                    <td class="nowrap">{formatTestedAt(report)}</td>
+                    <td class="nowrap">{formatTestedAt(report).replace('（北京时间）', '')}</td>
                     <td class="num">{rr.downloadMbps} Mbps</td>
                     <td class="num">{rr.uploadMbps !== null ? `${rr.uploadMbps} Mbps` : '—'}</td>
                     <td class="num">{report.ownerReport ? `${report.ownerReport.speed.pingMs} ms` : typeof rr.latencyMs === 'number' ? `${rr.latencyMs} ms` : '—'}</td>
@@ -391,6 +398,18 @@ const homeTitle = `${SITE.name}｜${SITE.tagline}`;
   .brand-price {
     color: var(--primary);
     font-weight: 600;
+  }
+
+  .speed-overview th,
+  .speed-overview td {
+    white-space: nowrap;
+    vertical-align: middle;
+    padding: 9px 12px;
+  }
+
+  .speed-overview td.small {
+    white-space: normal;
+    min-width: 6em;
   }
 
   .speed-grid {

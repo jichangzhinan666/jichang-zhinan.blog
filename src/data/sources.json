@@ -63,6 +63,15 @@
     "relatedBrandIds": ["twilight"]
   },
   {
+    "id": "src-breezenet-intro",
+    "file": "source-materials/brands/微风网络-品牌介绍.txt",
+    "sourceType": "unverified",
+    "collectedAt": "2026-11-10",
+    "description": "微风网络品牌介绍文案（标题、口号、两段介绍与结语），用于品牌页页首展示",
+    "credibility": "站长提供的宣传性文案；文中“¥137/年”与登记的清风套餐 ¥99/年不一致，不作为价格依据，相关数据以品牌资料为准。",
+    "relatedBrandIds": ["breezenet"]
+  },
+  {
     "id": "src-twilight-intro",
     "file": "source-materials/brands/暮光加速-品牌介绍.txt",
     "sourceType": "unverified",

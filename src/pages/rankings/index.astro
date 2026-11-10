@@ -14,8 +14,8 @@ const crumbs = [
   { name: '首页', href: '/' },
   { name: '机场推荐', href: '/rankings/' },
 ];
-const title = '机场榜单索引：2026 年度榜与专题榜（入门价格、每 GB 单价、流量、地区）';
-const description = `机场指南榜单索引：2026 机场推荐总榜（编辑整理榜）以及由 ${stats.brands} 个品牌套餐数据直接派生的专题榜——入门月付最低、入门档每 GB 单价最低、单档月流量最高、节点地区最多、年付小包价格。全部数据注明来源，不含评分。`;
+const title = '2026 机场分类榜单｜低价机场、大流量套餐与节点地区指南';
+const description = `汇总 2026 年机场分类榜单与专题指南，涵盖低价机场套餐、大流量机场、节点地区及线路类型等实用信息。通过 ${stats.brands} 个品牌的真实套餐资料进行价格、流量与地区分类对比，帮助读者快速找到符合预算和使用需求的机场服务，不含评分。`;
 const jsonLd = [
   collectionPageLd(title, '/rankings/', description),
   breadcrumbLd(crumbs),
@@ -23,12 +23,13 @@ const jsonLd = [
 ];
 ---
 
-<BaseLayout title="机场榜单索引：2026 年度榜与专题榜" description={description} jsonLd={jsonLd}>
+<BaseLayout title={title} titleSuffix={false} description={description} jsonLd={jsonLd}>
   <div class="container">
     <Breadcrumbs crumbs={crumbs} />
     <header class="page-hero">
-      <h1>机场榜单索引</h1>
-      <p class="lead">年度总榜为站长编辑推荐顺序；专题榜直接由套餐数据派生（价格、流量、地区），两者都不含评分。数据更新 {lastmod}，价格以品牌结算页为准。</p>
+      <h1>{title}</h1>
+      <p class="lead">汇总 2026 年机场分类榜单与专题指南，涵盖低价机场套餐、大流量机场、节点地区及线路类型等实用信息。通过真实套餐资料进行价格、流量与地区分类对比，帮助读者快速找到符合预算和使用需求的机场服务。</p>
+      <p class="lead lead-note">年度总榜采用站长编辑推荐顺序，专题榜依据套餐数据分类整理，不代表实际速度排名。数据更新：{lastmod}。</p>
     </header>
 
     <section class="card section annual" aria-labelledby="annual-title">
@@ -120,6 +121,13 @@ const jsonLd = [
 </BaseLayout>
 
 <style>
+  .page-hero .lead + .lead {
+    margin-top: 8px;
+  }
+  .page-hero .lead-note {
+    font-size: 0.95rem;
+    color: var(--text-3, var(--text-2));
+  }
   .annual {
     display: grid;
     grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr);

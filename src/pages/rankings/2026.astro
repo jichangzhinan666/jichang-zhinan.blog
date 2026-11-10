@@ -1,7 +1,7 @@
 ---
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import Breadcrumbs from '@/components/Breadcrumbs.astro';
-import RankList from '@/components/RankList.astro';
+import RankCards from '@/components/RankCards.astro';
 import FAQ from '@/components/FAQ.astro';
 import Icon from '@/components/Icon.astro';
 import { SITE, STATIC_PAGES } from '@/lib/site';
@@ -47,8 +47,8 @@ const crumbs = [
   { name: '机场推荐', href: '/rankings/' },
   { name: '2026 机场推荐榜单', href: '/rankings/2026/' },
 ];
-const title = '2026 机场推荐榜单（年度版）：8 个品牌套餐、线路与实测证据对比';
-const description = `2026 机场推荐排行榜（站长编辑推荐榜，年度版）：${stats.brands} 个品牌的推荐顺序，逐个列出入门价格、每 GB 单价、线路类型、设备与客户端政策、优惠码与实测证据等级，不含虚构评分。资料更新 ${lastmod}。`;
+const title = '2026 机场推荐排行榜｜套餐价格、线路与真实测速指南';
+const description = `2026 机场推荐排行榜：${stats.brands} 个品牌、${stats.tiers} 档套餐的可筛选对比卡片，列出最低月付、入门流量、每 GB 单价、覆盖地区、线路类型与实测证据状态（本站实测 / 第三方记录 / 暂无证据）。站长编辑推荐顺序，不含评分，资料更新 ${lastmod}。`;
 const jsonLd = [
   articleLd({
     type: 'Article',
@@ -70,33 +70,34 @@ const jsonLd = [
 ];
 ---
 
-<BaseLayout title="2026 机场推荐榜单（年度版）：套餐、线路与实测证据" description={description} jsonLd={jsonLd} ogType="article" publishedTime="2026-11-10" modifiedTime={lastmod}>
+<BaseLayout title={title} titleSuffix={false} description={description} jsonLd={jsonLd} ogType="article" publishedTime="2026-11-10" modifiedTime={lastmod}>
   <div class="container">
     <Breadcrumbs crumbs={crumbs} />
-    <header class="page-hero">
-      <span class="pill"><Icon name="trophy" size={14} />编辑整理榜 · 2026 年度版 · 更新于 {lastmod}</span>
-      <h1>2026 机场推荐榜单：套餐、线路和使用场景指南</h1>
+    <header class="page-hero rank-hero">
+      <h1>2026 机场推荐排行榜｜套餐价格、线路与真实测速指南</h1>
       <p class="lead">
-        这份榜单整理了 {stats.brands} 个机场品牌的 {stats.tiers} 档套餐、节点地区、线路类型、客户端政策与测速证据。名次为站长的编辑推荐顺序，不含分数；每个名次旁都写明可核查的事实（证据等级、入门价、地区数），点进品牌页可以看到全部资料来源与核实时间。
+        {stats.brands} 个品牌、{stats.tiers} 档套餐的可筛选对比：最低月付、入门流量、覆盖地区、线路类型与实测证据一目了然。资料核实 2026-11-09 / 2026-11-10，页面更新 {lastmod}。
       </p>
+      <div class="rank-meta">
+        <span class="pill"><Icon name="trophy" size={14} />站长编辑推荐 · 非测速排名</span>
+        <span class="pill"><Icon name="layers" size={14} />{stats.brands} 个品牌</span>
+        <span class="pill"><Icon name="tag" size={14} />{stats.tiers} 档套餐</span>
+        <span class="pill"><Icon name="speed" size={14} />{stats.ownerReports} 份本站实测</span>
+        <span class="pill"><Icon name="calendar" size={14} />更新于 {lastmod}</span>
+      </div>
+      <details class="method card-flat">
+        <summary><Icon name="info" size={16} />评选方法与资料来源（点击展开）</summary>
+        <ol class="small">
+          <li>名次为<strong>站长编辑推荐</strong>：综合资料完整度、套餐性价比、线路类型与客户端政策后指定，不是算法评分，也不是实测排名；名次不代表速度或稳定性。</li>
+          <li>价格、流量、地区、线路均来自各品牌/推广方提供的资料（核实日期见品牌页），本站不自行推算或补全；价格以结算页为准。</li>
+          <li>实测证据分三类：<strong>有本站实测</strong>（站长 2026-11-10 使用 IPCheck.ing 完成，报告注明出口与时间）、<strong>有第三方记录</strong>（资料方文字记录或用户提供的 MiaoKo / SpeedCentre 截图，含未标注日期者）、<strong>暂无测速证据</strong>。现有实测的网络环境、节点与时段不统一，不能横向比较。</li>
+          <li>品牌入口为推广链接，购买可能为本站带来佣金；名次不因佣金调整，不接受付费排名。详见<a href="/disclosure/">推广关系披露</a>与<a href="/methodology/">方法说明</a>。</li>
+        </ol>
+      </details>
     </header>
 
-    <div class="callout callout-info">
-      <Icon name="info" size={18} />
-      <div>
-        <strong>榜单性质（详见<a href="/methodology/">方法说明</a>）</strong>
-        <ol class="small" style="margin:6px 0 0">
-          <li>名次为<strong>站长编辑推荐</strong>：综合资料完整度、套餐性价比、线路类型与客户端政策后指定，不是算法评分，也不是实测排名。</li>
-          <li>每个名次旁的证据等级（站长实测 → 带日期截图 / 记录 → 未标注日期截图 → 暂无证据）、入门价与地区数均直接来自资料，可在品牌页核对。</li>
-          <li>品牌入口为推广链接，推广关系已在披露页说明；名次不因佣金调整。</li>
-        </ol>
-        <p class="small" style="margin:6px 0 0">名次不代表速度或稳定性；现有实测的网络环境、节点与时段不统一，不能横向比较。</p>
-      </div>
-    </div>
-
-    <section class="card section" aria-labelledby="full-rank-title">
-      <h2 class="section-title" id="full-rank-title"><Icon name="list" size={20} />完整榜单（{ranking.length} 个品牌）</h2>
-      <RankList showReasons />
+    <section class="card section" aria-label="完整榜单">
+      <RankCards />
     </section>
 
     <section class="card section" aria-labelledby="scenario-title">
@@ -223,8 +224,40 @@ const jsonLd = [
 </BaseLayout>
 
 <style>
-  .page-hero .pill {
+  .rank-hero .lead {
     margin-bottom: 12px;
+  }
+
+  .rank-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 14px;
+  }
+
+  .method {
+    padding: 10px 16px;
+    max-width: 920px;
+  }
+
+  .method summary {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    cursor: pointer;
+    font-weight: 600;
+    color: var(--primary);
+    list-style: none;
+  }
+
+  .method summary::-webkit-details-marker {
+    display: none;
+  }
+
+  .method ol {
+    margin: 10px 0 4px;
+    padding-left: 1.3em;
+    color: var(--text-2);
   }
 
   .scenario-grid {

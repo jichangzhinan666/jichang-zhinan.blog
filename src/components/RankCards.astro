@@ -1,0 +1,392 @@
+---
+/**
+ * 榜单对比卡片 + 筛选：全部静态渲染，筛选只在浏览器中隐藏/显示卡片，顺序始终为站长编辑推荐顺序。
+ * 证据状态四类：有本站实测 / 有第三方记录 / 仅官方资料 / 暂无测速证据（最后两类等价，用于筛选与标签）。
+ */
+import Icon from './Icon.astro';
+import BrandMark from './BrandMark.astro';
+import { computeRanking, getSpeedReport, formatPrice, formatTraffic, formatPerGB, getTopPlan } from '@/lib/data';
+import type { Brand } from '@/lib/types';
+
+const ranking = computeRanking();
+
+type EvidenceKind = 'owner' | 'third' | 'none';
+function evidenceKind(b: Brand): EvidenceKind {
+  const s = b.speedTests.evidenceStatus;
+  if (s === 'owner-report') return 'owner';
+  if (s === 'none') return 'none';
+  return 'third';
+}
+const EVIDENCE_TEXT: Record<EvidenceKind, { label: string; tone: string }> = {
+  owner: { label: '有本站实测', tone: 'strong' },
+  third: { label: '有第三方记录', tone: 'medium' },
+  none: { label: '暂无测速证据', tone: 'none' },
+};
+
+function lineTags(b: Brand): string[] {
+  const text = b.lineTypes.join(' ');
+  const tags: string[] = [];
+  if (/IEPL/i.test(text)) tags.push('IEPL');
+  if (/IPLC/i.test(text)) tags.push('IPLC');
+  if (/BGP/i.test(text)) tags.push('BGP');
+  if (/直连/.test(text)) tags.push('直连');
+  return tags;
+}
+
+const regionOrder = ['香港', '台湾', '日本', '新加坡', '美国', '韩国', '马来西亚'];
+const allRegions = [...new Set(ranking.flatMap((r) => r.brand.nodeRegions))];
+const regions = [...regionOrder.filter((r) => allRegions.includes(r)), ...allRegions.filter((r) => !regionOrder.includes(r)).sort((a, b) => a.localeCompare(b, 'zh-CN'))];
+
+const cards = ranking.map((r) => {
+  const b = r.brand;
+  const top = getTopPlan(b.id);
+  const kind = evidenceKind(b);
+  const reportSlug = b.speedTests.reportSlugs[0];
+  const report = reportSlug ? getSpeedReport(reportSlug) : undefined;
+  return { r, b, top, kind, report, lines: lineTags(b) };
+});
+---
+
+<section class="rank-cards" aria-labelledby="rank-cards-title">
+  <div class="section-head">
+    <h2 class="section-title" id="rank-cards-title"><Icon name="trophy" size={20} />完整榜单（{ranking.length} 个品牌）</h2>
+    <span class="badge badge-medium">编辑推荐 · 非测速排名</span>
+  </div>
+
+  <form class="rc-filters card-flat" id="rank-filter" aria-label="筛选品牌">
+    <div class="rcf-row">
+      <label>入门月付不高于
+        <select name="price">
+          <option value="">不限</option>
+          <option value="20">¥20</option>
+          <option value="25">¥25</option>
+          <option value="30">¥30</option>
+        </select>
+      </label>
+      <label>入门月流量不低于
+        <select name="gb">
+          <option value="0">不限</option>
+          <option value="120">120 GB</option>
+          <option value="150">150 GB</option>
+          <option value="200">200 GB</option>
+        </select>
+      </label>
+      <label>节点地区
+        <select name="region">
+          <option value="">不限</option>
+          {regions.map((x) => <option value={x}>{x}</option>)}
+        </select>
+      </label>
+      <label>线路类型
+        <select name="line">
+          <option value="">不限</option>
+          <option value="IEPL">IEPL 专线</option>
+          <option value="IPLC">IPLC 专线</option>
+          <option value="BGP">BGP 中转 / 优化</option>
+          <option value="直连">直连</option>
+        </select>
+      </label>
+      <label>实测证据
+        <select name="evidence">
+          <option value="">不限</option>
+          <option value="owner">有本站实测</option>
+          <option value="third">有第三方记录</option>
+          <option value="none">暂无测速证据</option>
+        </select>
+      </label>
+      <button type="reset" class="btn btn-outline btn-sm">清除筛选</button>
+    </div>
+    <p class="small muted" id="rank-filter-result" aria-live="polite">显示全部 {ranking.length} 个品牌，顺序为站长编辑推荐顺序。</p>
+  </form>
+
+  <ol class="rc-grid" id="rank-cards">
+    {
+      cards.map(({ r, b, top, kind, report, lines }) => (
+        <li
+          class="rc-card card"
+          data-entry={r.entry?.price ?? ''}
+          data-gb={r.entry?.trafficGB ?? 0}
+          data-regions={b.nodeRegions.join('|')}
+          data-lines={lines.join('|')}
+          data-evidence={kind}
+        >
+          <div class="rc-top">
+            <span class={`rc-rank rank-${r.position}`} aria-label={`编辑推荐第 ${r.position} 位`}>{r.position}</span>
+            <BrandMark brand={b} size={52} />
+            <div class="rc-title">
+              <h3><a href={`/reviews/${b.slug}/`}>{b.displayName}</a></h3>
+              {b.englishName && <span class="rc-en">{b.englishName}</span>}
+            </div>
+          </div>
+          <p class="rc-tagline">{b.tagline}</p>
+          <dl class="rc-facts">
+            <div>
+              <dt>最低月付</dt>
+              <dd>{r.entry ? <><strong>{formatPrice(r.entry.price)}</strong><small>/月 · {r.entry.planName}</small></> : '资料未提供'}</dd>
+            </div>
+            <div>
+              <dt>入门流量 / 每 GB</dt>
+              <dd>{r.entry ? `${formatTraffic(r.entry.trafficGB)} · ${formatPerGB(r.pricePerGB)}` : '—'}</dd>
+            </div>
+            <div>
+              <dt>最大档月流量</dt>
+              <dd>{top ? `${formatTraffic(top.trafficGB)}${top.prices.monthly !== undefined ? ` · ${formatPrice(top.prices.monthly)}/月` : ''}` : '—'}</dd>
+            </div>
+            <div>
+              <dt>覆盖地区</dt>
+              <dd>{b.nodeRegions.length} 个：{b.nodeRegions.slice(0, 6).join('、')}{b.nodeRegions.length > 6 ? ' 等' : ''}{b.nodeCount ? `（${b.nodeCount} 节点）` : ''}</dd>
+            </div>
+            <div>
+              <dt>线路类型</dt>
+              <dd>{lines.length ? lines.map((l) => <span class="tag">{l}</span>) : '资料未说明'}</dd>
+            </div>
+            <div>
+              <dt>客户端</dt>
+              <dd class="rc-client">{b.clientPolicy.thirdPartyClients.split('（')[0]}</dd>
+            </div>
+          </dl>
+          <div class="rc-evidence">
+            <span class={`badge badge-${EVIDENCE_TEXT[kind].tone}`}>{EVIDENCE_TEXT[kind].label}</span>
+            <span class="badge badge-none">官方资料 {b.lastVerifiedAt}</span>
+            {report && (
+              <a class="rc-report" href={`/speed-tests/${report.slug}/`}>
+                {b.speedTests.latestDatedTest ? `测试 ${b.speedTests.latestDatedTest}` : '截图未标注日期'} · 查看报告 →
+              </a>
+            )}
+          </div>
+          <div class="rc-actions">
+            <a class="btn btn-primary btn-sm" href={`/reviews/${b.slug}/`}>查看资料与测评<Icon name="arrow-right" size={14} /></a>
+            {b.affiliateUrl && (
+              <a class="btn btn-outline btn-sm" href={b.affiliateUrl} rel="sponsored nofollow noopener noreferrer" target="_blank">官网 / 推广入口<Icon name="external" size={14} /></a>
+            )}
+          </div>
+        </li>
+      ))
+    }
+  </ol>
+  <p class="empty" id="rank-empty" hidden>没有符合全部条件的品牌，请放宽筛选。</p>
+  <p class="small muted rc-note">
+    <Icon name="info" size={14} /> 名次为站长编辑推荐，不是测速排名或算法评分；价格为资料中的名义价格，以结算页为准。品牌入口为推广链接，购买可能为本站带来佣金，详见<a href="/disclosure/">推广关系披露</a>。
+  </p>
+</section>
+
+<style>
+  .rc-filters {
+    margin-bottom: 16px;
+    padding: 14px 16px;
+  }
+
+  .rcf-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px 14px;
+    align-items: flex-end;
+  }
+
+  .rcf-row label {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--text-2);
+  }
+
+  .rcf-row select {
+    min-height: 38px;
+    min-width: 130px;
+    padding: 6px 10px;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--border-strong);
+    background: var(--surface);
+    color: var(--text);
+    font: inherit;
+    font-weight: 500;
+  }
+
+  #rank-filter-result {
+    margin: 10px 0 0;
+  }
+
+  .rc-grid {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px;
+  }
+
+  .rc-card {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding: 18px;
+  }
+
+  .rc-top {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .rc-rank {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background: var(--surface-3);
+    color: var(--text-2);
+    font-weight: 700;
+    flex: none;
+  }
+
+  .rank-1 { background: linear-gradient(135deg, #fbbf24, #f59e0b); color: #fff; }
+  .rank-2 { background: linear-gradient(135deg, #cbd5e1, #94a3b8); color: #fff; }
+  .rank-3 { background: linear-gradient(135deg, #fdba74, #ea580c); color: #fff; }
+
+  .rc-title h3 {
+    margin: 0;
+    font-size: 1.15rem;
+  }
+
+  .rc-title h3 a {
+    color: var(--text);
+  }
+
+  .rc-en {
+    font-size: 0.75rem;
+    color: var(--muted);
+  }
+
+  .rc-tagline {
+    margin: 0;
+    font-size: 0.875rem;
+    color: var(--text-2);
+  }
+
+  .rc-facts {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px 14px;
+    margin: 0;
+    padding: 12px;
+    border-radius: var(--radius);
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    font-size: 0.875rem;
+  }
+
+  .rc-facts dt {
+    font-size: 0.72rem;
+    color: var(--muted);
+  }
+
+  .rc-facts dd {
+    margin: 0;
+    color: var(--text);
+  }
+
+  .rc-facts dd strong {
+    color: var(--primary);
+    font-size: 1.1rem;
+  }
+
+  .rc-facts dd small {
+    color: var(--muted);
+    margin-left: 4px;
+  }
+
+  .rc-facts .tag {
+    margin-right: 4px;
+  }
+
+  .rc-client {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .rc-evidence {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 6px 10px;
+    font-size: 0.8125rem;
+  }
+
+  .rc-report {
+    font-weight: 600;
+  }
+
+  .rc-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: auto;
+  }
+
+  .rc-note {
+    display: flex;
+    gap: 6px;
+    align-items: flex-start;
+    margin: 14px 0 0;
+  }
+
+  @media (max-width: 1023px) {
+    .rc-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  @media (max-width: 639px) {
+    .rc-facts {
+      grid-template-columns: 1fr;
+    }
+
+    .rcf-row label,
+    .rcf-row select {
+      width: 100%;
+    }
+
+    .rc-actions .btn {
+      flex: 1 1 100%;
+    }
+  }
+</style>
+
+<script>
+  const form = document.getElementById('rank-filter') as HTMLFormElement | null;
+  const cards = Array.from(document.querySelectorAll<HTMLElement>('#rank-cards .rc-card'));
+  const result = document.getElementById('rank-filter-result');
+  const empty = document.getElementById('rank-empty');
+
+  const apply = () => {
+    if (!form) return;
+    const d = new FormData(form);
+    const price = d.get('price') as string;
+    const gb = Number(d.get('gb') ?? 0);
+    const region = d.get('region') as string;
+    const line = d.get('line') as string;
+    const evidence = d.get('evidence') as string;
+    let visible = 0;
+    cards.forEach((c) => {
+      const entry = c.dataset.entry ? Number(c.dataset.entry) : null;
+      let ok = true;
+      if (price) ok = entry !== null && entry <= Number(price);
+      if (ok && gb) ok = Number(c.dataset.gb ?? 0) >= gb;
+      if (ok && region) ok = (c.dataset.regions ?? '').split('|').includes(region);
+      if (ok && line) ok = (c.dataset.lines ?? '').split('|').includes(line);
+      if (ok && evidence) ok = c.dataset.evidence === evidence;
+      c.hidden = !ok;
+      if (ok) visible += 1;
+    });
+    if (empty) empty.hidden = visible > 0;
+    if (result) result.textContent = visible === cards.length ? `显示全部 ${cards.length} 个品牌，顺序为站长编辑推荐顺序。` : `符合条件：${visible} / ${cards.length} 个品牌（顺序不变）。`;
+  };
+  form?.addEventListener('change', apply);
+  form?.addEventListener('reset', () => window.setTimeout(apply, 0));
+</script>

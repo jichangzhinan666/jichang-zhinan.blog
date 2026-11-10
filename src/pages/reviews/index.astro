@@ -4,8 +4,46 @@ import Breadcrumbs from '@/components/Breadcrumbs.astro';
 import BrandMark from '@/components/BrandMark.astro';
 import EvidenceBadge from '@/components/EvidenceBadge.astro';
 import Icon from '@/components/Icon.astro';
-import { computeRanking, getEntryPlan, formatPrice, formatTraffic, formatPerGB, getStats } from '@/lib/data';
+import { computeRanking, getEntryPlan, formatPrice, formatTraffic, formatPerGB, getStats, getReportsForBrand, testedDateOnly } from '@/lib/data';
 import { breadcrumbLd, collectionPageLd, itemListLd } from '@/lib/seo';
+import type { Brand } from '@/lib/types';
+
+/** 线路类型去掉“地区：”前缀后去重，便于卡片一行展示 */
+function lineSummary(b: Brand): string {
+  const list = [...new Set(b.lineTypes.map((l) => l.replace(/^[^：]+：/, '')))];
+  return list.length ? list.join(' / ') : '资料未提供';
+}
+
+/** 支持系统：去掉版本号限定，保留括号内的客户端说明 */
+function platformSummary(b: Brand): string {
+  if (!b.supportedPlatforms.length) return '支持系统资料未提供';
+  return b.supportedPlatforms.map((p) => p.replace(/\s*[\d.]+\s*及以上/, '')).join(' / ');
+}
+
+/** 资料验证状态：官方资料 / 公开记录 / 本站实测 分开标注，缺失即“无” */
+function verification(b: Brand) {
+  const officialDates = b.sourceRecords
+    .filter((s) => s.sourceType === 'user-supplied-official')
+    .map((s) => s.verifiedAt)
+    .filter((d): d is string => Boolean(d))
+    .sort();
+  const reports = getReportsForBrand(b.id);
+  const owner = reports.filter((r) => r.sourceType === 'independently-measured');
+  const pub = reports.filter((r) => r.sourceType !== 'independently-measured');
+  const pubLabel = pub
+    .map((r) => {
+      const kind = r.evidenceFiles[0]?.kind === 'text-record' ? '文字记录' : '截图';
+      const d = testedDateOnly(r);
+      return d ? `${kind} ${d}` : `${kind}（未标注日期）`;
+    })
+    .join('、');
+  return {
+    official: officialDates.length ? officialDates[officialDates.length - 1] : null,
+    pub: pub.length ? pubLabel : null,
+    owner: owner.length ? `${testedDateOnly(owner[0]) ?? ''}${owner.length > 1 ? ` 等 ${owner.length} 份` : ''}`.trim() : null,
+    supplement: b.sourceRecords.some((s) => s.sourceType === 'unverified'),
+  };
+}
 
 const ranking = computeRanking();
 const stats = getStats();
@@ -31,8 +69,8 @@ function features(brandId: string) {
   return f;
 }
 
-const title = '机场品牌评测与资料库：8 个品牌的套餐、节点、客户端政策与实测证据';
-const description = `按地区、入门价格与功能筛选 ${stats.brands} 个机场品牌。每个品牌页列出套餐价格、节点地区、线路类型、订阅/第三方客户端政策、优惠码、测速证据与资料核实日期，不含虚构评分。`;
+const title = '2026 机场品牌测评大全｜节点线路、客户端与详细资料库';
+const description = `收录 ${stats.brands} 个机场品牌、${stats.tiers} 档套餐资料，整理线路类型、节点覆盖、客户端支持、使用限制与测速证据，官方资料、公开记录与本站实测分开标注。每个品牌设有独立资料页，可按地区、入门价与功能筛选，不含评分。`;
 const crumbs = [
   { name: '首页', href: '/' },
   { name: '品牌评测', href: '/reviews/' },
@@ -47,13 +85,13 @@ const jsonLd = [
 ];
 ---
 
-<BaseLayout title="机场品牌评测与资料库（8 个品牌）" description={description} jsonLd={jsonLd}>
+<BaseLayout title={title} titleSuffix={false} description={description} jsonLd={jsonLd}>
   <div class="container">
     <Breadcrumbs crumbs={crumbs} />
     <header class="page-hero">
-      <h1>机场品牌评测与资料库</h1>
+      <h1>{title}</h1>
       <p class="lead">
-        收录 {stats.brands} 个品牌、{stats.tiers} 档套餐。本页只做筛选与导航；每个品牌页按资料逐项列出套餐、节点、客户端政策、优惠码、测速证据与资料来源，缺失的字段如实标注“资料未提供”。
+        收录 {stats.brands} 个机场品牌、{stats.tiers} 档套餐资料，系统整理各品牌的线路类型、节点覆盖、客户端支持、套餐信息、使用限制及测速证据。每个品牌均设有独立资料页面，方便读者查询产品特点、核实资料来源，并根据实际需求选择合适的机场服务。
       </p>
     </header>
 
@@ -118,6 +156,7 @@ const jsonLd = [
         ranking.map((r) => {
           const b = r.brand;
           const entry = getEntryPlan(b.id);
+          const v = verification(b);
           return (
             <li
               class="brand-item card card-hover"
@@ -148,24 +187,52 @@ const jsonLd = [
                   <dt>每 GB</dt>
                   <dd>{entry ? formatPerGB(entry.pricePerGB) : '—'}</dd>
                 </div>
-                <div>
-                  <dt>节点</dt>
+                <div class="span-2">
+                  <dt>节点地区</dt>
                   <dd>
-                    {b.nodeRegions.length} 个地区{b.nodeCount ? ` · ${b.nodeCount} 节点` : ''}
+                    {b.nodeRegions.length ? b.nodeRegions.join('、') : '资料未提供'}
+                    <span class="muted">（{b.nodeRegions.length} 个地区{b.nodeCount ? ` · ${b.nodeCount} 节点` : ''}）</span>
                   </dd>
                 </div>
-                <div>
-                  <dt>线路</dt>
-                  <dd>{b.lineTypes.join(' / ')}</dd>
+                <div class="span-2">
+                  <dt>线路类型</dt>
+                  <dd>{lineSummary(b)}</dd>
                 </div>
-                <div>
-                  <dt>设备</dt>
-                  <dd>{b.deviceLimit}</dd>
+                <div class="span-2">
+                  <dt>客户端</dt>
+                  <dd>
+                    {platformSummary(b)}
+                    {b.clientPolicy.officialClient && <span class="muted"> · 官方客户端</span>}
+                  </dd>
                 </div>
                 <div>
                   <dt>第三方客户端</dt>
                   <dd>{b.clientPolicy.thirdPartyClients.split('（')[0]}</dd>
                 </div>
+                <div>
+                  <dt>设备</dt>
+                  <dd>{b.deviceLimit}</dd>
+                </div>
+              </dl>
+              <dl class="bi-verify" aria-label="资料验证状态">
+                <div class={v.official ? 'on' : ''}>
+                  <dt>官方资料</dt>
+                  <dd>{v.official ? `核实 ${v.official}` : '资料未提供'}</dd>
+                </div>
+                <div class={v.pub ? 'on' : ''}>
+                  <dt>公开记录</dt>
+                  <dd>{v.pub ?? '无'}</dd>
+                </div>
+                <div class={v.owner ? 'on strong' : ''}>
+                  <dt>本站实测</dt>
+                  <dd>{v.owner ?? '无'}</dd>
+                </div>
+                {v.supplement && (
+                  <div class="note">
+                    <dt>站长补充</dt>
+                    <dd>部分字段为站长补充，未独立验证</dd>
+                  </div>
+                )}
               </dl>
               <div class="bi-foot">
                 <EvidenceBadge brand={b} />
@@ -175,7 +242,6 @@ const jsonLd = [
                     {b.coupon.discount ? ` · ${b.coupon.discount}` : ''}
                   </span>
                 )}
-                <span class="small muted">资料核实 {b.lastVerifiedAt ?? '—'}</span>
                 <a class="btn btn-secondary btn-sm bi-cta" href={`/reviews/${b.slug}/`}>
                   查看资料与测评
                   <Icon name="arrow-right" size={14} />
@@ -196,6 +262,7 @@ const jsonLd = [
       <ul class="small">
         <li>“入门档”指月付价格最低的周期套餐，每 GB 单价按月付价 ÷ 月流量计算，不含优惠码。</li>
         <li>“可导入第三方客户端”“可向客服申请订阅链接”均按品牌资料原文归类；不提供或不推荐导入的品牌不会出现在该筛选结果中。</li>
+        <li>卡片中的“官方资料”指品牌或推广方提供的文字资料及其核实日期；“公开记录”指用户提供的测速截图或文字记录；“本站实测”指站长用 IPCheck.ing 完成的单节点报告。三者分开标注，缺失即写“无”或“资料未提供”。</li>
         <li>“有测速证据”包含站长实测报告、带日期的截图/记录以及未标注日期的截图，具体等级见各品牌页与<a href="/methodology/">方法说明</a>。</li>
         <li>想横向比较价格，请使用<a href="/compare/">套餐对比</a>；想看排序理由，请看<a href="/rankings/2026/">2026 榜单</a>。</li>
       </ul>
@@ -370,6 +437,66 @@ const jsonLd = [
   .bi-facts dd {
     margin: 0;
     color: var(--text);
+    overflow-wrap: anywhere;
+  }
+
+  .bi-facts .span-2 {
+    grid-column: 1 / -1;
+  }
+
+  .bi-verify {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 8px;
+    margin: 0;
+    font-size: 0.8125rem;
+  }
+
+  .bi-verify > div {
+    padding: 8px 10px;
+    border-radius: var(--radius-sm);
+    border: 1px dashed var(--border-strong);
+    background: var(--surface-2);
+    color: var(--muted);
+  }
+
+  .bi-verify > div.on {
+    border-style: solid;
+    border-color: var(--primary-100);
+    background: var(--primary-50);
+    color: var(--text);
+  }
+
+  .bi-verify > div.strong {
+    border-color: #a7e3c3;
+    background: var(--success-bg);
+  }
+
+  .bi-verify > div.note {
+    grid-column: 1 / -1;
+    border-style: solid;
+    border-color: #fde3b5;
+    background: var(--warning-bg);
+    color: var(--text-2);
+  }
+
+  :root[data-theme="dark"] .bi-verify > div.strong {
+    border-color: #2f6b4f;
+  }
+
+  :root[data-theme="dark"] .bi-verify > div.note {
+    border-color: #5b4214;
+  }
+
+  .bi-verify dt {
+    font-size: 0.72rem;
+    font-weight: 600;
+    margin-bottom: 2px;
+  }
+
+  .bi-verify dd {
+    margin: 0;
+    overflow-wrap: anywhere;
   }
 
   .bi-foot {
@@ -387,6 +514,18 @@ const jsonLd = [
   @media (max-width: 1023px) {
     .brand-list {
       grid-template-columns: 1fr;
+    }
+  }
+
+  @media (max-width: 479px) {
+    .bi-verify {
+      grid-template-columns: 1fr;
+    }
+
+    .bi-cta {
+      margin-left: 0;
+      width: 100%;
+      justify-content: center;
     }
   }
 </style>

@@ -87,23 +87,37 @@ const verified = [...new Set(tiers.map((t) => t.verifiedAt).filter(Boolean))];
                 </thead>
                 <tbody>
                   {list.map((t) => (
-                    <tr>
-                      <td>
-                        <strong>{t.planName}</strong>
-                        {t.features.length > 0 && <div class="plan-features">{t.features.join(' · ')}</div>}
-                        {t.note && <div class="plan-note">{t.note}</div>}
-                      </td>
-                      <td>
-                        <span class="nowrap">{formatTraffic(t.trafficGB)}</span>
-                        <div class="plan-note">{t.trafficNote}</div>
-                      </td>
-                      {cols.map((p) => (
-                        <td class="num">{t.prices[p] !== undefined ? formatPrice(t.prices[p]!) : '—'}</td>
-                      ))}
-                      <td class="num">{perGB(t)}</td>
-                      <td class="nowrap">{deviceLabel(t.deviceLimit)}</td>
-                      <td class="nowrap">{couponLabel(t.couponEligible)}</td>
-                    </tr>
+                    <>
+                      <tr class="plan-main">
+                        <td>
+                          <strong>{t.planName}</strong>
+                          {t.features.length > 0 && <div class="plan-features">{t.features.join(' · ')}</div>}
+                          {t.note && <div class="plan-note">{t.note}</div>}
+                        </td>
+                        <td>
+                          <span class="nowrap">{formatTraffic(t.trafficGB)}</span>
+                          <div class="plan-note">{t.trafficNote}</div>
+                        </td>
+                        {cols.map((p) => (
+                          <td class="num">{t.prices[p] !== undefined ? formatPrice(t.prices[p]!) : '—'}</td>
+                        ))}
+                        <td class="num">{perGB(t)}</td>
+                        <td class="nowrap">{deviceLabel(t.deviceLimit)}</td>
+                        <td class="nowrap">{couponLabel(t.couponEligible)}</td>
+                      </tr>
+                      {/* 窄屏专用：同一份说明文字改为显示在该档下方的整行里（上面单元格内的说明同时隐藏，二者只显示其一） */}
+                      {(t.features.length > 0 || t.note || t.trafficNote) && (
+                        <tr class="plan-sub">
+                          <td colspan={cols.length + 5}>
+                            <div class="plan-sub-text">
+                              {t.features.length > 0 && <span>{t.features.join(' · ')}</span>}
+                              {t.note && <span>{t.note}</span>}
+                              {t.trafficNote && <span>{t.trafficNote.startsWith('流量') ? t.trafficNote : `流量：${t.trafficNote}`}</span>}
+                            </div>
+                          </td>
+                        </tr>
+                      )}
+                    </>
                   ))}
                 </tbody>
               </table>
@@ -135,17 +149,74 @@ const verified = [...new Set(tiers.map((t) => t.verifiedAt).filter(Boolean))];
     font-size: 1.05rem;
   }
 
+  /* 说明文字给出最小宽度：窄屏时表格横向滚动，而不是把文字压成每行两个字 */
   .plan-features {
     font-size: 0.78rem;
     color: var(--muted);
     margin-top: 2px;
+    min-width: 15em;
+    max-width: 30em;
+    text-wrap: pretty;
   }
 
   .plan-note {
     font-size: 0.75rem;
     color: var(--muted);
     margin-top: 2px;
+    min-width: 13em;
     max-width: 32ch;
+    text-wrap: pretty;
+  }
+
+  /* 按表格所在区块的宽度切换（手机，以及平板 / 小笔记本上较窄的正文栏）：
+     说明文字不再挤在“套餐”“流量”两列里，改为每档下方的一整行。
+     这一行用 sticky 固定在可视区域内、宽度等于可视宽度，横向滚动看价格时说明始终可读 */
+  .plan-section {
+    container-type: inline-size;
+  }
+
+  .plan-sub {
+    display: none;
+  }
+
+  /* 最后一档后面还有一行隐藏的 plan-sub：表格底边由外框负责，不重复画线 */
+  .plan-main:has(+ .plan-sub:last-child) td {
+    border-bottom: 0;
+  }
+
+  @container (max-width: 719px) {
+    .plan-main .plan-features,
+    .plan-main .plan-note {
+      display: none;
+    }
+
+    .plan-sub {
+      display: table-row;
+    }
+
+    /* 有说明行的档位：分隔线画在说明行下面 */
+    .plan-main:has(+ .plan-sub) td {
+      padding-bottom: 4px;
+      border-bottom: 0;
+    }
+
+    .plan-sub td {
+      padding-top: 0;
+    }
+
+    .plan-sub-text {
+      position: sticky;
+      left: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      width: calc(100cqw - 26px);
+      max-width: 100%;
+      font-size: 0.78rem;
+      line-height: 1.55;
+      color: var(--muted);
+      text-wrap: pretty;
+    }
   }
 
   .plan-source {

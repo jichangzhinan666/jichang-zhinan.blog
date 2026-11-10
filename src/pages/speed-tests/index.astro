@@ -4,6 +4,7 @@ import Breadcrumbs from '@/components/Breadcrumbs.astro';
 import ReportCard from '@/components/ReportCard.astro';
 import SpeedBars from '@/components/SpeedBars.astro';
 import Icon from '@/components/Icon.astro';
+import TitleText from '@/components/TitleText.astro';
 import { getSpeedReports, getBrand, getBrands, formatTestedAt } from '@/lib/data';
 import { breadcrumbLd, collectionPageLd, itemListLd } from '@/lib/seo';
 
@@ -41,7 +42,7 @@ const jsonLd = [
     <Breadcrumbs crumbs={crumbs} />
     <header class="page-hero speed-hero">
       <p class="speed-eyebrow">2026 机场指南 · 节点测速中心</p>
-      <h1>{title}</h1>
+      <h1><TitleText text={title} /></h1>
       <p class="lead">
         汇总 2026 年机场节点测速报告与网络性能记录，涵盖香港、日本、新加坡、台湾、美国等常见节点地区。整理延迟、下载速度、线路信息、出口运营商及可用的网络稳定性指标，帮助读者了解不同机场节点的测试表现与使用环境。
       </p>
@@ -107,12 +108,12 @@ const jsonLd = [
           <tbody>
             {reports.map((r) => (
               <tr>
-                <td><a href={`/reviews/${getBrand(r.brandId)!.slug}/`}>{getBrand(r.brandId)!.displayName}</a></td>
-                <td><a href={`/speed-tests/${r.slug}/`}>{r.title}</a></td>
+                <td class="col-keep"><a href={`/reviews/${getBrand(r.brandId)!.slug}/`}>{getBrand(r.brandId)!.displayName}</a></td>
+                <td class="col-text"><a href={`/speed-tests/${r.slug}/`}>{r.title}</a></td>
                 <td class="nowrap">{formatTestedAt(r)}</td>
                 <td class="small">{r.tool.split('+')[0].trim()}</td>
                 <td class="small">{r.isp ?? '未标注'}</td>
-                <td class="small">{r.verificationStatus === 'owner-measured' ? '站长实测' : r.verificationStatus === 'user-supplied-record' ? '资料文字记录' : '用户提供截图'}</td>
+                <td class="small col-keep">{r.verificationStatus === 'owner-measured' ? '站长实测' : r.verificationStatus === 'user-supplied-record' ? '资料文字记录' : '用户提供截图'}</td>
               </tr>
             ))}
           </tbody>

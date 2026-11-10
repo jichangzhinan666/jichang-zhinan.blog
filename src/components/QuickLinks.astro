@@ -142,4 +142,36 @@ import { QUICK_LINKS } from '@/lib/site';
       height: 40px;
     }
   }
+
+  /* 手机窄屏：图标在上、文字居中，标题不再被挤成两个字一行 */
+  @media (max-width: 479px) {
+    .quick-links {
+      padding: 10px;
+    }
+
+    .quick-links ul {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 2px;
+    }
+
+    .quick-links a {
+      flex-direction: column;
+      gap: 6px;
+      padding: 10px 2px;
+      text-align: center;
+    }
+
+    .ql-text {
+      align-items: center;
+    }
+
+    .ql-text strong {
+      font-size: 0.82rem;
+      white-space: nowrap;
+    }
+
+    .ql-text small {
+      display: none;
+    }
+  }
 </style>

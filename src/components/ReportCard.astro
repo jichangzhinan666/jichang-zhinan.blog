@@ -95,6 +95,12 @@ const firstRegion = report.regionResults[0];
     display: flex;
     flex-direction: column;
     gap: 12px;
+    /* 指标格按卡片自身宽度换成两列（平板双栏时卡片也会很窄） */
+    container-type: inline-size;
+  }
+
+  .rc-title {
+    min-width: 0;
   }
 
   .rc-head {
@@ -184,7 +190,7 @@ const firstRegion = report.regionResults[0];
     margin-top: auto;
   }
 
-  @media (max-width: 480px) {
+  @container (max-width: 430px) {
     .rc-metrics {
       grid-template-columns: repeat(2, minmax(0, 1fr));
     }

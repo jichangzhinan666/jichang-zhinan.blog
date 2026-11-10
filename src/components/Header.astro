@@ -308,7 +308,7 @@ function isActive(href: string): boolean {
   }
 
   .nav-item.active > .nav-link {
-    background: var(--primary);
+    background: var(--primary-solid);
     color: #fff;
     box-shadow: 0 4px 12px rgba(21, 94, 239, 0.3);
   }
@@ -397,6 +397,12 @@ function isActive(href: string): boolean {
 
   .nav-item[data-open] .nav-dropdown {
     display: block;
+  }
+
+  /* 按 Esc 关闭后，在鼠标 / 焦点离开该导航项之前，不再因悬停或聚焦自动展开
+     （悬停、聚焦弹出的内容必须能用键盘关掉） */
+  .nav-item[data-dismissed]:not([data-open]) .nav-dropdown {
+    display: none;
   }
 
   .header-actions {
@@ -881,6 +887,40 @@ function isActive(href: string): boolean {
       height: 40px;
     }
   }
+
+  /* 320px 级小屏：收起域名副标题并缩小图标，保证四个按钮完整显示、互不遮挡 */
+  @media (max-width: 359px) {
+    .header-inner {
+      gap: 8px;
+    }
+
+    .brand {
+      gap: 8px;
+    }
+
+    .brand-logo {
+      width: 34px;
+      height: 34px;
+      border-radius: 10px;
+    }
+
+    .brand-text strong {
+      font-size: 1.05rem;
+    }
+
+    .brand-text small {
+      display: none;
+    }
+
+    .header-actions {
+      gap: 4px;
+    }
+
+    .icon-btn {
+      width: 36px;
+      height: 36px;
+    }
+  }
 </style>
 
 <script>
@@ -904,10 +944,21 @@ function isActive(href: string): boolean {
         el.querySelector('.nav-toggle')?.setAttribute('aria-expanded', 'false');
       });
       if (!isOpen) {
+        item.removeAttribute('data-dismissed');
         item.setAttribute('data-open', '');
         btn.setAttribute('aria-expanded', 'true');
       }
     });
+  });
+
+  // Esc 关闭的下拉菜单：鼠标与焦点都离开该导航项后，恢复悬停 / 聚焦自动展开
+  document.querySelectorAll<HTMLElement>('.nav-item.has-children').forEach((item) => {
+    const restore = () =>
+      window.requestAnimationFrame(() => {
+        if (!item.matches(':hover') && !item.contains(document.activeElement)) item.removeAttribute('data-dismissed');
+      });
+    item.addEventListener('mouseleave', restore);
+    item.addEventListener('focusout', restore);
   });
 
   document.addEventListener('click', (e) => {
@@ -922,6 +973,10 @@ function isActive(href: string): boolean {
 
   document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape') {
+      // 由悬停 / 聚焦展开的下拉菜单也要能用 Esc 关掉
+      document.querySelectorAll<HTMLElement>('.nav-item.has-children').forEach((el) => {
+        if (el.matches(':hover') || el.contains(document.activeElement)) el.setAttribute('data-dismissed', '');
+      });
       document.querySelectorAll('.nav-item[data-open]').forEach((el) => {
         el.removeAttribute('data-open');
         el.querySelector('.nav-toggle')?.setAttribute('aria-expanded', 'false');
@@ -929,6 +984,8 @@ function isActive(href: string): boolean {
       if (nav?.classList.contains('open')) {
         nav.classList.remove('open');
         burger?.setAttribute('aria-expanded', 'false');
+        // 按钮的读屏名称随状态复位（原先 Esc 关闭后仍读作“关闭菜单”）
+        burger?.setAttribute('aria-label', '打开菜单');
         burger?.focus();
       }
     }

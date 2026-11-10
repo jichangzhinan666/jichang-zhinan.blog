@@ -65,15 +65,26 @@ const rows = limit ? ranking.slice(0, limit) : ranking;
     padding: 0;
     display: flex;
     flex-direction: column;
+    /* 按列表自身宽度切换行内布局（同一组件既用在窄栏也用在整行） */
+    container-type: inline-size;
   }
 
   .rank-row {
     display: grid;
     grid-template-columns: 32px auto minmax(0, 1fr) auto;
-    align-items: center;
+    /* 名次与标识对齐首行文字，多行说明向下延伸，避免标识悬在一大块文字中间 */
+    align-items: start;
     gap: 12px;
     padding: 14px 0;
     border-bottom: 1px solid var(--border);
+  }
+
+  .rank-no {
+    margin-top: 5px;
+  }
+
+  .rank-cta {
+    align-self: center;
   }
 
   .rank-row:last-child {
@@ -93,19 +104,20 @@ const rows = limit ? ranking.slice(0, limit) : ranking;
     font-size: 0.9rem;
   }
 
+  /* 金 / 银 / 铜底色上改用深色数字（原白字对比度仅 1.5–1.7:1） */
   .rank-1 {
-    background: linear-gradient(135deg, #fbbf24, #f59e0b);
-    color: #fff;
+    background: linear-gradient(135deg, #fcd34d, #f59e0b);
+    color: #422006;
   }
 
   .rank-2 {
-    background: linear-gradient(135deg, #cbd5e1, #94a3b8);
-    color: #fff;
+    background: linear-gradient(135deg, #e2e8f0, #94a3b8);
+    color: #0f172a;
   }
 
   .rank-3 {
-    background: linear-gradient(135deg, #fdba74, #ea580c);
-    color: #fff;
+    background: linear-gradient(135deg, #fdba74, #f97316);
+    color: #431407;
   }
 
   .rank-main {
@@ -130,14 +142,11 @@ const rows = limit ? ranking.slice(0, limit) : ranking;
     color: var(--muted);
   }
 
+  /* 品牌定位语完整显示，不再截断 */
   .rank-highlight {
     margin: 2px 0 6px;
     font-size: 0.85rem;
     color: var(--muted);
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
   }
 
   .rank-meta {
@@ -173,14 +182,17 @@ const rows = limit ? ranking.slice(0, limit) : ranking;
     padding: 10px 0;
   }
 
-  @media (max-width: 639px) {
+  /* 列表不足 380px 宽（手机，或 900–1280px 窗口里的窄栏）时，按钮移到说明下方，
+     否则说明文字会被挤成每行三四个字 */
+  @container (max-width: 379px) {
     .rank-row {
       grid-template-columns: 28px auto minmax(0, 1fr);
     }
 
     .rank-cta {
-      grid-column: 2 / -1;
+      grid-column: 3 / -1;
       justify-self: start;
+      align-self: start;
     }
   }
 </style>

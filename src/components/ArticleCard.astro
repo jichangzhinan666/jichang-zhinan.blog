@@ -69,8 +69,11 @@ const minutes = readingMinutes(article.body);
     align-items: start;
   }
 
+  /* 同一行的卡片等高时，多出的高度全部给正文区（第二行），
+     封面下方不再出现一条空白；日期与“阅读全文”固定在卡片底部对齐 */
   .article-card.tile {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: auto 1fr;
     padding: 0;
     border: 1px solid var(--border);
     border-radius: var(--radius-lg);
@@ -85,7 +88,13 @@ const minutes = readingMinutes(article.body);
   }
 
   .article-card.tile .ac-body {
+    display: flex;
+    flex-direction: column;
     padding: 0 16px 16px;
+  }
+
+  .article-card.tile .ac-meta {
+    margin-top: auto;
   }
 
   .article-card:last-child {
@@ -203,7 +212,7 @@ const minutes = readingMinutes(article.body);
 
   @media (max-width: 639px) {
     .article-card.row {
-      grid-template-columns: 1fr;
+      grid-template-columns: minmax(0, 1fr);
     }
 
     .article-card.row .ac-top {

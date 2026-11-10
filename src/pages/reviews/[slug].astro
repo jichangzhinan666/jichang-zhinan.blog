@@ -43,6 +43,8 @@ const prev = ranking[(idx - 1 + ranking.length) % ranking.length].brand;
 const next = ranking[(idx + 1) % ranking.length].brand;
 
 const tested = brand.speedTests.evidenceStatus !== 'none';
+// 页首价格卡里的线路摘要：去掉“地区：”前缀后去重
+const lineSummary = [...new Set(brand.lineTypes.map((l) => l.replace(/^[^：]+：/, '')))].join(' / ') || '资料未提供';
 const evidenceText = EVIDENCE_LABEL[brand.speedTests.evidenceStatus];
 
 const title = `${brand.displayName}机场怎么样？套餐价格、优惠码与实测证据（2026 版）`;
@@ -164,6 +166,24 @@ const jsonLd = [
             </div>
           )
         }
+        <dl class="bh-facts">
+          <div>
+            <dt>节点</dt>
+            <dd>{brand.nodeRegions.length} 个地区{brand.nodeCount ? ` · ${brand.nodeCount} 节点` : ''}</dd>
+          </div>
+          <div>
+            <dt>线路</dt>
+            <dd>{lineSummary}</dd>
+          </div>
+          <div>
+            <dt>设备</dt>
+            <dd>{brand.deviceLimit}</dd>
+          </div>
+          <div>
+            <dt>优惠码</dt>
+            <dd>{brand.coupon ? `${brand.coupon.code}${brand.coupon.discount ? ` · ${brand.coupon.discount}` : ''}` : '资料未提供'}</dd>
+          </div>
+        </dl>
         <div class="bh-actions">
           {
             brand.affiliateUrl && (
@@ -177,7 +197,7 @@ const jsonLd = [
         </div>
         <p class="bh-disclosure small muted">
           <Icon name="info" size={14} />
-          以上为推广链接，购买可能为本站带来佣金；排序与评语不受影响。<a href="/disclosure/">披露说明</a>
+          <span>以上为推广链接，购买可能为本站带来佣金；排序与评语不受影响。<a href="/disclosure/">披露说明</a></span>
         </p>
       </div>
     </header>
@@ -195,7 +215,7 @@ const jsonLd = [
             <div><dt>倍率</dt><dd>{brand.ratio ?? '资料未提供'}</dd></div>
             <div><dt>设备数</dt><dd>{brand.deviceLimit}</dd></div>
             <div><dt>支持系统</dt><dd>{brand.supportedPlatforms.length ? brand.supportedPlatforms.join('、') : '资料未逐一列出'}{brand.platformsNote && <span class="muted small"> · {brand.platformsNote}</span>}</dd></div>
-            <div><dt>官网</dt><dd>{brand.officialWebsite ? <a href={brand.officialWebsite} rel="nofollow noopener noreferrer" target="_blank">{brand.officialWebsite}</a> : '资料仅提供推广入口'}</dd></div>
+            <div><dt>官网</dt><dd>{brand.officialWebsite ? <a href={brand.officialWebsite} rel="sponsored nofollow noopener noreferrer" target="_blank">{brand.officialWebsite}</a> : '资料仅提供推广入口'}</dd></div>
           </dl>
           {
             Object.keys(brand.nodeCountByRegion).length > 0 && (
@@ -289,13 +309,13 @@ const jsonLd = [
                       {brand.clientPolicy.platformsDetail.map((p) => (
                         <tr>
                           <td class="nowrap">{p.platforms}</td>
-                          <td>{p.client}</td>
+                          <td class="col-keep">{p.client}</td>
                           <td class="nowrap">
                             <span class={`badge ${p.kind === 'brand' ? 'badge-medium' : p.kind === 'third' ? 'badge-strong' : 'badge-none'}`}>
                               {p.kind === 'brand' ? '品牌客户端' : p.kind === 'third' ? '第三方客户端' : '待核实'}
                             </span>
                           </td>
-                          <td class="small">{p.source}</td>
+                          <td class="small col-text">{p.source}</td>
                         </tr>
                       ))}
                     </tbody>
@@ -339,7 +359,15 @@ const jsonLd = [
                 {reportImage && ownerReport && (
                   <figure class="report-figure">
                     <a href={reportImage.src} target="_blank" rel="noopener">
-                      <Image src={reportImage} alt={`${ownerReport.title}：站长根据实测截图整理的报告图`} widths={[640, 960, 1280]} sizes="(max-width: 960px) 100vw, 880px" loading="lazy" decoding="async" />
+                      <Image
+                        src={reportImage}
+                        alt={`${ownerReport.title}：站长根据实测截图整理的报告图`}
+                        widths={[640, 960, 1280, 1600]}
+                        sizes="(max-width: 1023px) 100vw, 1040px"
+                        loading="lazy"
+                        decoding="async"
+                        style={`max-width:min(100%, ${reportImage.width}px)`}
+                      />
                     </a>
                     <figcaption class="small muted">{ownerReport.evidenceFiles[0]?.caption}。点击图片在新标签页查看大图。</figcaption>
                   </figure>
@@ -384,9 +412,9 @@ const jsonLd = [
                 {sources.map((s) => (
                   <tr>
                     <td class="mono small">{s.file.replace('source-materials/', '')}</td>
-                    <td class="small">{s.sourceType === 'user-supplied-official' ? '品牌/推广方资料' : s.sourceType === 'independently-measured' ? '站长实测报告' : s.sourceType === 'user-supplied-screenshot' ? '用户提供截图' : s.sourceType}</td>
+                    <td class="small col-keep">{s.sourceType === 'user-supplied-official' ? '品牌/推广方资料' : s.sourceType === 'independently-measured' ? '站长实测报告' : s.sourceType === 'user-supplied-screenshot' ? '用户提供截图' : s.sourceType === 'unverified' ? '站长补充（未独立验证）' : s.sourceType}</td>
                     <td class="nowrap">{s.collectedAt}</td>
-                    <td class="small">{s.credibility}</td>
+                    <td class="small col-text">{s.credibility}</td>
                   </tr>
                 ))}
               </tbody>
@@ -411,6 +439,21 @@ const jsonLd = [
         </section>
 
         <FAQ items={faq} title={`关于${brand.displayName}的常见问题`} id="brand-faq" />
+
+        <nav class="brand-nav" aria-label="相邻品牌">
+          <a class="card card-hover" href={`/reviews/${prev.slug}/`}>
+            <small>榜单上一位</small>
+            <span><BrandMark brand={prev} size={32} />{prev.displayName}</span>
+          </a>
+          <a class="card card-hover" href="/reviews/">
+            <small>品牌资料库</small>
+            <span><Icon name="layers" size={20} />返回全部品牌</span>
+          </a>
+          <a class="card card-hover" href={`/reviews/${next.slug}/`}>
+            <small>榜单下一位</small>
+            <span><BrandMark brand={next} size={32} />{next.displayName}</span>
+          </a>
+        </nav>
       </div>
 
       <aside class="brand-aside">
@@ -428,19 +471,10 @@ const jsonLd = [
             <li><a href="#brand-faq">常见问题</a></li>
           </ol>
         </nav>
-        <div class="card">
+        <div class="card rank-pos">
           <h2 class="toc-title">榜单位置</h2>
-          <p class="small">第 {ranked.position} 位 / {ranking.length}（编辑整理榜）</p>
-          <ul class="small muted">{ranked.reasons.map((r) => <li>{r}</li>)}</ul>
+          <p class="small">第 {ranked.position} 位 / {ranking.length}（编辑整理榜，非评分）</p>
           <a class="btn btn-outline btn-sm" href="/rankings/2026/">查看完整榜单</a>
-        </div>
-        <div class="card">
-          <h2 class="toc-title">相邻品牌</h2>
-          <ul class="neighbors">
-            <li><a href={`/reviews/${prev.slug}/`}><BrandMark brand={prev} size={32} />{prev.displayName}</a></li>
-            <li><a href={`/reviews/${next.slug}/`}><BrandMark brand={next} size={32} />{next.displayName}</a></li>
-          </ul>
-          <a class="small" href="/reviews/">返回品牌资料库</a>
         </div>
       </aside>
     </div>
@@ -545,8 +579,32 @@ const jsonLd = [
     border-radius: var(--radius);
     background: var(--surface-2);
     border: 1px solid var(--border);
-    position: sticky;
-    top: calc(var(--header-h) + 16px);
+  }
+
+  /* 价格卡内的关键事实：节点、线路、设备、优惠码（均来自品牌资料） */
+  .bh-facts {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    gap: 6px 12px;
+    margin: 0;
+    padding: 10px 0;
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+    font-size: 0.85rem;
+  }
+
+  .bh-facts > div {
+    display: contents;
+  }
+
+  .bh-facts dt {
+    color: var(--muted);
+    white-space: nowrap;
+  }
+
+  .bh-facts dd {
+    margin: 0;
+    color: var(--text);
   }
 
   .bh-price {
@@ -712,19 +770,23 @@ const jsonLd = [
     margin: 12px 0 16px;
   }
 
+  /* 图片最多显示到原始像素宽度（内联 max-width），不再被拉伸放大而发虚 */
   .report-figure img {
+    display: block;
     width: 100%;
     height: auto;
+    margin-inline: auto;
     border-radius: var(--radius);
     border: 1px solid var(--border);
   }
 
   .report-grid {
     display: grid;
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
     gap: 14px;
   }
 
+  /* 侧栏只保留目录与榜单位置两张短卡片，吸顶时在 768px 高的屏幕里也能完整显示 */
   .brand-aside {
     display: flex;
     flex-direction: column;
@@ -732,6 +794,41 @@ const jsonLd = [
     position: sticky;
     top: calc(var(--header-h) + 16px);
     align-self: start;
+  }
+
+  .rank-pos p {
+    margin: 0 0 10px;
+  }
+
+  .brand-nav {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 14px;
+  }
+
+  .brand-nav a {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    padding: 14px 16px;
+    color: var(--text);
+    text-decoration: none;
+  }
+
+  .brand-nav small {
+    font-size: 0.75rem;
+    color: var(--muted);
+  }
+
+  .brand-nav span {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: 600;
+  }
+
+  .brand-nav span :global(.icon) {
+    color: var(--primary);
   }
 
   .toc-title {
@@ -748,27 +845,26 @@ const jsonLd = [
     gap: 4px;
   }
 
-  .neighbors {
-    list-style: none;
-    margin: 0 0 8px;
-    padding: 0;
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
+  /* 视口很矮时不吸顶，保证侧栏内容始终可以滚动到 */
+  @media (max-height: 620px) {
+    .brand-aside {
+      position: static;
+    }
   }
 
-  .neighbors a {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    color: var(--text);
-    font-weight: 600;
+  /* 品牌介绍比右侧价格卡长时（常见于 1024px 左右的窗口），价格卡在页首区块内随滚动停留，
+     入口按钮始终可见，右下角不再留一块静止的空白；窗口太矮时不吸顶，避免卡片显示不全 */
+  @media (min-width: 1024px) and (min-height: 700px) {
+    .bh-side {
+      position: sticky;
+      top: calc(var(--header-h) + 16px);
+    }
   }
 
   @media (max-width: 1023px) {
     .brand-hero,
     .brand-layout {
-      grid-template-columns: 1fr;
+      grid-template-columns: minmax(0, 1fr);
     }
 
     .brand-aside {
@@ -782,8 +878,9 @@ const jsonLd = [
 
   @media (max-width: 639px) {
     .facts,
-    .two-col {
-      grid-template-columns: 1fr;
+    .two-col,
+    .brand-nav {
+      grid-template-columns: minmax(0, 1fr);
     }
 
     .bh-main {

@@ -7,6 +7,7 @@ import Icon from '@/components/Icon.astro';
 import BrandMark from '@/components/BrandMark.astro';
 import FavButton from '@/components/FavButton.astro';
 import ReadTracker from '@/components/ReadTracker.astro';
+import TitleText from '@/components/TitleText.astro';
 import { CATEGORY_META, SITE } from '@/lib/site';
 import { articleUrl, getPublishedArticles, readingMinutes, wordCount, type Article } from '@/lib/articles';
 import { getBrand } from '@/lib/data';
@@ -64,13 +65,13 @@ if (data.faq.length) jsonLd.push(faqLd(data.faq));
   publishedTime={data.publishedAt}
   modifiedTime={data.updatedAt}
 >
-  <div class="container">
+  <div class="container container-read">
     <Breadcrumbs crumbs={crumbs} />
     <div class="article-layout">
       <article class="article-main">
         <header class="article-head card">
           <a class="pill" href={meta.href}>{meta.label}</a>
-          <h1>{data.title}</h1>
+          <h1><TitleText text={data.title} /></h1>
           <p class="lead">{data.description}</p>
           <div class="article-meta">
             <span><Icon name="user" size={14} /><a href={SITE.author.url} rel="author">{data.author}</a></span>
@@ -168,7 +169,7 @@ if (data.faq.length) jsonLd.push(faqLd(data.faq));
           <div>
             <strong>{SITE.author.name}</strong>
             <p class="small muted">整理机场资料、套餐与测速记录，所有数据注明来源与日期，不虚构评分。</p>
-            <a class="small" href="/about/">关于我们 →</a>
+            <p class="author-links small"><a href={SITE.author.url}>作者介绍 →</a><a href="/about/">关于我们 →</a></p>
           </div>
         </div>
         {
@@ -224,8 +225,10 @@ if (data.faq.length) jsonLd.push(faqLd(data.faq));
     margin-bottom: 12px;
   }
 
+  /* 文章标题普遍较长（30–40 字）：略小于栏目页大标题，桌面端控制在两行内 */
   .article-head h1 {
     margin-bottom: 10px;
+    font-size: clamp(1.5rem, 1.15rem + 1.4vw, 2.125rem);
   }
 
   .article-actions {
@@ -283,6 +286,11 @@ if (data.faq.length) jsonLd.push(faqLd(data.faq));
     margin-bottom: 4px;
   }
 
+  /* 目录链接占满整行，短标题（如“iOS”）也有足够的点击宽度 */
+  .toc-inline li a {
+    display: block;
+  }
+
   .toc-inline .depth-3 {
     list-style: circle;
     margin-left: 1em;
@@ -291,6 +299,11 @@ if (data.faq.length) jsonLd.push(faqLd(data.faq));
 
   .prose-card {
     padding: 28px 32px;
+  }
+
+  /* 阅读宽度由 .container-read 控制，正文占满卡片（原先 78ch 上限会在卡片右侧留下一条空带） */
+  .prose-card .prose {
+    max-width: none;
   }
 
   .refs {
@@ -342,20 +355,19 @@ if (data.faq.length) jsonLd.push(faqLd(data.faq));
   .related-brands span {
     display: flex;
     flex-direction: column;
+    min-width: 0;
   }
 
+  /* 品牌定位语完整显示，不再截成一行加省略号 */
   .related-brands small {
     font-size: 0.75rem;
+    line-height: 1.5;
     color: var(--muted);
-    display: -webkit-box;
-    -webkit-line-clamp: 1;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
   }
 
   .prev-next {
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 14px;
   }
 
@@ -408,6 +420,13 @@ if (data.faq.length) jsonLd.push(faqLd(data.faq));
     margin: 4px 0 6px;
   }
 
+  .author-box .author-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px 14px;
+    margin-bottom: 0;
+  }
+
   .aside-title {
     font-size: 0.95rem;
     margin-bottom: 10px;
@@ -440,9 +459,16 @@ if (data.faq.length) jsonLd.push(faqLd(data.faq));
 
   @media (max-width: 1023px) {
     .article-layout {
-      grid-template-columns: 1fr;
+      grid-template-columns: minmax(0, 1fr);
     }
 
+    .article-aside {
+      position: static;
+    }
+  }
+
+  /* 窗口较矮时侧栏不吸顶：否则侧栏比可视区高，底部的链接滚不出来 */
+  @media (max-height: 720px) {
     .article-aside {
       position: static;
     }
@@ -460,7 +486,7 @@ if (data.faq.length) jsonLd.push(faqLd(data.faq));
 
     .related-brands ul,
     .prev-next {
-      grid-template-columns: 1fr;
+      grid-template-columns: minmax(0, 1fr);
     }
   }
 </style>

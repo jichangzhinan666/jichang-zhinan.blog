@@ -12,10 +12,20 @@
   --primary-100: #d9e6fb;
   --primary-200: #b9d0fa;
   --primary-300: #8db1f6;
+  /* 承载白色文字的实心主色、浅底上的深色主色文字（两个主题分别取值，保证对比度 ≥ 4.5:1） */
+  --primary-solid: #155eef;
+  --primary-strong-text: #0b3fa8;
+  /* 主按钮渐变：两种主题共用同一组深蓝，白字对比度 ≥ 5:1 */
+  --btn-from: #2563eb;
+  --btn-mid: #155eef;
+  --btn-to: #0f4fd1;
+  --btn-deep: #0b3fa8;
   --accent: #38bdf8;
   --text: #101828;
   --text-2: #344054;
   --muted: #667085;
+  /* 浅色底标签上的次要文字（比 --muted 略深，满足 4.5:1） */
+  --muted-strong: #596579;
   --surface: #ffffff;
   --surface-2: #f5f8ff;
   --surface-3: #eaf1ff;
@@ -56,9 +66,12 @@
   --primary-100: #1c2d52;
   --primary-200: #28407a;
   --primary-300: #3a569b;
+  --primary-solid: #2563eb;
+  --primary-strong-text: #a8c8ff;
   --text: #e6edf7;
   --text-2: #c6d2e5;
   --muted: #93a2bb;
+  --muted-strong: #a3b1c9;
   --surface: #121c33;
   --surface-2: #16213b;
   --surface-3: #1b2a4a;
@@ -90,6 +103,13 @@
   box-sizing: border-box;
 }
 
+/* hidden 属性必须始终生效。组件样式里的 display: flex / grid 会覆盖浏览器默认的
+   [hidden] { display: none }——首页文章栏目切换、品牌筛选、榜单筛选此前都因此
+   “只改了计数，卡片仍全部显示”。 */
+[hidden] {
+  display: none !important;
+}
+
 html {
   font-size: 16px;
   -webkit-text-size-adjust: 100%;
@@ -99,13 +119,24 @@ html {
 
 body {
   margin: 0;
+  /* 页面不足一屏时让页脚贴底 */
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  min-height: 100dvh;
   font-family: var(--font-sans);
   font-size: 1rem;
   line-height: 1.7;
   color: var(--text);
   background: var(--bg);
+  /* 超长的网址、代码等不可断词也要在容器内折行，避免手机端横向溢出 */
+  overflow-wrap: break-word;
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
+}
+
+main {
+  flex: 1 0 auto;
 }
 
 h1,
@@ -117,10 +148,34 @@ h4 {
   font-weight: 700;
   color: var(--text);
   letter-spacing: 0.01em;
+  /* 多行标题各行长度均衡，避免末行只剩一两个字 */
+  text-wrap: balance;
+}
+
+p,
+li,
+dd,
+figcaption,
+blockquote {
+  text-wrap: pretty;
 }
 
 h1 {
   font-size: clamp(1.75rem, 1.2rem + 2vw, 2.5rem);
+}
+
+/* 标题里的「｜」与前两个字不拆开，避免分隔符落到行首（见 TitleText.astro） */
+.title-glue {
+  white-space: nowrap;
+}
+
+/* 平板与桌面：大标题只在标点、空格处折行（“节点”“订阅”等词不再被拆到两行）；
+   单段文字实在放不下时仍允许任意位置折行，不会溢出。手机上每行字数太少，保持默认折行。 */
+@media (min-width: 768px) {
+  h1 {
+    word-break: keep-all;
+    overflow-wrap: anywhere;
+  }
 }
 
 h2 {
@@ -180,7 +235,7 @@ ol {
   top: -60px;
   z-index: 1000;
   padding: 10px 16px;
-  background: var(--primary);
+  background: var(--primary-solid);
   color: #fff;
   border-radius: var(--radius-sm);
   font-weight: 600;
@@ -225,16 +280,35 @@ ol {
   margin-bottom: 16px;
 }
 
+/* 标题单独出现时与下方内容留 14px；放在 .section-head 里时由容器负责间距 */
 .section-title {
   display: flex;
   align-items: center;
   gap: 10px;
-  margin: 0;
+  margin: 0 0 14px;
   font-size: 1.25rem;
+}
+
+.section-head .section-title {
+  margin: 0;
 }
 
 .section-title .icon {
   color: var(--primary);
+}
+
+/* 图标在弹性布局里不被压缩变形 */
+.icon {
+  flex-shrink: 0;
+}
+
+/* 阅读型页面使用较窄的居中容器，避免正文右侧留出大片空白 */
+.container-read {
+  max-width: 1200px;
+}
+
+.container-prose {
+  max-width: 968px;
 }
 
 .section-link {
@@ -313,6 +387,8 @@ ol {
   border-radius: var(--radius);
   font-weight: 600;
   font-size: 0.95rem;
+  /* 固定行高，使同一规格的按钮高度一致（标准 44px，小号 36px） */
+  line-height: 1.35;
   border: 1px solid transparent;
   cursor: pointer;
   text-decoration: none;
@@ -329,12 +405,12 @@ ol {
 
 .btn-primary {
   color: #fff;
-  background: linear-gradient(135deg, #3b82f6 0%, var(--primary) 60%, var(--primary-600) 100%);
+  background: linear-gradient(135deg, var(--btn-from) 0%, var(--btn-mid) 60%, var(--btn-to) 100%);
   box-shadow: 0 6px 16px rgba(21, 94, 239, 0.3);
 }
 
 .btn-primary:hover {
-  background: linear-gradient(135deg, #3b82f6 0%, var(--primary-600) 60%, var(--primary-700) 100%);
+  background: linear-gradient(135deg, var(--btn-mid) 0%, var(--btn-to) 60%, var(--btn-deep) 100%);
 }
 
 .btn-secondary {
@@ -413,7 +489,7 @@ ol {
 
 .badge-medium {
   background: var(--primary-50);
-  color: var(--primary-700);
+  color: var(--primary-strong-text);
 }
 
 .badge-weak {
@@ -423,7 +499,7 @@ ol {
 
 .badge-none {
   background: var(--surface-3);
-  color: var(--muted);
+  color: var(--muted-strong);
 }
 
 .badge-danger {
@@ -433,10 +509,6 @@ ol {
 
 :root[data-theme="dark"] .badge-strong {
   color: #6ee7b7;
-}
-
-:root[data-theme="dark"] .badge-medium {
-  color: #93c5fd;
 }
 
 :root[data-theme="dark"] .badge-weak {
@@ -548,6 +620,8 @@ ol {
   border: 1px solid var(--border);
   border-radius: var(--radius);
   background: var(--surface);
+  scrollbar-width: thin;
+  -webkit-overflow-scrolling: touch;
 }
 
 table.data {
@@ -586,6 +660,21 @@ table.data td.num,
 table.data th.num {
   text-align: right;
   font-variant-numeric: tabular-nums;
+  /* 数值与单位不拆行（如 “191.43 Mbps”） */
+  white-space: nowrap;
+}
+
+/*
+ * 中文没有空格，自动表格布局会把文字列压到每行一两个字。
+ * 名称不折行、长说明给出最小宽度，放不下时由 .table-wrap 横向滚动，而不是把单元格挤成竖排。
+ */
+table.data td > strong:first-child,
+table.data .col-keep {
+  white-space: nowrap;
+}
+
+table.data .col-text {
+  min-width: 15em;
 }
 
 /* --------------------------------------------------------------------------
@@ -685,6 +774,7 @@ table.data th.num {
 .prose a {
   text-decoration: underline;
   text-decoration-color: var(--primary-200);
+  overflow-wrap: anywhere;
 }
 
 .prose a:hover {
@@ -715,6 +805,8 @@ table.data th.num {
   border-radius: 6px;
   background: var(--surface-3);
   color: var(--text);
+  /* 行内代码里的长网址允许在任意位置折行 */
+  overflow-wrap: anywhere;
 }
 
 .prose pre {
@@ -752,6 +844,12 @@ table.data th.num {
 
 .prose table th {
   background: var(--surface-2);
+  white-space: nowrap;
+}
+
+/* 文章内表格：每列至少 7 个字宽，放不下时表格自身横向滚动 */
+.prose table td {
+  min-width: 7em;
 }
 
 .prose img {
@@ -790,6 +888,49 @@ table.data th.num {
   .card,
   .card-flat {
     padding: 16px;
+  }
+}
+
+/* 触屏设备：独立成行的文字链接加大可点区域（行内元素的上下内边距不影响排版） */
+@media (pointer: coarse) {
+  .breadcrumbs li a,
+  .site-footer li a,
+  .toc-inline li a,
+  .related-list li a,
+  .refs li a,
+  .facts dd a,
+  table.data td > a,
+  a.small,
+  a.section-link,
+  .ac-cat,
+  .ac-more,
+  .article-meta a,
+  .author-links a,
+  .nf-links a,
+  .ios-links a,
+  .g-more a:only-child,
+  .rc-report,
+  .gl-anchor,
+  .me-grid p.small > a,
+  .report-links li > a,
+  .prose li > a:only-child {
+    padding-block: 5px;
+  }
+
+  /* 两个字的品牌名（如“飞V”）宽度不足 24px：表格里的链接给出最小点击宽度 */
+  table.data td > a,
+  .prose table td > a {
+    display: inline-block;
+    min-width: 24px;
+    padding-block: 3px;
+  }
+
+  /* 百科术语前的 “#” 锚点只有 10px 宽，补足到 24px */
+  .gl-anchor {
+    display: inline-block;
+    min-width: 24px;
+    margin-left: -7px;
+    text-align: center;
   }
 }
 

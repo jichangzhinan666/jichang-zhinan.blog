@@ -6,6 +6,7 @@
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import Breadcrumbs from '@/components/Breadcrumbs.astro';
 import Icon from '@/components/Icon.astro';
+import TitleText from '@/components/TitleText.astro';
 import { SITE, SOCIAL_LINKS } from '@/lib/site';
 import { getPublishedArticles, articleUrl, articleSlug } from '@/lib/articles';
 
@@ -38,7 +39,7 @@ const crumbs = [
         <Icon name="user" size={34} />
       </div>
       <div class="me-id">
-        <h1>{title}</h1>
+        <h1><TitleText text={title} /></h1>
         <p class="me-mode">
           <span class="badge badge-medium">游客模式</span>
           <span class="small muted">无需注册；收藏、阅读记录与偏好只保存在当前浏览器，不会上传。</span>
@@ -70,9 +71,9 @@ const crumbs = [
     <nav class="me-jump small" aria-label="页内导航">
       <a href="#favorites">我的收藏</a>
       <a href="#history">阅读记录</a>
-      <a href="#subscribe">订阅更新</a>
       <a href="#prefs">偏好设置</a>
       <a href="#tutorials">常用教程</a>
+      <a href="#subscribe">订阅更新</a>
       <a href="#author">作者介绍</a>
     </nav>
 
@@ -95,23 +96,71 @@ const crumbs = [
         <p class="empty" id="his-empty">暂无阅读记录。浏览文章、品牌页或套餐对比后会自动记录最近 30 条。</p>
       </section>
 
-      <section class="card section" id="subscribe" aria-labelledby="sub-title">
-        <h2 class="section-title" id="sub-title"><Icon name="rss" size={20} />订阅更新</h2>
-        <p class="small">及时获取机场测评、节点测速报告、新手教程及最新文章。</p>
-        <div class="me-actions">
-          <a class="btn btn-primary" href="/rss.xml" type="application/rss+xml"><Icon name="rss" size={16} />通过 RSS 订阅</a>
-          <a class="btn btn-outline" href="/news/"><Icon name="bolt" size={16} />资讯与更新</a>
-          {
-            socials.map((s) => (
-              <a class="btn btn-outline" href={s.href!} target="_blank" rel="noopener noreferrer">
-                <Icon name={s.id} size={16} />
-                {s.label}
-                <Icon name="external" size={14} />
-              </a>
-            ))
+      {/* 在首次绘制前同步填好两个列表，避免模块脚本稍后渲染时把下方内容整体推走（布局偏移） */}
+      <script is:inline>
+        (function () {
+          function rel(ts) {
+            var m = Math.floor((Date.now() - ts) / 60000);
+            if (!(m >= 1)) return '刚刚';
+            if (m < 60) return m + ' 分钟前';
+            var h = Math.floor(m / 60);
+            if (h < 24) return h + ' 小时前';
+            var d = Math.floor(h / 24);
+            if (d < 7) return d + ' 天前';
+            var t = new Date(ts);
+            var p = function (n) {
+              return String(n).padStart(2, '0');
+            };
+            return t.getFullYear() + '-' + p(t.getMonth() + 1) + '-' + p(t.getDate());
           }
-        </div>
-      </section>
+          function read(key) {
+            try {
+              var v = JSON.parse(localStorage.getItem(key) || '[]');
+              return Array.isArray(v)
+                ? v.filter(function (x) {
+                    return x && typeof x.url === 'string' && typeof x.title === 'string';
+                  })
+                : [];
+            } catch (e) {
+              return [];
+            }
+          }
+          function fill(listId, emptyId, statId, items, removable) {
+            var list = document.getElementById(listId);
+            var empty = document.getElementById(emptyId);
+            var stat = document.getElementById(statId);
+            if (!list) return;
+            items.forEach(function (it) {
+              var li = document.createElement('li');
+              var a = document.createElement('a');
+              a.href = it.url;
+              a.textContent = it.title;
+              var meta = document.createElement('span');
+              meta.className = 'me-meta small muted';
+              meta.textContent = (it.type || '页面') + ' · ' + rel(it.ts);
+              li.appendChild(a);
+              li.appendChild(meta);
+              if (removable) {
+                var b = document.createElement('button');
+                b.type = 'button';
+                b.className = 'btn btn-outline btn-sm';
+                b.textContent = '移除';
+                li.appendChild(b);
+              }
+              list.appendChild(li);
+            });
+            if (empty) empty.hidden = items.length > 0;
+            if (stat) stat.textContent = String(items.length);
+          }
+          fill('fav-list', 'fav-empty', 'stat-fav', read('jz-favorites'), true);
+          fill('his-list', 'his-empty', 'stat-his', read('jz-history'), false);
+          try {
+            var theme = localStorage.getItem('jz-theme');
+            var st = document.getElementById('stat-theme');
+            if (st) st.textContent = theme === 'dark' ? '深色' : theme === 'light' ? '浅色' : '跟随系统';
+          } catch (e) {}
+        })();
+      </script>
 
       <section class="card section" id="prefs" aria-labelledby="prefs-title">
         <h2 class="section-title" id="prefs-title"><Icon name="tool" size={20} />偏好设置</h2>
@@ -131,8 +180,10 @@ const crumbs = [
               <label class="chip"><input type="radio" name="font" value="large" /><span>偏大</span></label>
             </div>
           </fieldset>
-          <p class="small muted">偏好立即生效并保存在本浏览器；页头的主题按钮会同步这里的选择。</p>
-          <button type="button" class="btn btn-outline btn-sm" id="clear-all">清除本浏览器中的全部个人数据</button>
+          <div class="prefs-foot">
+            <p class="small muted">偏好立即生效并保存在本浏览器；页头的主题按钮会同步这里的选择。</p>
+            <button type="button" class="btn btn-outline btn-sm" id="clear-all">清除本浏览器中的全部个人数据</button>
+          </div>
         </form>
       </section>
 
@@ -154,6 +205,24 @@ const crumbs = [
           }
         </ul>
         <p class="small"><a href="/tutorials/">查看全部教程 →</a></p>
+      </section>
+
+      <section class="card section" id="subscribe" aria-labelledby="sub-title">
+        <h2 class="section-title" id="sub-title"><Icon name="rss" size={20} />订阅更新</h2>
+        <p class="small">及时获取机场测评、节点测速报告、新手教程及最新文章。</p>
+        <div class="me-actions">
+          <a class="btn btn-primary btn-sm" href="/rss.xml" type="application/rss+xml"><Icon name="rss" size={16} />通过 RSS 订阅</a>
+          <a class="btn btn-outline btn-sm" href="/news/"><Icon name="bolt" size={16} />资讯与更新</a>
+          {
+            socials.map((s) => (
+              <a class="btn btn-outline btn-sm" href={s.href!} target="_blank" rel="noopener noreferrer">
+                <Icon name={s.id} size={16} />
+                {s.label}
+                <Icon name="external" size={14} />
+              </a>
+            ))
+          }
+        </div>
       </section>
 
       <section class="card section" id="author" aria-labelledby="author-title">
@@ -210,8 +279,9 @@ const crumbs = [
     margin: 0;
   }
 
+  /* 固定最小宽度：数值由脚本填入时（如“跟随系统”→“浅色”）不改变卡片宽度 */
   .me-stats > div {
-    min-width: 88px;
+    min-width: 104px;
     padding: 10px 14px;
     border-radius: var(--radius);
     border: 1px solid var(--border);
@@ -264,6 +334,8 @@ const crumbs = [
 
   .me-grid .section {
     margin: 0;
+    /* 允许网格项收缩到容器宽度（否则不可折行的内容会把整页撑出横向滚动） */
+    min-width: 0;
     scroll-margin-top: calc(var(--header-h) + 16px);
   }
 
@@ -306,16 +378,42 @@ const crumbs = [
     grid-column: 2;
   }
 
+  /* 空状态提示是卡片里最后一个元素，不需要段落默认的下边距（否则卡片底部多出一截空白） */
+  .me-grid .empty {
+    margin: 0;
+  }
+
   .me-actions {
     display: flex;
     flex-wrap: wrap;
     gap: 8px;
   }
 
+  /* 偏好卡片与右侧“常用教程”等高：设置项在上，说明与清除按钮固定在卡片底部 */
+  #prefs {
+    display: flex;
+    flex-direction: column;
+  }
+
   .prefs {
+    flex: 1;
     display: flex;
     flex-direction: column;
     gap: 14px;
+  }
+
+  .prefs-foot {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+    margin-top: auto;
+    padding-top: 14px;
+    border-top: 1px dashed var(--border);
+  }
+
+  .prefs-foot p {
+    margin: 0;
   }
 
   .prefs fieldset {
@@ -363,8 +461,8 @@ const crumbs = [
   }
 
   .chip input:checked + span {
-    background: var(--primary);
-    border-color: var(--primary);
+    background: var(--primary-solid);
+    border-color: var(--primary-solid);
     color: #fff;
   }
 
@@ -410,11 +508,10 @@ const crumbs = [
     min-width: 0;
   }
 
+  /* 教程标题完整显示（原先单行省略号会截掉后半句） */
   .me-quick small {
     color: var(--muted);
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
+    line-height: 1.5;
   }
 
   @media (max-width: 1023px) {
@@ -430,15 +527,26 @@ const crumbs = [
 
   @media (max-width: 767px) {
     .me-grid {
-      grid-template-columns: 1fr;
+      grid-template-columns: minmax(0, 1fr);
     }
 
     .me-id h1 {
       font-size: 1.25rem;
     }
 
+    .me-stats > div {
+      flex: 1 1 0;
+      min-width: 0;
+      padding-inline: 6px;
+    }
+
+    /* 320px 手机上三个统计块各约 76px 宽：标签保持一行 */
+    .me-stats dt {
+      white-space: nowrap;
+    }
+
     .me-list :global(li) {
-      grid-template-columns: 1fr;
+      grid-template-columns: minmax(0, 1fr);
     }
 
     .me-list :global(.btn) {
@@ -450,6 +558,25 @@ const crumbs = [
     .me-actions .btn {
       flex: 1 1 160px;
       justify-content: center;
+    }
+  }
+
+  /* 小屏手机：头像缩小并与标题首行对齐，不再悬在三四行文字中间 */
+  @media (max-width: 479px) {
+    .me-hero {
+      gap: 14px;
+      align-items: start;
+      padding: 18px 16px;
+    }
+
+    .me-avatar {
+      width: 52px;
+      height: 52px;
+    }
+
+    .me-avatar :global(svg) {
+      width: 26px;
+      height: 26px;
     }
   }
 </style>

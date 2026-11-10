@@ -1,5 +1,6 @@
 ---
 import Icon from './Icon.astro';
+import TitleText from './TitleText.astro';
 import { SITE, STATIC_PAGES } from '@/lib/site';
 import { getRegionCoverage, getBrands } from '@/lib/data';
 
@@ -23,7 +24,7 @@ const updated = STATIC_PAGES['/']?.lastmod;
       <Icon name="sparkle" size={14} />
       {SITE.rankingYear} 年度版 · 更新于 {updated}
     </span>
-    <h1 id="hero-title">{SITE.heroTitle}</h1>
+    <h1 id="hero-title"><TitleText text={SITE.heroTitle} /></h1>
     {SITE.heroSubtitle && <p class="hero-sub">{SITE.heroSubtitle}</p>}
     <p class="hero-intro">{SITE.heroIntro}</p>
     <div class="hero-actions">
@@ -130,7 +131,9 @@ const updated = STATIC_PAGES['/']?.lastmod;
       radial-gradient(600px 300px at 10% 100%, rgba(14, 165, 233, 0.3), transparent 60%),
       linear-gradient(135deg, var(--hero-from), var(--hero-to));
     color: var(--hero-text);
+    /* clip 不会形成可滚动容器（hidden 会让装饰层撑出可滚动区域，键盘聚焦时内容可能被卷走） */
     overflow: hidden;
+    overflow: clip;
     box-shadow: var(--shadow-lg);
   }
 

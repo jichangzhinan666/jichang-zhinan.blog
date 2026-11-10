@@ -12,9 +12,11 @@ interface Props {
 
 const { showTelegram = true } = Astro.props;
 const telegram = SOCIAL_LINKS.find((s) => s.id === 'telegram' && s.href);
+const count = CONTACT_CHANNELS.length + (showTelegram && telegram ? 1 : 0);
 ---
 
-<ul class="contact-channels" aria-label="联系方式">
+<div class="cc-wrap">
+<ul class="contact-channels" data-count={count} aria-label="联系方式">
   {
     CONTACT_CHANNELS.map((c) => (
       <li class={`cc-card cc-${c.id}`}>
@@ -69,22 +71,42 @@ const telegram = SOCIAL_LINKS.find((s) => s.id === 'telegram' && s.href);
     )
   }
 </ul>
+</div>
 <p class="cc-status small muted" aria-live="polite"></p>
 
 <style>
+  /* 按组件自身宽度决定列数（同一组件用在窄正文卡片和宽卡片里） */
+  .cc-wrap {
+    container-type: inline-size;
+  }
+
+  /* 用在正文（.prose）里时，与下一段文字保持正常段距 */
+  :global(.prose) .cc-wrap {
+    margin-bottom: 1.2em;
+  }
+
   .contact-channels {
     list-style: none;
     margin: 0;
     padding: 0;
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    /* min(260px, 100%)：容器不足 260px（320px 手机）时列宽跟随容器，不撑出横向滚动 */
+    grid-template-columns: repeat(auto-fit, minmax(min(260px, 100%), 1fr));
     gap: 12px;
+  }
+
+  /* 4 个渠道：中等宽度固定 2×2，避免 3+1 落单 */
+  @container (min-width: 544px) and (max-width: 1099px) {
+    .contact-channels[data-count="4"] {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
   }
 
   .cc-card {
     display: flex;
     flex-direction: column;
     gap: 10px;
+    margin: 0;
     padding: 16px;
     border-radius: var(--radius-lg);
     border: 1px solid var(--border);

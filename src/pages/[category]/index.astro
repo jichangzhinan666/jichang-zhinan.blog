@@ -3,6 +3,7 @@ import BaseLayout from '@/layouts/BaseLayout.astro';
 import Breadcrumbs from '@/components/Breadcrumbs.astro';
 import ArticleCard from '@/components/ArticleCard.astro';
 import Icon from '@/components/Icon.astro';
+import TitleText from '@/components/TitleText.astro';
 import { CATEGORY_META, STATIC_PAGES, type CategoryKey } from '@/lib/site';
 import { getPublishedArticles, articleUrl, articleSlug, categoryLabel, type Article } from '@/lib/articles';
 import { getBrands, getEntryPlan, formatPrice } from '@/lib/data';
@@ -261,7 +262,7 @@ const heroLead = HERO[category]?.lead ?? meta.description;
   <div class="container">
     <Breadcrumbs crumbs={crumbs} />
     <header class="page-hero">
-      <h1>{heroTitle}</h1>
+      <h1><TitleText text={heroTitle} /></h1>
       <p class="lead">{heroLead}</p>
     </header>
 
@@ -643,7 +644,7 @@ const heroLead = HERO[category]?.lead ?? meta.description;
     font-size: 0.7rem;
     font-weight: 500;
     background: var(--surface-3);
-    color: var(--muted);
+    color: var(--muted-strong);
     vertical-align: middle;
   }
 
@@ -681,7 +682,7 @@ const heroLead = HERO[category]?.lead ?? meta.description;
   @media (max-width: 639px) {
     .group-grid,
     .topic-grid {
-      grid-template-columns: 1fr;
+      grid-template-columns: minmax(0, 1fr);
     }
   }
 
@@ -735,8 +736,9 @@ const heroLead = HERO[category]?.lead ?? meta.description;
     flex-wrap: wrap;
   }
 
+  /* “#” 锚点是可点击的链接，颜色需达到可读对比度（原来的浅蓝只有约 1.5:1） */
   .gl-anchor {
-    color: var(--primary-200);
+    color: var(--muted);
     text-decoration: none;
     font-weight: 500;
   }
@@ -774,7 +776,7 @@ const heroLead = HERO[category]?.lead ?? meta.description;
 
   @media (max-width: 767px) {
     .glossary {
-      grid-template-columns: 1fr;
+      grid-template-columns: minmax(0, 1fr);
     }
   }
 </style>

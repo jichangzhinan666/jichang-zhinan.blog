@@ -1,7 +1,8 @@
 ---
 /**
- * 服务端渲染的 SVG 条形图：由可信测速数组驱动，标注单位与日期。
- * 无数据时显示“暂无可验证测速记录”。
+ * 服务端渲染的横向条形图：由可信测速数组驱动，标注单位与日期。
+ * 用 HTML + CSS 绘制（不再用固定视口的 SVG），标签、数值在任何宽度下都不会与条形重叠或被裁掉；
+ * 容器较窄时标签自动换到条形上方。无数据时显示“暂无可验证测速记录”。
  */
 interface Bar {
   label: string;
@@ -20,11 +21,6 @@ interface Props {
 
 const { bars, unit, title, caption, maxValue } = Astro.props;
 const max = maxValue ?? Math.max(1, ...bars.map((b) => b.value));
-const rowH = 44;
-const labelW = 190;
-const width = 720;
-const chartW = width - labelW - 90;
-const height = Math.max(1, bars.length) * rowH + 12;
 const fmt = (n: number) => (Number.isInteger(n) ? n.toString() : n.toFixed(2).replace(/\.?0+$/, ''));
 ---
 
@@ -33,65 +29,119 @@ const fmt = (n: number) => (Number.isInteger(n) ? n.toString() : n.toFixed(2).re
     <p class="empty">暂无可验证测速记录</p>
   ) : (
     <figure class="speed-bars">
-      <svg viewBox={`0 0 ${width} ${height}`} role="img" aria-labelledby="sb-title" preserveAspectRatio="xMinYMin meet">
-        <title id="sb-title">{title}</title>
-        {bars.map((b, i) => {
-          const y = i * rowH + 8;
-          const w = Math.max(4, Math.round((b.value / max) * chartW));
+      <ul class="sb-list" aria-label={title}>
+        {bars.map((b) => {
+          const pct = Math.max(1.5, Math.round((b.value / max) * 1000) / 10);
           return (
-            <g>
-              <text x="0" y={y + 16} class="sb-label">
-                {b.label}
-              </text>
-              {b.sublabel && (
-                <text x="0" y={y + 32} class="sb-sub">
-                  {b.sublabel}
-                </text>
-              )}
-              <rect x={labelW} y={y + 6} width={chartW} height={20} rx="10" class="sb-track" />
-              <rect x={labelW} y={y + 6} width={w} height={20} rx="10" fill={b.color ?? 'var(--primary)'} />
-              <text x={labelW + w + 10} y={y + 21} class="sb-value">
-                {fmt(b.value)} {unit}
-              </text>
-            </g>
+            <li class="sb-row">
+              <div class="sb-meta">
+                <span class="sb-label">{b.label}</span>
+                {b.sublabel && <span class="sb-sub">{b.sublabel}</span>}
+              </div>
+              <div class="sb-bar">
+                <div class="sb-track" aria-hidden="true">
+                  <span class="sb-fill" style={`width:${pct}%${b.color ? `;background:${b.color}` : ''}`} />
+                </div>
+                <span class="sb-value">
+                  {fmt(b.value)} <small>{unit}</small>
+                </span>
+              </div>
+            </li>
           );
         })}
-      </svg>
+      </ul>
       {caption && <figcaption class="small muted">{caption}</figcaption>}
     </figure>
   )
 }
 
 <style>
-  .speed-bars svg {
-    width: 100%;
-    height: auto;
-    font-family: var(--font-sans);
+  .speed-bars {
+    margin: 0;
+    container-type: inline-size;
+  }
+
+  .sb-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+
+  .sb-row {
+    display: grid;
+    grid-template-columns: minmax(0, 250px) minmax(0, 1fr);
+    gap: 6px 18px;
+    align-items: center;
+  }
+
+  .sb-meta {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    line-height: 1.4;
   }
 
   .sb-label {
-    font-size: 14px;
+    font-size: 0.925rem;
     font-weight: 600;
-    fill: var(--text);
+    color: var(--text);
   }
 
   .sb-sub {
-    font-size: 11px;
-    fill: var(--muted);
+    font-size: 0.75rem;
+    color: var(--muted);
+  }
+
+  .sb-bar {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-width: 0;
   }
 
   .sb-track {
-    fill: var(--surface-3);
+    flex: 1;
+    min-width: 0;
+    height: 14px;
+    border-radius: 999px;
+    background: var(--surface-3);
+    overflow: hidden;
+  }
+
+  .sb-fill {
+    display: block;
+    height: 100%;
+    border-radius: 999px;
+    background: linear-gradient(90deg, #60a5fa, var(--primary));
   }
 
   .sb-value {
-    font-size: 13px;
-    font-weight: 600;
-    fill: var(--text-2);
+    flex: none;
+    min-width: 7.2em;
+    text-align: right;
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: var(--text);
+    white-space: nowrap;
     font-variant-numeric: tabular-nums;
   }
 
+  .sb-value small {
+    font-size: 0.75rem;
+    font-weight: 500;
+    color: var(--muted);
+  }
+
   figcaption {
-    margin-top: 8px;
+    margin-top: 12px;
+  }
+
+  @container (max-width: 560px) {
+    .sb-row {
+      grid-template-columns: minmax(0, 1fr);
+    }
   }
 </style>

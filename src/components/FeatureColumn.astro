@@ -35,6 +35,8 @@ const latestRows = getSpeedReports()
       time: formatTestedAt(r).replace('（北京时间）', ''),
     };
   });
+// 丢包率全部缺失时不单独占一列（表下说明已注明“资料未提供”），避免表格被挤出卡片
+const hasLoss = latestRows.some((r) => r.loss !== '未提供');
 ---
 
 <div class="feature-col">
@@ -141,27 +143,36 @@ const latestRows = getSpeedReports()
           <table class="data speed-mini">
             <thead>
               <tr>
-                <th>品牌 · 节点</th>
+                <th>品牌 · 节点 / 测速时间</th>
                 <th class="num">延迟</th>
                 <th class="num">下载</th>
-                <th class="num">丢包</th>
-                <th>出口运营商</th>
-                <th>测速时间</th>
+                {hasLoss && <th class="num">丢包</th>}
+                <th class="exit-head">出口运营商</th>
               </tr>
             </thead>
             <tbody>
               {latestRows.map((row) => (
-                <tr>
-                  <td class="nowrap"><a href={`/speed-tests/${row.slug}/`}>{row.brand} · {row.region}</a></td>
-                  <td class="num nowrap">{row.latency}</td>
-                  <td class="num nowrap">{row.download}</td>
-                  <td class="num nowrap">{row.loss}</td>
-                  <td class="exit-cell" title={`${row.exitOrg}${row.exitAsn ? ` · ${row.exitAsn}` : ''}`}>
-                    <span class="exit-org">{row.exitOrg}</span>
-                    {row.exitAsn && <span class="exit-asn">{row.exitAsn}</span>}
-                  </td>
-                  <td class="small nowrap">{row.time}</td>
-                </tr>
+                <>
+                  <tr class="main-row">
+                    <td class="nowrap">
+                      <a href={`/speed-tests/${row.slug}/`}>{row.brand} · {row.region}</a>
+                      <span class="row-time">{row.time}</span>
+                    </td>
+                    <td class="num nowrap">{row.latency}</td>
+                    <td class="num nowrap">{row.download}</td>
+                    {hasLoss && <td class="num nowrap">{row.loss}</td>}
+                    <td class="exit-cell" title={`${row.exitOrg}${row.exitAsn ? ` · ${row.exitAsn}` : ''}`}>
+                      <span class="exit-org">{row.exitOrg}</span>
+                      {row.exitAsn && <span class="exit-asn">{row.exitAsn}</span>}
+                    </td>
+                  </tr>
+                  {/* 卡片较窄时“出口运营商”一列放不下：改为显示这一行，上面那一列隐藏（同一份数据，二者只显示其一） */}
+                  <tr class="exit-row">
+                    <td colspan={hasLoss ? 4 : 3}>
+                      <span class="exit-label">出口运营商</span>{row.exitOrg}{row.exitAsn ? ` · ${row.exitAsn}` : ''}
+                    </td>
+                  </tr>
+                </>
               ))}
             </tbody>
           </table>
@@ -169,7 +180,7 @@ const latestRows = getSpeedReports()
       ) : (
         <p class="empty">暂无实测数据</p>
       )}
-    <p class="small muted latest-note">延迟为测速工具 Ping；丢包率资料未提供时显示“未提供”。不同品牌的节点、时段与网络环境不同，不能直接横向比较。</p>
+    <p class="small muted latest-note">延迟为测速工具 Ping；{hasLoss ? '丢包率资料未提供时显示“未提供”' : '现有记录均未提供丢包率，故不单列'}。不同品牌的节点、时段与网络环境不同，不能直接横向比较。</p>
   </section>
 
   <GuidePicks />
@@ -180,8 +191,9 @@ const latestRows = getSpeedReports()
     margin-bottom: 10px;
   }
 
+  /* 测速时间并入首列第二行，表格在三栏布局的中栏里无需横向滚动即可看全 */
   .speed-mini {
-    min-width: 520px;
+    min-width: 0;
     font-size: 0.85rem;
   }
 
@@ -192,16 +204,25 @@ const latestRows = getSpeedReports()
     white-space: nowrap;
   }
 
-  .exit-cell {
-    max-width: 150px;
+  .row-time {
+    display: block;
+    font-size: 0.72rem;
+    color: var(--muted);
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* 出口运营商名称完整显示：较长的公司名折成两行，不再用省略号截断 */
+  .speed-mini td.exit-cell {
+    min-width: 124px;
+    max-width: 168px;
+    white-space: normal;
   }
 
   .exit-org {
     display: block;
-    max-width: 150px;
-    overflow: hidden;
-    text-overflow: ellipsis;
     font-size: 0.8rem;
+    line-height: 1.35;
+    overflow-wrap: anywhere;
   }
 
   .exit-asn {
@@ -209,6 +230,62 @@ const latestRows = getSpeedReports()
     font-size: 0.72rem;
     color: var(--muted);
     font-family: var(--font-mono);
+  }
+
+  /* 按卡片自身宽度切换：四列共需约 472px，放不下时把出口运营商改成每条记录下方的一行，
+     不再出现“最后一列被裁掉、要横向滚动才看得到”的情况 */
+  .latest-speed {
+    container-type: inline-size;
+  }
+
+  .speed-mini .exit-row {
+    display: none;
+  }
+
+  /* 最后一条记录后面还有一行隐藏的 exit-row：表格底边仍由外框负责，不重复画线 */
+  .speed-mini tbody tr.main-row:nth-last-child(2) td {
+    border-bottom: 0;
+  }
+
+  @container (max-width: 473px) {
+    .speed-mini .exit-head,
+    .speed-mini .exit-cell {
+      display: none;
+    }
+
+    .speed-mini .exit-row {
+      display: table-row;
+    }
+
+    .speed-mini th,
+    .speed-mini td {
+      padding-inline: 8px;
+    }
+
+    .speed-mini th:first-child {
+      white-space: normal;
+    }
+
+    .speed-mini .main-row td {
+      padding-bottom: 2px;
+      border-bottom: 0;
+    }
+
+    .speed-mini .exit-row td {
+      padding-top: 0;
+      font-size: 0.72rem;
+      color: var(--muted);
+      white-space: normal;
+      overflow-wrap: anywhere;
+    }
+
+    .exit-label {
+      margin-right: 6px;
+    }
+
+    .exit-label::after {
+      content: "：";
+    }
   }
 
   .latest-note {
@@ -275,8 +352,9 @@ const latestRows = getSpeedReports()
     left: 14px;
     padding: 3px 10px;
     border-radius: 999px;
-    background: rgba(255, 255, 255, 0.18);
-    border: 1px solid rgba(255, 255, 255, 0.35);
+    /* 深色半透明底，保证白字在浅色渐变起点上也有足够对比度 */
+    background: rgba(8, 20, 60, 0.42);
+    border: 1px solid rgba(255, 255, 255, 0.4);
     font-size: 0.75rem;
     font-weight: 600;
   }
@@ -363,23 +441,51 @@ const latestRows = getSpeedReports()
 
   .carousel-dots {
     display: flex;
-    gap: 8px;
+    align-items: center;
   }
 
+  /* 按钮本身 28×28 便于触控，圆点用伪元素绘制 */
   .dot {
-    width: 10px;
-    height: 10px;
+    position: relative;
+    width: 28px;
+    height: 28px;
     padding: 0;
-    border-radius: 50%;
     border: 0;
-    background: var(--primary-200);
+    border-radius: 50%;
+    background: transparent;
     cursor: pointer;
   }
 
-  .dot.active {
+  .dot::before {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 10px;
+    height: 10px;
+    border-radius: 999px;
+    /* 未选中的圆点与背景至少 3:1（原浅蓝约 1.6:1，几乎看不出还有几张） */
+    background: var(--primary-300);
+    background: color-mix(in srgb, var(--primary) 70%, var(--surface));
+    transform: translate(-50%, -50%);
+    transition: width 0.2s ease, background 0.2s ease;
+  }
+
+  .dot:hover::before {
     background: var(--primary);
+  }
+
+  .dot.active::before {
     width: 22px;
-    border-radius: 6px;
+    background: var(--primary);
+  }
+
+  /* 触屏上把圆点的可点区域放大到 36px */
+  @media (pointer: coarse) {
+    .dot {
+      width: 36px;
+      height: 36px;
+    }
   }
 
   .feature-small {

@@ -62,14 +62,11 @@ const recent = (await getPublishedArticles())
     padding-bottom: 0;
   }
 
+  /* 文章标题完整显示（小屏上原先限制两行，会截掉标题后半句） */
   .recent-list a {
     color: var(--text);
     font-size: 0.9rem;
     font-weight: 600;
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
   }
 
   .recent-list a:hover {

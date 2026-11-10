@@ -1,0 +1,32 @@
+---
+/**
+ * 标题文字排版：把不该被拆到两行的小片段包进不折行的 <span>，其余文字照常折行。
+ * 只增加标记，标题的文字内容（textContent）与原字符串完全一致，不影响 SEO。
+ *
+ * 目前处理四种片段（每段最多五六个字符，不会造成溢出）：
+ *   1. 分隔符「｜」和它前面的两个字 —— 避免「｜」落到行首；
+ *   2. 日期 2026-11-10 —— 避免在连字符处断开；
+ *   3. “中转 / 直连”里的斜杠与它前面的词 —— 避免斜杠落到行首；
+ *   4. 数字与紧跟的量词（“8 个”“66 档”“2026 年”）—— 避免数字和单位分家。
+ *
+ * 用法：<h1><TitleText text={title} /></h1>
+ */
+interface Props {
+  text: string;
+}
+
+const { text } = Astro.props;
+const GLUE = /(.{2}｜|\d{4}-\d{2}-\d{2}|\S{1,4} \/(?= )|\d+(?:\.\d+)? [一-鿿])/gu;
+
+const parts: { t: string; glue: boolean }[] = [];
+let last = 0;
+for (const m of text.matchAll(GLUE)) {
+  const i = m.index ?? 0;
+  if (i > last) parts.push({ t: text.slice(last, i), glue: false });
+  parts.push({ t: m[0], glue: true });
+  last = i + m[0].length;
+}
+if (last < text.length) parts.push({ t: text.slice(last), glue: false });
+---
+
+{parts.map((p) => (p.glue ? <span class="title-glue">{p.t}</span> : p.t))}

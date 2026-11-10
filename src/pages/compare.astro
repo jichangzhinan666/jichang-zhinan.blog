@@ -2,6 +2,7 @@
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import Breadcrumbs from '@/components/Breadcrumbs.astro';
 import Icon from '@/components/Icon.astro';
+import TitleText from '@/components/TitleText.astro';
 import FavButton from '@/components/FavButton.astro';
 import ReadTracker from '@/components/ReadTracker.astro';
 import { STATIC_PAGES } from '@/lib/site';
@@ -58,7 +59,7 @@ const jsonLd = [webPageLd(title, '/compare/', description, lastmod), breadcrumbL
   <div class="container">
     <Breadcrumbs crumbs={crumbs} />
     <header class="page-hero">
-      <h1>{title}</h1>
+      <h1><TitleText text={title} /></h1>
       <p class="lead">
         汇总 {stats.brands} 个机场品牌、{stats.tiers} 档套餐资料，全面对比机场月付价格、套餐流量、每 GB 单价及不同付款周期。支持按预算、流量与套餐类型筛选，帮助读者更直观地比较各品牌的套餐成本与适用场景。
       </p>
@@ -225,7 +226,7 @@ const jsonLd = [webPageLd(title, '/compare/', description, lastmod), breadcrumbL
                   <td class="num">{formatPrice(y)}</td>
                   <td class="num">{formatPrice(m)}</td>
                   <td class="num">{t.trafficGB ? formatPerGB(round3(m / t.trafficGB)) : '—'}</td>
-                  <td class="small">{t.trafficNote}</td>
+                  <td class="small col-text">{t.trafficNote}</td>
                   <td class="nowrap">{t.couponEligible === true ? '适用' : t.couponEligible === false ? '不适用' : '未说明'}</td>
                   <td class="nowrap small">{t.verifiedAt ?? '未提供'}</td>
                 </tr>
@@ -256,7 +257,7 @@ const jsonLd = [webPageLd(title, '/compare/', description, lastmod), breadcrumbL
                     <td class="num">{formatPrice(p)}</td>
                     <td class="num">{t.trafficGB ? formatPerGB(round3(p / t.trafficGB)) : '—'}</td>
                     <td class="nowrap">{deviceLabel(t.deviceLimit)}</td>
-                    <td class="small">{[t.trafficNote, ...t.features, t.note].filter(Boolean).join('；')}</td>
+                    <td class="small col-text">{[t.trafficNote, ...t.features, t.note].filter(Boolean).join('；')}</td>
                     <td class="nowrap small">{t.verifiedAt ?? '未提供'}</td>
                   </tr>
                 );
@@ -281,7 +282,7 @@ const jsonLd = [webPageLd(title, '/compare/', description, lastmod), breadcrumbL
                   <td><strong>{t.planName}</strong></td>
                   <td class="num">{formatTraffic(t.trafficGB)}</td>
                   <td class="num">{t.prices.monthly !== undefined ? formatPrice(t.prices.monthly) : '—'}</td>
-                  <td class="small">{[...t.features, t.note].filter(Boolean).join('；')}</td>
+                  <td class="small col-text">{[...t.features, t.note].filter(Boolean).join('；')}</td>
                   <td class="nowrap small">{t.verifiedAt ?? '未提供'}</td>
                 </tr>
               );
@@ -452,8 +453,8 @@ const jsonLd = [webPageLd(title, '/compare/', description, lastmod), breadcrumbL
   }
 
   .chip input:checked + span {
-    background: var(--primary);
-    border-color: var(--primary);
+    background: var(--primary-solid);
+    border-color: var(--primary-solid);
     color: #fff;
   }
 

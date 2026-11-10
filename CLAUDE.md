@@ -15,8 +15,12 @@ npm run validate:data  # 校验 brands/plans/speed-tests/sources/evidence-map �
 npm run build          # prebuild(校验+资产) → astro build → postbuild(IndexNow key 文件 + SEO 审计)
 npm run preview        # 预览 dist
 npm run seo:audit      # 单独运行 SEO 审计（需先 build），输出 seo-audit-report.json
+npm run ui:audit       # 全站 UI 审计（需先 build）：本机 Chrome 在 7 个视口渲染全部页面，输出 ui-audit-report.json
+npm run ui:test        # 交互实测（需先 build）：真实鼠标 / 键盘操作 69 项用例，有失败时以非 0 退出
 npm run indexnow:dry   # IndexNow 干运行（从 dist/sitemap.xml 读取 URL，不发送）
 ```
+
+`ui:audit` / `ui:test` 依赖本机已安装的 Chrome 或 Edge（可用 `CHROME_PATH` 指定），不联网、不改文件；**没有挂到 `build` 上**（Cloudflare Pages 构建环境没有浏览器）。改动样式、组件或交互脚本后请手动跑这两条。常用参数：`--vp 375,1440`、`--pages /,/compare/`、`--theme dark`、`--shots <目录>`、`--only <分组关键词>`。
 
 构建会在以下情况失败：数据校验报错、文章 frontmatter 不合法、SEO 审计发现错误（死链、缺 canonical、多个 H1、未来日期、演示占位数据、sitemap 与页面不一致等）。请修复后再构建，不要绕过。
 
@@ -39,7 +43,8 @@ npm run indexnow:dry   # IndexNow 干运行（从 dist/sitemap.xml 读取 URL，
 | `src/lib/seo.ts` | JSON-LD 构造（WebSite/Organization/Breadcrumb/Article/ItemList/FAQ） |
 | `src/pages/sitemap.xml.ts` | 自定义 Sitemap（只含可索引页，lastmod 为真实内容日期） |
 | `src/pages/search-index.json.ts` | 站内搜索索引 |
-| `scripts/` | validate-data / generate-brand-assets / seo-audit / indexnow / write-indexnow-key |
+| `scripts/` | validate-data / generate-brand-assets / seo-audit / indexnow / write-indexnow-key；`ui-audit.mjs`（布局与可访问性扫描）、`ui-interactions.mjs`（交互实测）、`lib/cdp.mjs`（零依赖驱动本机 Chrome） |
+| `UI_AUDIT_REPORT.md` / `docs/ui-audit/` | 2026-11-11 全站 UI 审计报告与修复前后对比图 |
 | `public/robots.txt` `_headers` `_redirects` | 爬虫、响应头与重定向规则（Cloudflare Pages） |
 
 ## 3. 内容硬性约束（不得违反）
@@ -78,3 +83,16 @@ npm run indexnow:dry   # IndexNow 干运行（从 dist/sitemap.xml 读取 URL，
 3. 证据图加入 `scripts/generate-brand-assets.mjs` 的映射表，运行脚本生成 webp。
 4. 更新 `changelog.json` 与相关页面的 `STATIC_PAGES.lastmod`。
 5. `npm run build` 通过后再提交。
+
+## 7. UI 约定（2026-11-11 全站审计后确立，详见 `UI_AUDIT_REPORT.md`）
+
+- **用 `hidden` 属性隐藏元素是可靠的**：`global.css` 里有 `[hidden] { display: none !important }`。不要删这条——组件里的 `display: flex / grid` 会覆盖浏览器默认的 `[hidden]`，此前三处筛选因此“只改计数、卡片不消失”。
+- **给子组件传 `class` 并在父组件 `<style>` 里写它的规则时**，子组件必须把多余属性（`data-astro-cid-*`）转发到根元素（`Icon.astro` 已转发）；否则规则不生效，需改用 `:global()`。
+- **按容器宽度而不是视口宽度做响应式**：同一组件会出现在窄栏和整行里。`RankList`、`SpeedBars`、`ReportCard`、`PlanTable`、`ContactChannels`、首页测速小表都用 `container-type: inline-size` + `@container`。
+- **窄屏表格**：名称列不折行、数值列不折行、长说明给最小宽度（`.col-keep` / `.col-text`），放不下由 `.table-wrap` 横向滚动；说明文字很长的表（套餐表、首页测速小表）在窄容器里改为“每条记录下方一整行”，不要把文字挤成每行一两个字。
+- **网格列一律写 `minmax(0, 1fr)`**，不要写裸 `1fr`（不可折行的内容会把整页撑出横向滚动）。
+- **并排等高卡片**用子网格对齐内部各段（榜单卡片、品牌资料卡片），不要靠 `margin-top: auto` 把按钮压到底而在中间留空。
+- **含「｜」、日期或“数字 + 量词”的大标题**用 `<TitleText text={…} />` 渲染（只加不折行的 `<span>`，文字内容不变）；≥768px 的 H1 只在标点和空格处折行。
+- **颜色**：实底蓝色按钮 / 选中态用 `--primary-solid`，浅底上的蓝色小字用 `--primary-strong-text`，弱化文字需要 AA 对比度时用 `--muted-strong`；按钮高度固定为 44px（`.btn`）与 36px（`.btn-sm`）。
+- **触屏点击区域**：独立成行的文字链接在 `@media (pointer: coarse)` 里补上下内边距（`global.css` 末尾的清单），新增此类链接时把选择器加进去。
+- 不存在的功能不要为了“完整”而添加：站内目前没有返回顶部、分享、复制链接按钮，也没有评论区。

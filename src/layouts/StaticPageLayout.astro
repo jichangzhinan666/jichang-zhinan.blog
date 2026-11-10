@@ -24,7 +24,7 @@ const jsonLd = [webPageLd(seoTitle ?? title, path, description, lastmod), breadc
 ---
 
 <BaseLayout title={seoTitle ?? title} description={description} canonicalPath={path} jsonLd={jsonLd} modifiedTime={lastmod}>
-  <div class="container">
+  <div class="container container-prose">
     <Breadcrumbs crumbs={crumbs} />
     <header class="page-hero">
       <h1>{title}</h1>
@@ -40,9 +40,14 @@ const jsonLd = [webPageLd(seoTitle ?? title, path, description, lastmod), breadc
 </BaseLayout>
 
 <style>
+  /* 说明类页面用居中的阅读宽度容器（.container-prose），正文卡片占满容器，
+     不再靠左留出右侧大片空白 */
   .static-card {
     padding: 28px 32px;
-    max-width: 920px;
+  }
+
+  .static-card .prose {
+    max-width: none;
   }
 
   .page-hero .small {

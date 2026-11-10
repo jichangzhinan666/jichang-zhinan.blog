@@ -19,6 +19,10 @@ npm-debug.log*
 # 每次构建生成的审计结果（内容见 IMPLEMENTATION_REPORT.md）
 seo-audit-report.json
 
+# UI 审计与交互实测的输出（npm run ui:audit / ui:test；结论见 UI_AUDIT_REPORT.md）
+ui-audit-report.json
+ui-interactions-report.json
+
 # 系统文件
 .DS_Store
 Thumbs.db

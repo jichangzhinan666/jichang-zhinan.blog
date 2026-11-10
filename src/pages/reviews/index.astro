@@ -4,6 +4,7 @@ import Breadcrumbs from '@/components/Breadcrumbs.astro';
 import BrandMark from '@/components/BrandMark.astro';
 import EvidenceBadge from '@/components/EvidenceBadge.astro';
 import Icon from '@/components/Icon.astro';
+import TitleText from '@/components/TitleText.astro';
 import { computeRanking, getEntryPlan, formatPrice, formatTraffic, formatPerGB, getStats, getReportsForBrand, testedDateOnly } from '@/lib/data';
 import { breadcrumbLd, collectionPageLd, itemListLd } from '@/lib/seo';
 import type { Brand } from '@/lib/types';
@@ -88,7 +89,7 @@ const jsonLd = [
   <div class="container">
     <Breadcrumbs crumbs={crumbs} />
     <header class="page-hero">
-      <h1>{title}</h1>
+      <h1><TitleText text={title} /></h1>
       <p class="lead">
         收录 {stats.brands} 个机场品牌、{stats.tiers} 档套餐资料，系统整理各品牌的线路类型、节点覆盖、客户端支持、套餐信息、使用限制及测速证据。每个品牌均设有独立资料页面，方便读者查询产品特点、核实资料来源，并根据实际需求选择合适的机场服务。
       </p>
@@ -228,13 +229,15 @@ const jsonLd = [
                 </div>
               </dl>
               <div class="bi-foot">
-                <EvidenceBadge brand={b} />
-                {b.coupon && (
-                  <span class="badge badge-medium">
-                    优惠码 {b.coupon.code}
-                    {b.coupon.discount ? ` · ${b.coupon.discount}` : ''}
-                  </span>
-                )}
+                <div class="bi-tags">
+                  <EvidenceBadge brand={b} />
+                  {b.coupon && (
+                    <span class="badge badge-medium">
+                      优惠码 {b.coupon.code}
+                      {b.coupon.discount ? ` · ${b.coupon.discount}` : ''}
+                    </span>
+                  )}
+                </div>
                 <a class="btn btn-secondary btn-sm bi-cta" href={`/reviews/${b.slug}/`}>
                   查看资料与测评
                   <Icon name="arrow-right" size={14} />
@@ -320,8 +323,8 @@ const jsonLd = [
   }
 
   .chip input:checked + span {
-    background: var(--primary);
-    border-color: var(--primary);
+    background: var(--primary-solid);
+    border-color: var(--primary-solid);
     color: #fff;
   }
 
@@ -377,6 +380,16 @@ const jsonLd = [
     display: flex;
     gap: 14px;
     align-items: flex-start;
+  }
+
+  /* 名称区可收缩，320px 屏幕上名次徽标不会被挤出卡片 */
+  .bi-head > div {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .bi-rank {
+    flex: none;
   }
 
   .bi-name {
@@ -480,27 +493,68 @@ const jsonLd = [
     overflow-wrap: anywhere;
   }
 
+  /* 卡片底部统一为“左：证据与优惠码标签（可折行）｜右：按钮”，
+     各卡片底部高度接近，等高排列时中间不再空出一大截 */
   .bi-foot {
     display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    gap: 8px 12px;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 10px 12px;
     margin-top: auto;
   }
 
+  .bi-tags {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+    min-width: 0;
+  }
+
+  /* 优惠码说明可能很长：允许折行，320px 手机上不再把卡片撑出 20px */
+  .bi-tags :global(.badge) {
+    min-width: 0;
+    white-space: normal;
+    border-radius: 12px;
+  }
+
   .bi-cta {
+    flex: none;
     margin-left: auto;
+  }
+
+  /* 两列并排时用子网格对齐：同一行两张卡片的“标题 / 参数 / 验证状态 / 底部”四段各自等高，
+     较短的一张不会在中间空出一截；不支持子网格的浏览器仍按纵向排列 */
+  @supports (grid-template-rows: subgrid) {
+    @media (min-width: 1024px) {
+      .brand-item {
+        display: grid;
+        grid-template-rows: subgrid;
+        grid-row: span 4;
+        align-content: start;
+      }
+
+      .bi-foot {
+        margin-top: 0;
+        align-self: end;
+      }
+    }
   }
 
   @media (max-width: 1023px) {
     .brand-list {
-      grid-template-columns: 1fr;
+      grid-template-columns: minmax(0, 1fr);
     }
   }
 
   @media (max-width: 479px) {
     .bi-verify {
-      grid-template-columns: 1fr;
+      grid-template-columns: minmax(0, 1fr);
+    }
+
+    .bi-foot {
+      flex-direction: column;
+      align-items: stretch;
     }
 
     .bi-cta {

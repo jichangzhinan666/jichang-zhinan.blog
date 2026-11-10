@@ -4,6 +4,7 @@ import Breadcrumbs from '@/components/Breadcrumbs.astro';
 import RankCards from '@/components/RankCards.astro';
 import FAQ from '@/components/FAQ.astro';
 import Icon from '@/components/Icon.astro';
+import TitleText from '@/components/TitleText.astro';
 import { SITE, STATIC_PAGES } from '@/lib/site';
 import { computeRanking, getEntryPlan, getTopPlan, formatPrice, formatTraffic, formatPerGB, getStats } from '@/lib/data';
 import { articleLd, breadcrumbLd, faqLd, itemListLd } from '@/lib/seo';
@@ -74,7 +75,7 @@ const jsonLd = [
   <div class="container">
     <Breadcrumbs crumbs={crumbs} />
     <header class="page-hero rank-hero">
-      <h1>2026 机场推荐排行榜｜套餐价格、线路与真实测速指南</h1>
+      <h1><TitleText text={title} /></h1>
       <p class="lead">
         {stats.brands} 个品牌、{stats.tiers} 档套餐的可筛选对比：最低月付、入门流量、覆盖地区、线路类型与实测证据一目了然。资料核实 2026-11-09 / 2026-11-10，页面更新 {lastmod}。
       </p>
@@ -239,10 +240,11 @@ const jsonLd = [
     padding: 10px 14px;
   }
 
+  /* 线路说明完整显示并允许折行（原先固定 220px 加省略号，多数品牌的线路被截掉后半段） */
   .quick-table td.qt-line {
-    max-width: 220px;
-    overflow: hidden;
-    text-overflow: ellipsis;
+    min-width: 13em;
+    max-width: 22em;
+    white-space: normal;
   }
 
   .rank-meta {
@@ -301,9 +303,14 @@ const jsonLd = [
     font-size: 0.925rem;
   }
 
+  /* 场景条目为单数时，最后一条占满整行，不在右侧留一个空格子 */
+  .scenario:last-child:nth-child(odd) {
+    grid-column: 1 / -1;
+  }
+
   @media (max-width: 767px) {
     .scenario-grid {
-      grid-template-columns: 1fr;
+      grid-template-columns: minmax(0, 1fr);
     }
   }
 </style>

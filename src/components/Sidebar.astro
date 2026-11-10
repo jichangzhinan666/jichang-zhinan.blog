@@ -147,7 +147,6 @@ const tools = [
     </div>
     <p class="ios-links small">
       <a href="https://support.apple.com/zh-cn/108647" target="_blank" rel="noopener noreferrer">Apple 官方账户注册教程</a>
-      <span aria-hidden="true">·</span>
       <a href="/tutorials/ios-shiyong-jiaocheng/">本站 iOS 使用教程</a>
     </p>
     <p class="side-note ios-note">
@@ -234,19 +233,18 @@ const tools = [
     width: 22px;
     height: 22px;
     border-radius: 50%;
-    background: var(--primary);
+    background: var(--primary-solid);
     color: #fff;
     font-size: 0.75rem;
     font-weight: 700;
     flex: none;
   }
 
+  /* 文章标题完整显示，不截断 */
   .qs-title {
     flex: 1;
-    display: -webkit-box;
-    -webkit-line-clamp: 1;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
+    min-width: 0;
+    line-height: 1.45;
   }
 
   .qs-chevron {
@@ -299,13 +297,18 @@ const tools = [
     color: var(--muted);
   }
 
+  /* “规划中”用虚线边框与灰色图标区分，不再整体降低透明度（否则文字对比度不足） */
   .tool.planned a {
-    opacity: 0.75;
     border-style: dashed;
+    background: transparent;
   }
 
   .tool.planned .tool-icon {
     color: var(--muted);
+  }
+
+  .tool.planned .tool-label {
+    color: var(--text-2);
   }
 
   .side-note {
@@ -372,7 +375,7 @@ const tools = [
     padding: 2px 8px;
     border-radius: 999px;
     background: var(--primary-100);
-    color: var(--primary-700, var(--primary));
+    color: var(--primary-strong-text);
     font-size: 0.72rem;
     font-weight: 600;
   }
@@ -430,11 +433,12 @@ const tools = [
     box-shadow: 0 6px 14px rgba(37, 99, 235, 0.2);
   }
 
+  /* 两个链接用间距分隔；窄栏里折成两行时不会在第一行末尾悬着一个分隔点 */
   .ios-links {
     margin: 8px 0 0;
     display: flex;
     flex-wrap: wrap;
-    gap: 6px;
+    gap: 2px 16px;
     color: var(--muted);
   }
 

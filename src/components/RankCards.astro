@@ -168,7 +168,8 @@ const cards = ranking.map((r) => {
   </ol>
   <p class="empty" id="rank-empty" hidden>没有符合全部条件的品牌，请放宽筛选。</p>
   <p class="small muted rc-note">
-    <Icon name="info" size={14} /> 名次为站长编辑推荐，不是测速排名或算法评分；价格为资料中的名义价格，以结算页为准。品牌入口为推广链接，购买可能为本站带来佣金，详见<a href="/disclosure/">推广关系披露</a>。
+    <Icon name="info" size={14} />
+    <span>名次为站长编辑推荐，不是测速排名或算法评分；价格为资料中的名义价格，以结算页为准。品牌入口为推广链接，购买可能为本站带来佣金，详见<a href="/disclosure/">推广关系披露</a>。</span>
   </p>
 </section>
 
@@ -223,7 +224,6 @@ const cards = ranking.map((r) => {
     display: flex;
     flex-direction: column;
     gap: 12px;
-    padding: 18px;
   }
 
   .rc-top {
@@ -245,9 +245,10 @@ const cards = ranking.map((r) => {
     flex: none;
   }
 
-  .rank-1 { background: linear-gradient(135deg, #fbbf24, #f59e0b); color: #fff; }
-  .rank-2 { background: linear-gradient(135deg, #cbd5e1, #94a3b8); color: #fff; }
-  .rank-3 { background: linear-gradient(135deg, #fdba74, #ea580c); color: #fff; }
+  /* 金 / 银 / 铜底色上改用深色数字（原白字对比度仅 1.5–1.7:1） */
+  .rank-1 { background: linear-gradient(135deg, #fcd34d, #f59e0b); color: #422006; }
+  .rank-2 { background: linear-gradient(135deg, #e2e8f0, #94a3b8); color: #0f172a; }
+  .rank-3 { background: linear-gradient(135deg, #fdba74, #f97316); color: #431407; }
 
   .rc-title h3 {
     margin: 0;
@@ -305,13 +306,6 @@ const cards = ranking.map((r) => {
     margin-right: 4px;
   }
 
-  .rc-client {
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-  }
-
   .rc-evidence {
     display: flex;
     flex-wrap: wrap;
@@ -338,15 +332,33 @@ const cards = ranking.map((r) => {
     margin: 14px 0 0;
   }
 
+  /* 两列并排时用子网格对齐：同一行两张卡片的“标题 / 定位语 / 参数框 / 证据 / 按钮”
+     五段各自等高，较短的一张不会在按钮上方空出一截；不支持子网格的浏览器仍按上面的纵向排列 */
+  @supports (grid-template-rows: subgrid) {
+    @media (min-width: 1024px) {
+      .rc-card {
+        display: grid;
+        grid-template-rows: subgrid;
+        grid-row: span 5;
+        align-content: start;
+      }
+
+      .rc-actions {
+        margin-top: 0;
+        align-self: end;
+      }
+    }
+  }
+
   @media (max-width: 1023px) {
     .rc-grid {
-      grid-template-columns: 1fr;
+      grid-template-columns: minmax(0, 1fr);
     }
   }
 
   @media (max-width: 639px) {
     .rc-facts {
-      grid-template-columns: 1fr;
+      grid-template-columns: minmax(0, 1fr);
     }
 
     .rcf-row label,

@@ -16,7 +16,6 @@ import { SITE, CATEGORY_META } from '@/lib/site';
 import { getPublishedArticles } from '@/lib/articles';
 import {
   computeRanking,
-  getBrands,
   getEntryPlan,
   getSpeedReports,
   getBrand,
@@ -38,7 +37,8 @@ for (const key of Object.keys(CATEGORY_META) as (keyof typeof CATEGORY_META)[]) 
   }
 }
 const ranking = computeRanking();
-const brands = getBrands();
+// 品牌资料库网格与全站其他列表保持同一顺序：站长编辑推荐顺序
+const brands = ranking.map((r) => r.brand);
 const stats = getStats();
 
 // 测速概览：只取有 Mbps 数值的记录（站长实测 + 文字记录）
@@ -222,7 +222,7 @@ const homeTitle = `${SITE.name}｜${SITE.tagline}`;
         <a class="section-link" href="/speed-tests/">全部测速报告 →</a>
       </div>
       <div class="speed-grid">
-        <div>
+        <div class="speed-chart">
           <SpeedBars
             bars={ownerBars}
             unit="Mbps"
@@ -236,7 +236,7 @@ const homeTitle = `${SITE.name}｜${SITE.tagline}`;
             <thead>
               <tr>
                 <th>品牌 / 节点</th>
-                <th>测试时间</th>
+                <th class="col-time">测试时间</th>
                 <th class="num">下载</th>
                 <th class="num">上传</th>
                 <th class="num">延迟</th>
@@ -252,8 +252,10 @@ const homeTitle = `${SITE.name}｜${SITE.tagline}`;
                       <a href={`/speed-tests/${report.slug}/`}>
                         {brand.displayName} · {report.ownerReport?.testedNode?.split('（')[0] ?? rr.region}
                       </a>
+                      {/* 手机上“测试时间”一列隐藏，时间改为显示在名称下方（同一数据，只显示其一） */}
+                      <span class="row-time">{formatTestedAt(report).replace('（北京时间）', '')}</span>
                     </td>
-                    <td class="nowrap">{formatTestedAt(report).replace('（北京时间）', '')}</td>
+                    <td class="nowrap col-time">{formatTestedAt(report).replace('（北京时间）', '')}</td>
                     <td class="num">{rr.downloadMbps} Mbps</td>
                     <td class="num">{rr.uploadMbps !== null ? `${rr.uploadMbps} Mbps` : '—'}</td>
                     <td class="num">{report.ownerReport ? `${report.ownerReport.speed.pingMs} ms` : typeof rr.latencyMs === 'number' ? `${rr.latencyMs} ms` : '—'}</td>
@@ -321,8 +323,8 @@ const homeTitle = `${SITE.name}｜${SITE.tagline}`;
   }
 
   .tab.active {
-    background: var(--primary);
-    border-color: var(--primary);
+    background: var(--primary-solid);
+    border-color: var(--primary-solid);
     color: #fff;
   }
 
@@ -378,13 +380,16 @@ const homeTitle = `${SITE.name}｜${SITE.tagline}`;
     font-size: 1rem;
   }
 
+  /* 品牌定位语完整显示，不再截断 */
   .brand-card-body small {
     font-size: 0.8rem;
     color: var(--muted);
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
+  }
+
+  /* 证据标签按内容宽度显示并贴在卡片底部，各卡片对齐 */
+  .brand-card-body :global(.badge) {
+    align-self: flex-start;
+    margin-top: auto;
   }
 
   .brand-card-meta {
@@ -407,11 +412,15 @@ const homeTitle = `${SITE.name}｜${SITE.tagline}`;
     padding: 9px 12px;
   }
 
+  /* 图表在上、明细表在下：七列表格需要整行宽度，并排时最后一列会被挤出卡片 */
   .speed-grid {
     display: grid;
-    grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr);
+    grid-template-columns: minmax(0, 1fr);
     gap: 20px;
-    align-items: start;
+  }
+
+  .speed-chart {
+    max-width: 960px;
   }
 
   @media (max-width: 1199px) {
@@ -426,23 +435,54 @@ const homeTitle = `${SITE.name}｜${SITE.tagline}`;
     .brand-grid {
       grid-template-columns: repeat(2, minmax(0, 1fr));
     }
+  }
 
-    .speed-grid {
-      grid-template-columns: 1fr;
+  /* 1200–1319px：右栏只有约 290px 时内容被拉得很长（比中栏高出 250px 以上），
+     把右栏放宽、中栏收窄，三栏底部基本对齐（实测 1280px 下高度差由 250px 降到约 70px） */
+  @media (min-width: 1200px) and (max-width: 1319px) {
+    .home-main {
+      grid-template-columns: minmax(0, 34fr) minmax(0, 36fr) minmax(0, 30fr);
     }
   }
 
-  @media (max-width: 767px) {
+  /* 平板竖屏（768–899px）两栏各只有约 350px：榜单文字被挤成窄列、测速表被裁掉一列，
+     且左栏比右栏高出近 800px，所以这一段也改为单栏 */
+  @media (max-width: 899px) {
     .home-main {
-      grid-template-columns: 1fr;
+      grid-template-columns: minmax(0, 1fr);
     }
 
     .col-side {
       grid-column: auto;
     }
+  }
 
+  @media (max-width: 767px) {
     .brand-grid {
-      grid-template-columns: 1fr;
+      grid-template-columns: minmax(0, 1fr);
+    }
+  }
+
+  /* 测速概览表：手机上把测试时间并到名称下方，首屏就能看到下载速度（原先时间一列把数值全部挤出屏幕） */
+  .speed-overview .row-time {
+    display: none;
+  }
+
+  @media (max-width: 639px) {
+    .speed-overview .col-time {
+      display: none;
+    }
+
+    .speed-overview .row-time {
+      display: block;
+      font-size: 0.72rem;
+      color: var(--muted);
+      white-space: nowrap;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .speed-overview td:first-child {
+      white-space: nowrap;
     }
   }
 </style>

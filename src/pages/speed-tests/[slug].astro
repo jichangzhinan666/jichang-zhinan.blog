@@ -4,6 +4,7 @@ import BaseLayout from '@/layouts/BaseLayout.astro';
 import Breadcrumbs from '@/components/Breadcrumbs.astro';
 import BrandMark from '@/components/BrandMark.astro';
 import Icon from '@/components/Icon.astro';
+import TitleText from '@/components/TitleText.astro';
 import { getSpeedReports, getSpeedReport, getBrand, formatTestedAt, getReportsForBrand } from '@/lib/data';
 import { resolveEvidenceImage } from '@/lib/evidence';
 import { articleLd, breadcrumbLd } from '@/lib/seo';
@@ -73,7 +74,7 @@ const regionLabelCol = (rr: RegionResult) => rr.latencyLabel ?? '延迟';
         <BrandMark brand={brand} size={40} />
         <a href={`/reviews/${brand.slug}/`}>{brand.displayName} 品牌资料页</a>
       </div>
-      <h1>{report.title}</h1>
+      <h1><TitleText text={report.title} /></h1>
       <p class="lead">{report.summary}</p>
       <dl class="rp-meta">
         <div><dt>证据状态</dt><dd>{statusLabel[report.verificationStatus]}</dd></div>
@@ -164,9 +165,9 @@ const regionLabelCol = (rr: RegionResult) => rr.latencyLabel ?? '延迟';
               <tbody>
                 {report.regionResults.map((rr) => (
                   <tr>
-                    <td><strong>{rr.region}</strong></td>
+                    <td class="col-keep"><strong>{rr.region}</strong></td>
                     <td class="num">{rr.nodeCount ?? '—'}</td>
-                    {own && <td>{rr.fastestNode ?? '—'}</td>}
+                    {own && <td class="col-keep">{rr.fastestNode ?? '—'}</td>}
                     <td class="num">{fmtLatency(rr.latencyMs)}</td>
                     {report.regionResults.some((r) => r.httpsLatencyMs) && <td class="num">{fmtRange(rr.httpsLatencyMs, 'ms')}</td>}
                     {hasSpeedMbps && <td class="num">{rr.downloadMbps !== null ? `${rr.downloadMbps} Mbps` : '—'}</td>}
@@ -174,7 +175,7 @@ const regionLabelCol = (rr: RegionResult) => rr.latencyLabel ?? '延迟';
                     {report.regionResults.some((r) => r.jitterMs !== null) && <td class="num">{rr.jitterMs !== null ? `${rr.jitterMs} ms` : '—'}</td>}
                     {report.regionResults.some((r) => r.avgSpeedMBps) && <td class="num">{fmtRange(rr.avgSpeedMBps, 'MB/s', approx)}</td>}
                     {report.regionResults.some((r) => r.maxSpeedMBps) && <td class="num">{fmtRange(rr.maxSpeedMBps, 'MB/s', approx)}</td>}
-                    <td class="small">
+                    <td class={`small ${rr.failedNodes.length > 0 || rr.notes.length > 0 ? 'col-text' : ''}`}>
                       {rr.status && <span class={`badge ${/超时|失败/.test(rr.status) ? 'badge-weak' : 'badge-strong'}`}>{rr.status}</span>}
                       {rr.failedNodes.length > 0 && <div>失败：{rr.failedNodes.join('；')}</div>}
                       {rr.notes.map((n) => <div class="muted">{n}</div>)}
@@ -297,7 +298,15 @@ const regionLabelCol = (rr: RegionResult) => rr.latencyLabel ?? '延迟';
               <figure class="evidence">
                 {img ? (
                   <a href={img.src} target="_blank" rel="noopener">
-                    <Image src={img} alt={`${f.caption}`} widths={[640, 960, 1280]} sizes="(max-width: 960px) 100vw, 920px" loading="lazy" decoding="async" />
+                    <Image
+                      src={img}
+                      alt={`${f.caption}`}
+                      widths={[640, 960, 1280, 1600]}
+                      sizes="(max-width: 1023px) 100vw, 1310px"
+                      loading="lazy"
+                      decoding="async"
+                      style={`max-width:min(100%, ${img.width}px)`}
+                    />
                   </a>
                 ) : (
                   <div class="empty small">{f.kind === 'text-record' ? '该记录为文字记录，无截图。' : '图片文件未纳入构建（请确认 source-materials 中存在该文件并重新运行构建）。'}</div>
@@ -328,7 +337,7 @@ const regionLabelCol = (rr: RegionResult) => rr.latencyLabel ?? '延迟';
       others.length > 0 && (
         <section class="card section">
           <h2 class="section-title"><Icon name="list" size={20} />{brand.displayName}的其他记录</h2>
-          <ul>
+          <ul class="report-links">
             {others.map((o) => (
               <li>
                 <a href={`/speed-tests/${o.slug}/`}>{o.title}</a> <span class="small muted">· {formatTestedAt(o)}</span>
@@ -533,7 +542,13 @@ const regionLabelCol = (rr: RegionResult) => rr.latencyLabel ?? '延迟';
     background: var(--surface-2);
   }
 
+  .conn-group li span:first-child {
+    min-width: 0;
+  }
+
   .conn-ms {
+    flex: none;
+    white-space: nowrap;
     font-variant-numeric: tabular-nums;
     color: var(--primary);
     font-weight: 600;
@@ -545,9 +560,16 @@ const regionLabelCol = (rr: RegionResult) => rr.latencyLabel ?? '延迟';
     gap: 20px;
   }
 
+  .evidence {
+    margin: 0;
+  }
+
+  /* 图片最多显示到原始像素宽度（内联 max-width），不再被拉伸放大而发虚 */
   .evidence img {
+    display: block;
     width: 100%;
     height: auto;
+    margin-inline: auto;
     border-radius: var(--radius);
     border: 1px solid var(--border);
   }
@@ -587,7 +609,7 @@ const regionLabelCol = (rr: RegionResult) => rr.latencyLabel ?? '延迟';
     .facts,
     .conn-groups,
     .rp-meta {
-      grid-template-columns: 1fr 1fr;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
     }
 
     .node-bars {

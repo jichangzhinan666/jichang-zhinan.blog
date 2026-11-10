@@ -42,7 +42,7 @@ const jsonLd = [webPageLd(title, '/author/', description, lastmod), breadcrumbLd
 ---
 
 <BaseLayout title={title} titleSuffix={false} description={description} canonicalPath="/author/" jsonLd={jsonLd} modifiedTime={lastmod}>
-  <div class="container author">
+  <div class="container container-prose author">
     <Breadcrumbs crumbs={crumbs} />
 
     <header class="author-hero card">
@@ -77,7 +77,7 @@ const jsonLd = [webPageLd(title, '/author/', description, lastmod), breadcrumbLd
         </ul>
       </section>
 
-      <section class="card section author-span" id="articles" aria-labelledby="articles-title">
+      <section class="card section" id="articles" aria-labelledby="articles-title">
         <div class="section-head">
           <h2 class="section-title" id="articles-title"><Icon name="file" size={20} />代表文章</h2>
           <a class="section-link" href="/news/">全部更新 →</a>
@@ -85,7 +85,7 @@ const jsonLd = [webPageLd(title, '/author/', description, lastmod), breadcrumbLd
         {picks.length ? <div class="author-articles">{picks.map((a) => <ArticleCard article={a} layout="tile" />)}</div> : <p class="empty">暂无文章</p>}
       </section>
 
-      <section class="card section author-span" id="contact" aria-labelledby="contact-title">
+      <section class="card section" id="contact" aria-labelledby="contact-title">
         <h2 class="section-title" id="contact-title"><Icon name="mail" size={20} />联系与纠错</h2>
         <p class="small">欢迎提供建议、最新资料与文章纠错信息。邮箱可一键发送或复制地址；Facebook 与 Telegram 在新标签页打开。提交纠错时请附页面地址、具体字段与可核对的来源，流程见<a href="/contact/">联系与纠错</a>页。</p>
         <ContactChannels />
@@ -157,23 +157,22 @@ const jsonLd = [webPageLd(title, '/author/', description, lastmod), breadcrumbLd
     border-radius: 999px;
     border: 1px solid var(--primary-100);
     background: var(--surface);
-    color: var(--primary-700, var(--primary));
+    color: var(--primary-strong-text);
     font-size: 0.8rem;
     font-weight: 600;
   }
 
+  /* 资料页用阅读宽度的单列：各区块上下排列，不再出现“左长右短”留下的大块空白 */
   .author-grid {
     display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-columns: minmax(0, 1fr);
     gap: 16px;
+    margin-top: 16px;
   }
 
   .author-grid .section {
     margin: 0;
-  }
-
-  .author-span {
-    grid-column: 1 / -1;
+    min-width: 0;
   }
 
   .author-bio p {
@@ -185,9 +184,9 @@ const jsonLd = [webPageLd(title, '/author/', description, lastmod), breadcrumbLd
     list-style: none;
     margin: 0;
     padding: 0;
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px 24px;
     font-size: 0.925rem;
   }
 
@@ -216,9 +215,9 @@ const jsonLd = [webPageLd(title, '/author/', description, lastmod), breadcrumbLd
   }
 
   @media (max-width: 767px) {
-    .author-grid,
+    .author-work,
     .author-articles {
-      grid-template-columns: 1fr;
+      grid-template-columns: minmax(0, 1fr);
     }
 
     .author-hero {

@@ -17,6 +17,8 @@
     "postbuild": "node scripts/write-indexnow-key.mjs && node scripts/seo-audit.mjs",
     "preview": "astro preview",
     "seo:audit": "node scripts/seo-audit.mjs",
+    "ui:audit": "node scripts/ui-audit.mjs",
+    "ui:test": "node scripts/ui-interactions.mjs",
     "indexnow": "node scripts/indexnow.mjs",
     "indexnow:dry": "node scripts/indexnow.mjs --dry-run --from-sitemap",
     "astro": "astro"

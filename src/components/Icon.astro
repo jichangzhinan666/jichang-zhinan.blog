@@ -10,9 +10,13 @@ interface Props {
   /** 传入 title 时图标对读屏器可见，否则 aria-hidden */
   title?: string;
   strokeWidth?: number;
+  /** 父组件传入 class 时 Astro 会附带作用域属性（data-astro-cid-*），需原样转发到 <svg> */
+  [key: `data-astro-cid-${string}`]: unknown;
 }
 
-const { name, size = 20, class: className = '', title, strokeWidth = 2 } = Astro.props;
+// rest 里只有父组件的样式作用域属性：不转发的话，父组件 <style> 中针对该 class 的规则
+// （旋转方向、靠右对齐、颜色）全部不会生效
+const { name, size = 20, class: className = '', title, strokeWidth = 2, ...rest } = Astro.props;
 
 const PATHS: Record<string, string> = {
   home: '<path d="M3 11.5 12 4l9 7.5"/><path d="M5.5 10v9.5h13V10"/><path d="M10 19.5v-5h4v5"/>',
@@ -77,6 +81,7 @@ const path = PATHS[name] ?? PATHS.info;
 ---
 
 <svg
+  {...rest}
   class={`icon ${className}`.trim()}
   width={size}
   height={size}

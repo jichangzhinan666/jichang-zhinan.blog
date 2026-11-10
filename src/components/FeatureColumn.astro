@@ -6,7 +6,7 @@ import { getSpeedReports, getBrand, formatTestedAt } from '@/lib/data';
 const featured = await getFeaturedArticles();
 const slides = featured.slice(0, 4);
 const guides = await getPublishedArticles('guides');
-const chooseGuide = guides.find((g) => g.id.endsWith('2027-jichang-xuangou-zhinan')) ?? guides[0];
+const chooseGuide = guides.find((g) => g.id.endsWith('2026-jichang-xuangou-zhinan')) ?? guides[0];
 const ownerReports = getSpeedReports().filter((r) => r.verificationStatus === 'owner-measured');
 const latestReport = ownerReports[0];
 const latestBrand = latestReport ? getBrand(latestReport.brandId) : undefined;

@@ -14,8 +14,8 @@ const crumbs = [
   { name: '首页', href: '/' },
   { name: '机场推荐', href: '/rankings/' },
 ];
-const title = '机场榜单索引：2027 年度榜与专题榜（入门价格、每 GB 单价、流量、地区）';
-const description = `机场指南榜单索引：2027 机场推荐总榜（编辑整理榜）以及由 ${stats.brands} 个品牌套餐数据直接派生的专题榜——入门月付最低、入门档每 GB 单价最低、单档月流量最高、节点地区最多、年付小包价格。全部数据注明来源，不含评分。`;
+const title = '机场榜单索引：2026 年度榜与专题榜（入门价格、每 GB 单价、流量、地区）';
+const description = `机场指南榜单索引：2026 机场推荐总榜（编辑整理榜）以及由 ${stats.brands} 个品牌套餐数据直接派生的专题榜——入门月付最低、入门档每 GB 单价最低、单档月流量最高、节点地区最多、年付小包价格。全部数据注明来源，不含评分。`;
 const jsonLd = [
   collectionPageLd(title, '/rankings/', description),
   breadcrumbLd(crumbs),
@@ -23,7 +23,7 @@ const jsonLd = [
 ];
 ---
 
-<BaseLayout title="机场榜单索引：2027 年度榜与专题榜" description={description} jsonLd={jsonLd}>
+<BaseLayout title="机场榜单索引：2026 年度榜与专题榜" description={description} jsonLd={jsonLd}>
   <div class="container">
     <Breadcrumbs crumbs={crumbs} />
     <header class="page-hero">
@@ -34,12 +34,12 @@ const jsonLd = [
     <section class="card section annual" aria-labelledby="annual-title">
       <div class="annual-text">
         <span class="pill"><Icon name="trophy" size={14} />年度榜</span>
-        <h2 id="annual-title">2027 机场推荐榜单（前瞻版）</h2>
+        <h2 id="annual-title">2026 机场推荐榜单（年度版）</h2>
         <p>{stats.brands} 个品牌、{stats.tiers} 档套餐；名次为站长编辑推荐顺序，不含评分，每个名次附证据等级、入门价与地区数。</p>
-        <a class="btn btn-primary" href="/rankings/2027/">查看 2027 榜单 <Icon name="arrow-right" size={16} /></a>
+        <a class="btn btn-primary" href="/rankings/2026/">查看 2026 榜单 <Icon name="arrow-right" size={16} /></a>
       </div>
       <ul class="annual-list small">
-        <li>2028 年榜单将使用 /rankings/2028/，2027 榜单 URL 保持不变。</li>
+        <li>2027 年榜单将使用 /rankings/2027/，2026 榜单 URL 保持不变。</li>
         <li>排序方法与局限见 <a href="/methodology/">测评、排序与测速方法</a>。</li>
         <li>想横向比较全部档位，请用 <a href="/compare/">套餐对比</a>。</li>
       </ul>

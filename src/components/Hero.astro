@@ -21,15 +21,15 @@ const updated = STATIC_PAGES['/']?.lastmod;
   <div class="hero-content">
     <span class="pill pill-dark hero-pill">
       <Icon name="sparkle" size={14} />
-      {SITE.isPreview ? '2027 前瞻版' : '2027 年度版'} · 更新于 {updated}
+      {SITE.rankingYear} 年度版 · 更新于 {updated}
     </span>
     <h1 id="hero-title">{SITE.heroTitle}</h1>
     <p class="hero-sub">{SITE.heroSubtitle}</p>
     <p class="hero-intro">{SITE.heroIntro}</p>
     <div class="hero-actions">
-      <a class="btn btn-primary" href="/rankings/2027/">
+      <a class="btn btn-primary" href="/rankings/2026/">
         <Icon name="plane" size={18} />
-        查看 2027 机场推荐榜单
+        查看 2026 机场推荐榜单
         <Icon name="arrow-right" size={16} />
       </a>
       <a class="btn btn-ghost" href="/guides/">

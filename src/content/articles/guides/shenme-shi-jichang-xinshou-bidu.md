@@ -1,5 +1,5 @@
 ---
-title: "什么是机场？新手必读：节点、订阅、客户端与常见坑（2027 版）"
+title: "什么是机场？新手必读：节点、订阅、客户端与常见坑（2026 版）"
 description: "用十分钟搞清楚“机场”到底是什么：节点、订阅链接、官方客户端与第三方客户端的关系，套餐表怎么看，以及新手最常踩的六个坑。全文以本站收录的 8 个品牌的真实政策为例。"
 category: guides
 primaryKeyword: "什么是机场"
@@ -84,6 +84,6 @@ faq:
 
 ## 下一步读什么
 
-- 想系统地选：[2027 机场选购指南](/guides/2027-jichang-xuangou-zhinan/)
-- 想直接看品牌：[2027 机场推荐榜单](/rankings/2027/)（编辑整理榜，不含评分）
+- 想系统地选：[2026 机场选购指南](/guides/2026-jichang-xuangou-zhinan/)
+- 想直接看品牌：[2026 机场推荐榜单](/rankings/2026/)（编辑整理榜，不含评分）
 - 想动手配置：[Clash Verge Rev 安装和订阅导入教程](/tutorials/clash-verge-rev-jiaocheng/)

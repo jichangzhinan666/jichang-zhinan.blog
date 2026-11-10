@@ -265,7 +265,7 @@ export interface RankedBrand {
 }
 
 /**
- * 2027 榜单 = 站长编辑推荐榜（详见 /methodology/）：
+ * 2026 榜单 = 站长编辑推荐榜（详见 /methodology/）：
  * 名次由 brands.json 中的 editorialRank 决定（站长综合资料完整度、套餐性价比、线路与客户端政策后指定），
  * 不是速度/稳定性评分，页面不显示任何分数；每个名次旁展示可核查的事实（证据等级、入门价、地区数）。
  */

@@ -94,11 +94,11 @@ if (sharp) {
   <path d="M104 116l26-26" stroke="#fff" stroke-width="4" stroke-linecap="round"/>
   <text x="164" y="120" font-family="PingFang SC, Microsoft YaHei, Noto Sans CJK SC, Noto Sans SC, sans-serif" font-size="40" font-weight="700" fill="#ffffff">机场指南</text>
   <text x="164" y="150" font-family="Segoe UI, Roboto, sans-serif" font-size="22" fill="#b7c7ea">jichang-zhinan.blog</text>
-  <text x="72" y="300" font-family="PingFang SC, Microsoft YaHei, Noto Sans CJK SC, Noto Sans SC, sans-serif" font-size="78" font-weight="800" fill="#ffffff">2027 机场指南大全</text>
+  <text x="72" y="300" font-family="PingFang SC, Microsoft YaHei, Noto Sans CJK SC, Noto Sans SC, sans-serif" font-size="78" font-weight="800" fill="#ffffff">2026 机场指南大全</text>
   <text x="72" y="370" font-family="PingFang SC, Microsoft YaHei, Noto Sans CJK SC, Noto Sans SC, sans-serif" font-size="34" font-weight="600" fill="#e4edff">机场推荐 · 真实测评 · 使用教程 · 排行榜 · 一站式指南</text>
   <text x="72" y="430" font-family="PingFang SC, Microsoft YaHei, Noto Sans CJK SC, Noto Sans SC, sans-serif" font-size="24" fill="#b7c7ea">所有价格、节点与测速数据注明来源与核实时间 · 不虚构评分</text>
   <rect x="72" y="500" width="330" height="60" rx="14" fill="url(#btn)"/>
-  <text x="237" y="539" text-anchor="middle" font-family="PingFang SC, Microsoft YaHei, Noto Sans CJK SC, Noto Sans SC, sans-serif" font-size="24" font-weight="700" fill="#ffffff">查看 2027 机场推荐榜单</text>
+  <text x="237" y="539" text-anchor="middle" font-family="PingFang SC, Microsoft YaHei, Noto Sans CJK SC, Noto Sans SC, sans-serif" font-size="24" font-weight="700" fill="#ffffff">查看 2026 机场推荐榜单</text>
 </svg>`;
     await sharp(Buffer.from(ogSvg)).png().toFile(ogDest);
     console.log('[assets] 写入 public/images/og-default.png');

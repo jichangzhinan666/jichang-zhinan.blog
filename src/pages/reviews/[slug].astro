@@ -43,7 +43,7 @@ const next = ranking[(idx + 1) % ranking.length].brand;
 const tested = brand.speedTests.evidenceStatus !== 'none';
 const evidenceText = EVIDENCE_LABEL[brand.speedTests.evidenceStatus];
 
-const title = `${brand.displayName}机场怎么样？套餐价格、优惠码与实测证据（2027 前瞻）`;
+const title = `${brand.displayName}机场怎么样？套餐价格、优惠码与实测证据（2026 版）`;
 const descParts = [
   `${brand.displayName}${brand.englishName ? `（${brand.englishName}）` : ''}资料整理：${brand.nodeRegions.length} 个地区${brand.nodeCount ? ` ${brand.nodeCount} 个节点` : ''}，${brand.lineTypes[0] ?? ''}`,
   entry ? `入门 ${formatPrice(entry.price)}/月 ${formatTraffic(entry.trafficGB)}` : '',
@@ -86,7 +86,7 @@ const crumbs = [
 const jsonLd = [
   articleLd({
     type: 'Article',
-    headline: `${brand.displayName}机场资料与测评（2027 前瞻版）`,
+    headline: `${brand.displayName}机场资料与测评（2026 年度版）`,
     description,
     url: `/reviews/${brand.slug}/`,
     datePublished: '2026-11-10',
@@ -386,7 +386,7 @@ const jsonLd = [
           <h2 class="toc-title">榜单位置</h2>
           <p class="small">第 {ranked.position} 位 / {ranking.length}（编辑整理榜）</p>
           <ul class="small muted">{ranked.reasons.map((r) => <li>{r}</li>)}</ul>
-          <a class="btn btn-outline btn-sm" href="/rankings/2027/">查看完整榜单</a>
+          <a class="btn btn-outline btn-sm" href="/rankings/2026/">查看完整榜单</a>
         </div>
         <div class="card">
           <h2 class="toc-title">相邻品牌</h2>

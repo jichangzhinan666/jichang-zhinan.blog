@@ -1,6 +1,6 @@
-# IMPLEMENTATION_REPORT.md —— 机场指南 2027 首版实施报告
+# IMPLEMENTATION_REPORT.md —— 机场指南 2026 首版实施报告
 
-- 项目：机场指南 jichang-zhinan.blog（2027 前瞻版）
+- 项目：机场指南 jichang-zhinan.blog（2026 年度版）
 - 报告日期：2026-11-10
 - 状态：**本地构建、校验与检查全部通过；未部署生产、未推送任何远端仓库、未向搜索引擎提交 IndexNow**（按总指令第 0 节要求等待站长批准）
 
@@ -16,7 +16,7 @@
 | --- | --- | --- |
 | 首页（Hero、快捷入口、三栏主区、最新文章、品牌库、测速概览、FAQ） | `/` | 完成 |
 | 榜单索引 + 5 个数据派生专题榜 | `/rankings/` | 完成 |
-| 2027 机场推荐榜单（编辑整理榜，含排序理由、场景解读、速查表、FAQ） | `/rankings/2027/` | 完成 |
+| 2026 机场推荐榜单（编辑整理榜，含排序理由、场景解读、速查表、FAQ） | `/rankings/2026/` | 完成 |
 | 品牌评测索引（地区 / 价格 / 功能筛选 + 排序） | `/reviews/` | 完成 |
 | 品牌详情 ×8 | `/reviews/{slug}/` | 完成 |
 | 测速报告总览 + 报告详情 ×8 | `/speed-tests/`、`/speed-tests/{slug}/` | 完成 |
@@ -223,9 +223,9 @@ set INDEXNOW_KEY=你的Key && node scripts/indexnow.mjs --from-sitemap
 4. 之后只在真实发布 / 修改 / 删除 URL 时执行 `node scripts/indexnow.mjs --urls <URL1>,<URL2>` 或 `--from-sitemap --since YYYY-MM-DD`；不要重复提交全站，不要在构建里自动提交。
 5. 在 Bing Webmaster 观察 IndexNow 接收记录 → URL 检查 → 搜索表现。提交成功只代表收到通知。
 
-## 9. 关于“2027-01-01 登上 Page 1 前三”目标
+## 9. 关于“2026-01-01 登上 Page 1 前三”目标
 
-本次实现做到的是：全部内容为可抓取 HTML、规范 URL 与 canonical 唯一、Sitemap 与 robots 一致、结构化数据真实、每页独立 title/description/H1、内链完整无死链、无虚构数据可被判为低质量。**没有任何技术手段能承诺某个日期的排名**，排名取决于 Bing 的抓取与评估节奏、竞争页面、站点历史与外部引用。建议上线后：尽早完成 Bing Webmaster 验证与 Sitemap 提交；持续补充带时间戳的实测与品牌更新（更新日志已就位）；补齐作者与联系信息以增强可信度；在 2027 年初按方法说明第五节完成同网络、同时段的多品牌重复测试后再发布“实测排名”。
+本次实现做到的是：全部内容为可抓取 HTML、规范 URL 与 canonical 唯一、Sitemap 与 robots 一致、结构化数据真实、每页独立 title/description/H1、内链完整无死链、无虚构数据可被判为低质量。**没有任何技术手段能承诺某个日期的排名**，排名取决于 Bing 的抓取与评估节奏、竞争页面、站点历史与外部引用。建议上线后：尽早完成 Bing Webmaster 验证与 Sitemap 提交；持续补充带时间戳的实测与品牌更新（更新日志已就位）；补齐作者与联系信息以增强可信度；在 2026 年初按方法说明第五节完成同网络、同时段的多品牌重复测试后再发布“实测排名”。
 
 ## 10. 文件变更清单（新增）
 
@@ -233,7 +233,7 @@ set INDEXNOW_KEY=你的Key && node scripts/indexnow.mjs --from-sitemap
 - 数据：`src/data/{brands,plans,speed-tests,sources,glossary,changelog,evidence-map}.json`
 - 库：`src/lib/{types,site,data,seo,articles,evidence}.ts`、`src/content.config.ts`
 - 布局与组件：`src/layouts/{BaseLayout,ArticleLayout,StaticPageLayout}.astro`；`src/components/{Header,Footer,Hero,QuickLinks,RankList,FeatureColumn,Sidebar,ArticleCard,BrandMark,EvidenceBadge,PlanTable,ReportCard,SpeedBars,FAQ,Breadcrumbs,Icon}.astro`
-- 页面：`src/pages/{index,compare,search,404,about,methodology,editorial-policy,disclosure,privacy,contact}.astro`、`src/pages/rankings/{index,2027}.astro`、`src/pages/reviews/{index,[slug]}.astro`、`src/pages/speed-tests/{index,[slug]}.astro`、`src/pages/[category]/{index,[slug]}.astro`、`src/pages/{sitemap.xml,rss.xml,search-index.json}.ts`
+- 页面：`src/pages/{index,compare,search,404,about,methodology,editorial-policy,disclosure,privacy,contact}.astro`、`src/pages/rankings/{index,2026}.astro`、`src/pages/reviews/{index,[slug]}.astro`、`src/pages/speed-tests/{index,[slug]}.astro`、`src/pages/[category]/{index,[slug]}.astro`、`src/pages/{sitemap.xml,rss.xml,search-index.json}.ts`
 - 内容：`src/content/articles/{guides×6,tutorials×6,wiki×3,news×1}.md`
 - 资产：`src/assets/evidence/*.webp`（13）、`public/{robots.txt,_headers,_redirects,favicon.svg,favicon-32.png,apple-touch-icon.png}`、`public/images/{og-default.png,logo-512.png}`
 - 脚本：`scripts/{validate-data,generate-brand-assets,seo-audit,indexnow,write-indexnow-key}.mjs`

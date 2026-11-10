@@ -10,7 +10,7 @@ import { articleLd, breadcrumbLd, faqLd, itemListLd } from '@/lib/seo';
 
 const ranking = computeRanking();
 const stats = getStats();
-const lastmod = STATIC_PAGES['/rankings/2027/'].lastmod;
+const lastmod = STATIC_PAGES['/rankings/2026/'].lastmod;
 
 const cheapest = [...ranking].filter((r) => r.entry).sort((a, b) => a.entry!.price - b.entry!.price)[0];
 const bestPerGB = [...ranking].filter((r) => r.pricePerGB !== null).sort((a, b) => a.pricePerGB! - b.pricePerGB!)[0];
@@ -29,8 +29,8 @@ const faq = [
     a: '不代表。名次是站长的编辑推荐顺序，不是速度测试结果。四份站长实测分别连接不同品牌的不同地区节点，测速服务器与时段都不同，不能用来比较品牌速度。要看速度，请进入各品牌页的测速报告并注意其局限说明。',
   },
   {
-    q: '为什么叫“2027 前瞻版”？',
-    a: `本站于 ${SITE.launchedAt} 上线，当前资料整理与实测均发生在 2026 年 11 月。2027 年到来后，本页会在同一 URL 下更新数据与说明，不会另建新页面覆盖；2028 年榜单将使用 /rankings/2028/。`,
+    q: '“2026 年度版”的数据范围是什么？',
+    a: `本站于 ${SITE.launchedAt} 上线，资料整理与站长实测均发生在 2026 年 11 月，本页会在同一 URL 下持续更新数据与说明；2027 年榜单将使用 /rankings/2027/，不会覆盖本页。`,
   },
   {
     q: '“编辑推荐”“推广合作”“实测排名”有什么区别？',
@@ -45,24 +45,24 @@ const faq = [
 const crumbs = [
   { name: '首页', href: '/' },
   { name: '机场推荐', href: '/rankings/' },
-  { name: '2027 机场推荐榜单', href: '/rankings/2027/' },
+  { name: '2026 机场推荐榜单', href: '/rankings/2026/' },
 ];
-const title = '2027 机场推荐榜单（前瞻版）：8 个品牌套餐、线路与实测证据对比';
-const description = `2027 机场推荐排行榜（站长编辑推荐榜，前瞻版）：${stats.brands} 个品牌的推荐顺序，逐个列出入门价格、每 GB 单价、线路类型、设备与客户端政策、优惠码与实测证据等级，不含虚构评分。资料更新 ${lastmod}。`;
+const title = '2026 机场推荐榜单（年度版）：8 个品牌套餐、线路与实测证据对比';
+const description = `2026 机场推荐排行榜（站长编辑推荐榜，年度版）：${stats.brands} 个品牌的推荐顺序，逐个列出入门价格、每 GB 单价、线路类型、设备与客户端政策、优惠码与实测证据等级，不含虚构评分。资料更新 ${lastmod}。`;
 const jsonLd = [
   articleLd({
     type: 'Article',
     headline: title,
     description,
-    url: '/rankings/2027/',
+    url: '/rankings/2026/',
     datePublished: '2026-11-10',
     dateModified: lastmod,
-    keywords: ['2027 机场推荐', '机场排行榜', '机场推荐榜单', 'IEPL 机场', 'IPLC 机场'],
+    keywords: ['2026 机场推荐', '机场排行榜', '机场推荐榜单', 'IEPL 机场', 'IPLC 机场'],
     section: '机场推荐',
   }),
   breadcrumbLd(crumbs),
   itemListLd(
-    '2027 机场推荐榜单（编辑整理榜）',
+    '2026 机场推荐榜单（编辑整理榜）',
     ranking.map((r) => ({ name: r.brand.displayName, url: `/reviews/${r.brand.slug}/`, description: r.brand.tagline })),
     '站长编辑推荐顺序；不含评分，每个品牌附可核查的资料事实。',
   ),
@@ -70,12 +70,12 @@ const jsonLd = [
 ];
 ---
 
-<BaseLayout title="2027 机场推荐榜单（前瞻版）：套餐、线路与实测证据" description={description} jsonLd={jsonLd} ogType="article" publishedTime="2026-11-10" modifiedTime={lastmod}>
+<BaseLayout title="2026 机场推荐榜单（年度版）：套餐、线路与实测证据" description={description} jsonLd={jsonLd} ogType="article" publishedTime="2026-11-10" modifiedTime={lastmod}>
   <div class="container">
     <Breadcrumbs crumbs={crumbs} />
     <header class="page-hero">
-      <span class="pill"><Icon name="trophy" size={14} />编辑整理榜 · 2027 前瞻版 · 更新于 {lastmod}</span>
-      <h1>2027 机场推荐榜单：套餐、线路和使用场景指南</h1>
+      <span class="pill"><Icon name="trophy" size={14} />编辑整理榜 · 2026 年度版 · 更新于 {lastmod}</span>
+      <h1>2026 机场推荐榜单：套餐、线路和使用场景指南</h1>
       <p class="lead">
         这份榜单整理了 {stats.brands} 个机场品牌的 {stats.tiers} 档套餐、节点地区、线路类型、客户端政策与测速证据。名次为站长的编辑推荐顺序，不含分数；每个名次旁都写明可核查的事实（证据等级、入门价、地区数），点进品牌页可以看到全部资料来源与核实时间。
       </p>
@@ -209,12 +209,12 @@ const jsonLd = [
     </section>
 
     <section class="card section" aria-labelledby="preview-title">
-      <h2 class="section-title" id="preview-title"><Icon name="calendar" size={20} />关于“2027 前瞻版”的数据时间范围</h2>
+      <h2 class="section-title" id="preview-title"><Icon name="calendar" size={20} />关于“2026 年度版”的数据时间范围</h2>
       <ul class="small">
         <li>品牌资料整理日期：2026-11-09 至 2026-11-10；套餐价格以品牌结算页实时显示为准。</li>
         <li>站长实测：2026-11-10 上午至下午，共 4 份单节点报告（隐形人 香港03、飞V 新加坡、浪网 香港、灵动云 日本5）。</li>
         <li>用户提供的截图：浪网 2026-07-19（MiaoKo，珠海联通）；微风网络与飞猫云的截图未标注日期。</li>
-        <li>进入 2027 年后，本页将在同一 URL 更新并在<a href="/news/#changelog">更新日志</a>记录变化。</li>
+        <li>本页在同一 URL 持续更新，每次变化记录在<a href="/news/#changelog">更新日志</a>；2027 年榜单另建 /rankings/2027/。</li>
       </ul>
     </section>
 

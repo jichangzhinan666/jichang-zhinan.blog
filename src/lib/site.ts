@@ -8,14 +8,14 @@ export const SITE = {
   domain: 'jichang-zhinan.blog',
   url: 'https://jichang-zhinan.blog',
   /** 首页 H1 */
-  heroTitle: '2027 机场指南大全',
+  heroTitle: '2026 机场指南大全',
   heroSubtitle: '机场推荐 · 真实测评 · 使用教程 · 排行榜 · 一站式指南',
   heroIntro:
     '从机场选购、套餐对比、节点测速到 Clash 等客户端教程，为你提供全面、客观、持续更新的网络加速使用指南。',
-  tagline: '2027 机场指南大全｜机场推荐、测评、教程、排名一体化',
-  headerTagline: '2027 专业机场指南 · 推荐 · 测评 · 教程 · 排名',
+  tagline: '2026 机场指南大全｜机场推荐、测评、教程、排名一体化',
+  headerTagline: '2026 专业机场指南 · 推荐 · 测评 · 教程 · 排名',
   description:
-    '机场指南（jichang-zhinan.blog）整理 2027 机场推荐榜单、品牌资料库、节点测速报告、Clash 等客户端教程与选购指南。所有价格、节点与测速数据均注明来源与核实时间，不虚构评分。',
+    '机场指南（jichang-zhinan.blog）整理 2026 机场推荐榜单、品牌资料库、节点测速报告、Clash 等客户端教程与选购指南。所有价格、节点与测速数据均注明来源与核实时间，不虚构评分。',
   locale: 'zh-CN',
   author: {
     name: '机场指南编辑部',
@@ -24,9 +24,9 @@ export const SITE = {
   /** 本站上线日期（真实） */
   launchedAt: '2026-11-10',
   /** 榜单年度 */
-  rankingYear: 2027,
-  /** 当前为 2027 前瞻版：进入 2027 年后改为 false 并更新榜单说明 */
-  isPreview: true,
+  rankingYear: 2026,
+  /** 2026 为当前年度版；进入 2027 年后新建 /rankings/2027/，本字段保留供年度切换时使用 */
+  isPreview: false,
   contactEmail: (import.meta.env?.PUBLIC_CONTACT_EMAIL as string | undefined) || null,
   bingVerification: (import.meta.env?.PUBLIC_BING_SITE_VERIFICATION as string | undefined) || null,
   googleVerification:
@@ -51,7 +51,7 @@ export const NAV: NavItem[] = [
     href: '/rankings/',
     icon: 'globe',
     children: [
-      { label: '2027 机场推荐榜单', href: '/rankings/2027/', description: '编辑整理榜（前瞻版）' },
+      { label: '2026 机场推荐榜单', href: '/rankings/2026/', description: '编辑整理榜（年度版）' },
       { label: '榜单索引与专题榜', href: '/rankings/', description: '入门价格、每 GB 单价、流量、地区' },
       { label: '套餐对比', href: '/compare/', description: '8 个品牌全部套餐横向比较' },
       { label: '品牌资料库', href: '/reviews/', description: '按地区、价格、功能筛选' },
@@ -74,7 +74,7 @@ export const NAV: NavItem[] = [
 
 /** 首页快捷入口（六个） */
 export const QUICK_LINKS = [
-  { label: '机场推荐榜单', sub: '2027 前瞻版 · 编辑整理', href: '/rankings/2027/', icon: 'trophy' },
+  { label: '机场推荐榜单', sub: '2026 年度版 · 编辑整理', href: '/rankings/2026/', icon: 'trophy' },
   { label: '实测评测', sub: '速度 · 延迟 · 连通性', href: '/speed-tests/', icon: 'chart' },
   { label: '使用教程', sub: 'Clash · iOS · Android', href: '/tutorials/', icon: 'book' },
   { label: '选购指南', sub: '按需求 · 按预算选择', href: '/guides/', icon: 'tag' },
@@ -98,7 +98,7 @@ export type CategoryKey = keyof typeof CATEGORY_META;
 export const STATIC_PAGES: Record<string, { title: string; lastmod: string; changefreq: string }> = {
   '/': { title: '首页', lastmod: '2026-11-10', changefreq: 'weekly' },
   '/rankings/': { title: '榜单索引', lastmod: '2026-11-10', changefreq: 'monthly' },
-  '/rankings/2027/': { title: '2027 机场推荐榜单', lastmod: '2026-11-10', changefreq: 'weekly' },
+  '/rankings/2026/': { title: '2026 机场推荐榜单', lastmod: '2026-11-10', changefreq: 'weekly' },
   '/reviews/': { title: '品牌评测索引', lastmod: '2026-11-10', changefreq: 'weekly' },
   '/speed-tests/': { title: '测速报告总览', lastmod: '2026-11-10', changefreq: 'weekly' },
   '/compare/': { title: '套餐对比', lastmod: '2026-11-10', changefreq: 'weekly' },

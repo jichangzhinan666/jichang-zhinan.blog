@@ -1,5 +1,5 @@
 ---
-title: "2027 稳定机场怎么选：延迟、丢包、抖动与晚高峰的判断方法"
+title: "2026 稳定机场怎么选：延迟、丢包、抖动与晚高峰的判断方法"
 description: "“稳定”不是形容词而是四个可测量的指标：延迟、抖动、丢包和晚高峰衰减。本文解释每个指标怎么看、用本站真实测速数据举例，并给出一份 7 天自测表，帮你在月付期内判断一家机场值不值得长期付费。"
 category: guides
 primaryKeyword: "稳定机场怎么选"
@@ -74,4 +74,4 @@ faq:
 3. 下载快不代表能开会，看上传与抖动。
 4. 任何服务商的“专线”“不限速”都需要用自己的记录验证。
 
-相关阅读：[2027 机场选购指南](/guides/2027-jichang-xuangou-zhinan/)、[机场节点低延迟却速度慢的原因](/wiki/jiedian-di-yanchi-que-sudu-man/)、[节点测速报告总览](/speed-tests/)。
+相关阅读：[2026 机场选购指南](/guides/2026-jichang-xuangou-zhinan/)、[机场节点低延迟却速度慢的原因](/wiki/jiedian-di-yanchi-que-sudu-man/)、[节点测速报告总览](/speed-tests/)。

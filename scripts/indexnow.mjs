@@ -3,7 +3,7 @@
  * IndexNow 推送脚本（手动执行，构建不会调用）
  *
  *   npm run indexnow:dry                      # 干运行：从 dist/sitemap.xml 读取 URL，只打印 payload
- *   node scripts/indexnow.mjs --urls https://jichang-zhinan.blog/rankings/2027/,https://jichang-zhinan.blog/reviews/flyv/
+ *   node scripts/indexnow.mjs --urls https://jichang-zhinan.blog/rankings/2026/,https://jichang-zhinan.blog/reviews/flyv/
  *   node scripts/indexnow.mjs --file changed-urls.txt
  *   node scripts/indexnow.mjs --from-sitemap --since 2026-11-10   # 只提交 lastmod ≥ 指定日期的 URL
  *

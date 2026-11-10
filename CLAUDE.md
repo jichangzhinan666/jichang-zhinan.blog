@@ -47,7 +47,7 @@ npm run indexnow:dry   # IndexNow 干运行（从 dist/sitemap.xml 读取 URL，
 1. **全站简体中文**；品牌英文名、协议名等专有名词保留原文。
 2. **资料优先、禁止虚构**：价格、流量、节点数、优惠码、客服政策只能来自 `source-materials/`；测速数值只能来自站长报告图、资料文字记录或用户截图。资料没有的字段用 `null` / 空数组，页面显示“资料未提供”。
 3. **不显示评分**：任何页面与 JSON-LD 都不得出现 `ratingValue`、`aggregateRating`、“9.x 分”。榜单是“站长编辑推荐榜”，名次来自 `brands.json` 的 `editorialRank`（1..n 唯一，由站长指定并记录到更新日志），页面必须同时展示证据等级、入门价、地区数等可核查事实。
-4. **日期真实**：`publishedAt` / `updatedAt` / `testedAt` 不得为未来日期；只在内容实质变更时改 `updatedAt` 与 `STATIC_PAGES.lastmod`，不要随构建自动改。未完成的测试不得标为“已实测”。当前为“2027 前瞻版”（`SITE.isPreview`），进入 2027 后更新文案。
+4. **日期真实**：`publishedAt` / `updatedAt` / `testedAt` 不得为未来日期；只在内容实质变更时改 `updatedAt` 与 `STATIC_PAGES.lastmod`，不要随构建自动改。未完成的测试不得标为“已实测”。当前为“2026 年度版”（`SITE.rankingYear`）；2027 年榜单新建 `/rankings/2027/`，不覆盖 2026 页面。
 5. **证据与归属**：截图转录的区间数值标“约”；归属存疑的记录 `status: 'review'`，不发布、不进 sitemap。截图中的订阅标识需脱敏（`*.sbs-7502` 形式）。
 6. **推广链接**：品牌入口均为推广链接，必须 `rel="sponsored nofollow noopener noreferrer"`，页面附披露说明。
 7. **不新增误导性按钮**：工具必须真实可用或明确标“规划中”。不提供需要上传订阅链接的工具（IP 查询、订阅转换、配置生成），理由见 `/privacy/#tools`。订阅更新用 RSS，不得假装邮件订阅成功。

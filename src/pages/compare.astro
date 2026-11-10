@@ -43,12 +43,12 @@ const crumbs = [
   { name: '机场推荐', href: '/rankings/' },
   { name: '套餐对比', href: '/compare/' },
 ];
-const title = `机场套餐对比 2027：${stats.brands} 个品牌价格、流量、每 GB 单价一览`;
+const title = `机场套餐对比 2026：${stats.brands} 个品牌价格、流量、每 GB 单价一览`;
 const description = `横向比较 ${stats.brands} 个机场品牌共 ${stats.tiers} 档套餐：周期套餐的月付/季付/半年付/年付价格、月流量与每 GB 单价，年付小包、不限时流量包与定制线路；支持按品牌筛选与排序，并附每 GB 单价计算器。数据更新 ${lastmod}，价格以结算页为准。`;
 const jsonLd = [webPageLd(title, '/compare/', description, lastmod), breadcrumbLd(crumbs)];
 ---
 
-<BaseLayout title={`机场套餐对比 2027：${stats.brands} 个品牌价格与每 GB 单价`} description={description} jsonLd={jsonLd}>
+<BaseLayout title={`机场套餐对比 2026：${stats.brands} 个品牌价格与每 GB 单价`} description={description} jsonLd={jsonLd}>
   <div class="container">
     <Breadcrumbs crumbs={crumbs} />
     <header class="page-hero">

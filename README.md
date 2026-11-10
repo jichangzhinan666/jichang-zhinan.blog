@@ -1,6 +1,6 @@
 # 机场指南 jichang-zhinan.blog
 
-2027 机场指南大全：机场推荐榜单、品牌资料库、节点测速报告、套餐对比、客户端教程、选购指南与百科。Astro 7 静态站点，部署于 Cloudflare Pages。
+2026 机场指南大全：机场推荐榜单、品牌资料库、节点测速报告、套餐对比、客户端教程、选购指南与百科。Astro 7 静态站点，部署于 Cloudflare Pages。
 
 - 开发与约束说明：[CLAUDE.md](./CLAUDE.md)
 - 实施报告（完成项、数据核验、检查结果、部署步骤）：[IMPLEMENTATION_REPORT.md](./IMPLEMENTATION_REPORT.md)

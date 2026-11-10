@@ -63,6 +63,15 @@
     "relatedBrandIds": ["twilight"]
   },
   {
+    "id": "src-dalaoyun-intro",
+    "file": "source-materials/brands/大佬云-品牌介绍.txt",
+    "sourceType": "unverified",
+    "collectedAt": "2026-11-10",
+    "description": "大佬云品牌介绍文案（标题、口号、两段介绍与结语），用于品牌页页首展示",
+    "credibility": "站长提供的宣传性文案，不作为价格、节点或测速的事实依据；文中价格与流量与登记套餐一致。",
+    "relatedBrandIds": ["dalaoyun"]
+  },
+  {
     "id": "src-flycat-intro",
     "file": "source-materials/brands/飞猫云-品牌介绍.txt",
     "sourceType": "unverified",

@@ -213,6 +213,16 @@
     "vision": "打造兼顾经济性、实用性与用户体验的全球网络加速品牌。",
     "values": "亲民价格、线路优化、灵活计费、简洁体验。",
     "slogan": "大佬云，让专线连接更有性价比。",
+    "intro": {
+      "heading": "大佬云 DALAO CLOUD",
+      "slogan": "专线连接世界，畅享自由网络。",
+      "paragraphs": [
+        "大佬云（Dalao Cloud）是一款主打高性价比专线网络、VLESS 协议与灵活流量套餐的全球网络加速服务，以低门槛订阅、多地区节点、官方客户端和多设备使用体验为主要特色，面向日常浏览、AI 工具、海外流媒体、在线学习与跨境办公等网络需求。",
+        "大佬云提供香港、日本、新加坡、台湾、美国等热门地区节点，采用涵盖轻量年付、常规月付及不限时流量包的套餐体系。从 ¥96/年的入门活动包，到每月 600GB 的高流量方案，为不同预算与使用频率的用户提供选择。"
+      ],
+      "tagline": "大佬云——以实惠价格连接世界，让优质网络服务触手可及。",
+      "source": "品牌介绍文案由站长于 2026-11-10 提供，属宣传性描述；套餐、节点与测速数据以下方资料为准"
+    },
     "officialWebsite": null,
     "affiliateUrl": "https://a01vipaff.dalaoyunaff.com/#/?code=yN6HqG0d",
     "logo": null,
@@ -284,7 +294,8 @@
       "资料未给出各地区节点数。"
     ],
     "sourceRecords": [
-      { "sourceType": "user-supplied-official", "sourceFile": "source-materials/brands/大佬云.txt", "sourceLocation": "全文（一至十节）", "verifiedAt": "2026-11-10" }
+      { "sourceType": "user-supplied-official", "sourceFile": "source-materials/brands/大佬云.txt", "sourceLocation": "全文（一至十节）", "verifiedAt": "2026-11-10" },
+      { "sourceType": "unverified", "sourceFile": "source-materials/brands/大佬云-品牌介绍.txt", "sourceLocation": "品牌介绍文案（页首展示）", "verifiedAt": "2026-11-10", "note": "站长提供的品牌介绍文案，属宣传性描述，不作为价格、节点或测速的事实依据；文中价格与流量与登记套餐一致" }
     ],
     "lastVerifiedAt": "2026-11-10",
     "editorialStatus": "published",

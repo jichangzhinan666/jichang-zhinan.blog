@@ -97,7 +97,8 @@
     ],
     "lastVerifiedAt": "2026-11-10",
     "editorialStatus": "published",
-    "keywords": ["灵动云机场", "灵动云优惠码", "灵动云测速", "灵动云套餐", "IEPL 机场", "ld888"]
+    "keywords": ["灵动云机场", "灵动云优惠码", "灵动云测速", "灵动云套餐", "IEPL 机场", "ld888"],
+    "editorialRank": 1
   },
   {
     "id": "flyv",
@@ -186,7 +187,8 @@
     ],
     "lastVerifiedAt": "2026-11-10",
     "editorialStatus": "published",
-    "keywords": ["飞V机场", "FlyV 机场", "飞V优惠码", "fly20", "飞V测速", "不发订阅链接的机场"]
+    "keywords": ["飞V机场", "FlyV 机场", "飞V优惠码", "fly20", "飞V测速", "不发订阅链接的机场"],
+    "editorialRank": 6
   },
   {
     "id": "dalaoyun",
@@ -275,7 +277,8 @@
     ],
     "lastVerifiedAt": "2026-11-10",
     "editorialStatus": "published",
-    "keywords": ["大佬云机场", "大佬云优惠码", "dly888", "便宜机场", "19.99 机场", "VLESS 机场"]
+    "keywords": ["大佬云机场", "大佬云优惠码", "dly888", "便宜机场", "19.99 机场", "VLESS 机场"],
+    "editorialRank": 5
   },
   {
     "id": "flycat",
@@ -366,7 +369,8 @@
     ],
     "lastVerifiedAt": "2026-11-09",
     "editorialStatus": "published",
-    "keywords": ["飞猫云机场", "飞猫云优惠码", "flycat888", "学生机场", "IPLC 机场", "飞猫云测速"]
+    "keywords": ["飞猫云机场", "飞猫云优惠码", "flycat888", "学生机场", "IPLC 机场", "飞猫云测速"],
+    "editorialRank": 4
   },
   {
     "id": "langwang",
@@ -468,7 +472,8 @@
     ],
     "lastVerifiedAt": "2026-11-10",
     "editorialStatus": "published",
-    "keywords": ["浪网机场", "WaveNet 机场", "浪网优惠码", "lw888", "浪网测速", "VLESS IEPL 机场"]
+    "keywords": ["浪网机场", "WaveNet 机场", "浪网优惠码", "lw888", "浪网测速", "VLESS IEPL 机场"],
+    "editorialRank": 8
   },
   {
     "id": "twilight",
@@ -553,7 +558,8 @@
     ],
     "lastVerifiedAt": "2026-11-09",
     "editorialStatus": "published",
-    "keywords": ["暮光加速机场", "暮光网络", "Twilight 机场", "暮光优惠码", "mm88", "大流量机场"]
+    "keywords": ["暮光加速机场", "暮光网络", "Twilight 机场", "暮光优惠码", "mm88", "大流量机场"],
+    "editorialRank": 2
   },
   {
     "id": "breezenet",
@@ -642,7 +648,8 @@
     ],
     "lastVerifiedAt": "2026-11-09",
     "editorialStatus": "published",
-    "keywords": ["微风网络机场", "Breezenet", "微风优惠码", "weifeng90", "住宅 IP 机场", "微风测速"]
+    "keywords": ["微风网络机场", "Breezenet", "微风优惠码", "weifeng90", "住宅 IP 机场", "微风测速"],
+    "editorialRank": 3
   },
   {
     "id": "invisible",
@@ -733,6 +740,7 @@
     ],
     "lastVerifiedAt": "2026-11-10",
     "editorialStatus": "published",
-    "keywords": ["隐形人机场", "INVISIBLE NETWORK", "隐形人优惠码", "yxr888", "大流量机场", "隐形人测速"]
+    "keywords": ["隐形人机场", "INVISIBLE NETWORK", "隐形人优惠码", "yxr888", "大流量机场", "隐形人测速"],
+    "editorialRank": 7
   }
 ]

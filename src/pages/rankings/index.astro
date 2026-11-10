@@ -28,14 +28,14 @@ const jsonLd = [
     <Breadcrumbs crumbs={crumbs} />
     <header class="page-hero">
       <h1>机场榜单索引</h1>
-      <p class="lead">年度总榜按公开规则排序；专题榜直接由套餐数据派生（价格、流量、地区），不含任何主观评分。数据更新 {lastmod}，价格以品牌结算页为准。</p>
+      <p class="lead">年度总榜为站长编辑推荐顺序；专题榜直接由套餐数据派生（价格、流量、地区），两者都不含评分。数据更新 {lastmod}，价格以品牌结算页为准。</p>
     </header>
 
     <section class="card section annual" aria-labelledby="annual-title">
       <div class="annual-text">
         <span class="pill"><Icon name="trophy" size={14} />年度榜</span>
         <h2 id="annual-title">2027 机场推荐榜单（前瞻版）</h2>
-        <p>{stats.brands} 个品牌、{stats.tiers} 档套餐；排序依据证据等级、入门档每 GB 单价与地区数，每个名次附理由。</p>
+        <p>{stats.brands} 个品牌、{stats.tiers} 档套餐；名次为站长编辑推荐顺序，不含评分，每个名次附证据等级、入门价与地区数。</p>
         <a class="btn btn-primary" href="/rankings/2027/">查看 2027 榜单 <Icon name="arrow-right" size={16} /></a>
       </div>
       <ul class="annual-list small">

@@ -126,6 +126,8 @@ export interface Brand {
   editorialStatus: EditorialStatus;
   /** 可能被搜索的关键词（站内搜索用） */
   keywords: string[];
+  /** 站长指定的编辑推荐名次（1 起，唯一）；榜单按此排序，页面同时展示可核查的事实 */
+  editorialRank: number;
 }
 
 export type PlanCategory =

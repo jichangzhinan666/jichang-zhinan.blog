@@ -265,12 +265,9 @@ export interface RankedBrand {
 }
 
 /**
- * 2027 榜单排序规则（可复现，详见 /methodology/）：
- * 1) 证据等级（站长实测 > 有日期的截图/记录 > 无日期截图 > 无证据）
- * 2) 入门档每 GB 单价（低→高）
- * 3) 节点地区数（多→少）
- * 4) slug 字母序
- * 该排序不是速度/稳定性评分，页面不显示任何分数。
+ * 2027 榜单 = 站长编辑推荐榜（详见 /methodology/）：
+ * 名次由 brands.json 中的 editorialRank 决定（站长综合资料完整度、套餐性价比、线路与客户端政策后指定），
+ * 不是速度/稳定性评分，页面不显示任何分数；每个名次旁展示可核查的事实（证据等级、入门价、地区数）。
  */
 export function computeRanking(): RankedBrand[] {
   const rows = getBrands().map((brand) => {
@@ -283,16 +280,10 @@ export function computeRanking(): RankedBrand[] {
       evidenceRank: EVIDENCE_RANK[brand.speedTests.evidenceStatus],
     };
   });
-  rows.sort((a, b) => {
-    if (a.evidenceRank !== b.evidenceRank) return a.evidenceRank - b.evidenceRank;
-    const pa = a.pricePerGB ?? Number.POSITIVE_INFINITY;
-    const pb = b.pricePerGB ?? Number.POSITIVE_INFINITY;
-    if (pa !== pb) return pa - pb;
-    if (a.regionCount !== b.regionCount) return b.regionCount - a.regionCount;
-    return a.brand.slug.localeCompare(b.brand.slug);
-  });
+  rows.sort((a, b) => a.brand.editorialRank - b.brand.editorialRank || a.brand.slug.localeCompare(b.brand.slug));
   return rows.map((r, i) => {
     const reasons: string[] = [];
+    reasons.push(`站长编辑推荐第 ${r.brand.editorialRank} 位（非评分）`);
     reasons.push(`证据等级：${EVIDENCE_LABEL[r.brand.speedTests.evidenceStatus]}`);
     if (r.entry) {
       reasons.push(

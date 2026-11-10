@@ -79,8 +79,15 @@ for (const b of brands) {
   if (b.speedTests?.evidenceStatus !== expected) err(`${tag}: evidenceStatus=${b.speedTests?.evidenceStatus} 与报告数据不一致（应为 ${expected}）`);
   const latest = brandReports.map((r) => r.testedAt).filter(Boolean).sort().at(-1)?.slice(0, 10) ?? null;
   if ((b.speedTests?.latestDatedTest ?? null) !== latest) err(`${tag}: latestDatedTest=${b.speedTests?.latestDatedTest} 与报告数据不一致（应为 ${latest}）`);
+  if (!Number.isInteger(b.editorialRank) || b.editorialRank < 1) err(`${tag}: editorialRank 必须为 ≥1 的整数`);
   const json = JSON.stringify(b);
   for (const d of DEMO_STRINGS) if (json.includes(d)) err(`${tag}: 含演示/占位字符串 "${d}"`);
+}
+{
+  const ranks = brands.filter((b) => b.editorialStatus === 'published').map((b) => b.editorialRank).sort((a, b) => a - b);
+  ranks.forEach((r, i) => {
+    if (r !== i + 1) err(`brands: 已发布品牌的 editorialRank 必须为 1..n 且不重复，实际 ${ranks.join(',')}`);
+  });
 }
 
 /* ---------------- plans ---------------- */

@@ -63,6 +63,15 @@
     "relatedBrandIds": ["twilight"]
   },
   {
+    "id": "src-invisible-client-note",
+    "file": "source-materials/brands/隐形人-客户端补充.txt",
+    "sourceType": "unverified",
+    "collectedAt": "2026-11-10",
+    "description": "隐形人客户端补充：订阅链接支持导入兼容的第三方客户端，相关资讯需通过客服渠道确认",
+    "credibility": "站长补充，本站未独立验证；不改变套餐、价格与排序。",
+    "relatedBrandIds": ["invisible"]
+  },
+  {
     "id": "src-breezenet-txt",
     "file": "source-materials/brands/微风网络.txt",
     "sourceType": "user-supplied-official",

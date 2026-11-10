@@ -702,7 +702,7 @@
     "clientPolicy": {
       "officialClient": true,
       "subscriptionLink": "不推荐使用，避免订阅外泄被他人盗用导致节点拥挤",
-      "thirdPartyClients": "不推荐导入 Clash、小火箭等（品牌特色中亦提到“支持主流第三方客户端”，以客服确认为准）",
+      "thirdPartyClients": "订阅链接支持导入兼容的第三方客户端，但相关资讯必须通过客服渠道确认",
       "downloadChannel": "仅限官网；网上出售的订阅链接或网盘分发的客户端均非官方渠道",
       "note": "官网客户端由官方统一发布和更新，同样可以安全使用"
     },
@@ -738,12 +738,13 @@
     "dataCaveats": [
       "优惠码 yxr888 的折扣幅度与适用范围资料未注明。",
       "马来西亚节点数量资料标注“待确认”，实测报告图只标注 5 个地区。",
-      "资料对第三方客户端的描述前后不一致（“支持主流第三方客户端” 与 “不推荐导入 Clash、小火箭”），以客服确认为准。",
+      "第三方客户端说明为站长 2026-11-10 补充（订阅链接支持导入兼容的第三方客户端，需通过客服确认）；原资料写明“不推荐导入 Clash、小火箭等”，兼容范围本站未独立验证。",
       "资料未提供客服渠道信息。"
     ],
     "sourceRecords": [
       { "sourceType": "user-supplied-official", "sourceFile": "source-materials/brands/隐形人.txt", "sourceLocation": "全文（一至九节）", "verifiedAt": "2026-11-09" },
-      { "sourceType": "independently-measured", "sourceFile": "source-materials/evidence/reports/隐形人_香港节点_实测报告.png", "sourceLocation": "站长实测报告图（2026-11-10 11:43）", "verifiedAt": "2026-11-10" }
+      { "sourceType": "independently-measured", "sourceFile": "source-materials/evidence/reports/隐形人_香港节点_实测报告.png", "sourceLocation": "站长实测报告图（2026-11-10 11:43）", "verifiedAt": "2026-11-10" },
+      { "sourceType": "unverified", "sourceFile": "source-materials/brands/隐形人-客户端补充.txt", "sourceLocation": "第三方客户端说明", "verifiedAt": "2026-11-10", "note": "站长补充，兼容范围需通过客服确认，本站未独立验证" }
     ],
     "lastVerifiedAt": "2026-11-10",
     "editorialStatus": "published",

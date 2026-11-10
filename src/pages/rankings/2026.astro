@@ -147,7 +147,7 @@ const jsonLd = [
         <div class="scenario">
           <h3>要用 Clash 等第三方客户端</h3>
           <p>
-            资料写明可导入第三方客户端：{thirdParty.length ? thirdParty.map((r, i) => <>{i > 0 && '、'}<a href={`/reviews/${r.brand.slug}/`}>{r.brand.displayName}</a></>) : '暂无'}。其中灵动云需向客服申请订阅链接。
+            资料写明可导入第三方客户端：{thirdParty.length ? thirdParty.map((r, i) => <>{i > 0 && '、'}<a href={`/reviews/${r.brand.slug}/`}>{r.brand.displayName}</a></>) : '暂无'}。其中灵动云需向客服申请订阅链接，隐形人需通过客服确认兼容情况。
           </p>
         </div>
         <div class="scenario">
@@ -188,7 +188,7 @@ const jsonLd = [
               ranking.map((r) => {
                 const e = getEntryPlan(r.brand.id);
                 const tp = r.brand.clientPolicy.thirdPartyClients;
-                const client = /待核实/.test(tp) ? '第三方待核实' : /支持导入|可导入/.test(tp) && !/不支持/.test(tp) ? (/客服/.test(tp) ? '可导入（需申请）' : '可导入 Clash') : /不支持/.test(tp) ? '不支持导入' : /不推荐/.test(tp) ? '不推荐导入' : '资料未提供';
+                const client = /待核实/.test(tp) ? '第三方待核实' : /支持导入|可导入/.test(tp) && !/不支持/.test(tp) ? (/客服/.test(tp) ? '可导入（需客服确认）' : '可导入 Clash') : /不支持/.test(tp) ? '不支持导入' : /不推荐/.test(tp) ? '不推荐导入' : '资料未提供';
                 const line = [...new Set(r.brand.lineTypes.map((l) => l.replace(/^[^：]+：/, '')))].join(' / ');
                 const ev = r.reasons.find((x) => x.startsWith('证据等级：'))?.replace('证据等级：', '') ?? '—';
                 return (

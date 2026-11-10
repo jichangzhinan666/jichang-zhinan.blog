@@ -59,7 +59,7 @@ iOS 没有桌面端的“系统代理”与“TUN 模式”之分，客户端启
 | --- | --- |
 | [飞V](/reviews/flyv/) | 支持系统列出 iOS；不对外发放订阅链接，只能用官方客户端 |
 | [暮光加速](/reviews/twilight/) | 支持系统列出 iOS；不推荐导入第三方 |
-| [隐形人](/reviews/invisible/) | 支持系统列出 iOS；不推荐导入第三方 |
+| [隐形人](/reviews/invisible/) | 支持系统列出 iOS；订阅链接支持导入兼容的第三方客户端，需通过客服确认 |
 | [大佬云](/reviews/dalaoyun/) | “iOS（通过 Nextin）” |
 | [微风网络](/reviews/breezenet/) | “iOS 15 及以上（iOS 通过 Nextin 登录）” |
 | 灵动云、飞猫云、浪网 | 资料未逐一列出支持系统，客服说明中灵动云提及 iOS 客户端 |

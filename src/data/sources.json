@@ -63,6 +63,15 @@
     "relatedBrandIds": ["twilight"]
   },
   {
+    "id": "src-langwang-intro",
+    "file": "source-materials/brands/浪网-品牌介绍.txt",
+    "sourceType": "unverified",
+    "collectedAt": "2026-11-10",
+    "description": "浪网品牌介绍文案（标题、口号、三段介绍与结语），用于品牌页页首展示",
+    "credibility": "站长提供的宣传性文案；文中“BGP 多线路智能调度”“独立 IP”“全节点 1 倍率”“多平台兼容”未见于原资料，不作为事实依据，相关数据以品牌资料为准。",
+    "relatedBrandIds": ["langwang"]
+  },
+  {
     "id": "src-invisible-intro",
     "file": "source-materials/brands/隐形人-品牌介绍.txt",
     "sourceType": "unverified",

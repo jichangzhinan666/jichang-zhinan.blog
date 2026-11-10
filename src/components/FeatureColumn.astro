@@ -1,5 +1,6 @@
 ---
 import Icon from './Icon.astro';
+import GuidePicks from './GuidePicks.astro';
 import { getFeaturedArticles, getPublishedArticles, articleUrl, categoryLabel } from '@/lib/articles';
 import { getSpeedReports, getBrand, formatTestedAt } from '@/lib/data';
 
@@ -10,6 +11,26 @@ const chooseGuide = guides.find((g) => g.id.endsWith('2026-jichang-xuangou-zhina
 const ownerReports = getSpeedReports().filter((r) => r.verificationStatus === 'owner-measured');
 const latestReport = ownerReports[0];
 const latestBrand = latestReport ? getBrand(latestReport.brandId) : undefined;
+
+/** 最新节点测速报告：只取有下载速度数值的记录（站长实测 / 资料文字记录），按时间倒序 */
+const latestRows = getSpeedReports()
+  .filter((r) => r.testedAt && (r.ownerReport || r.regionResults.some((rr) => rr.downloadMbps !== null)))
+  .slice(0, 4)
+  .map((r) => {
+    const brand = getBrand(r.brandId)!;
+    const rr = r.regionResults.find((x) => x.downloadMbps !== null) ?? r.regionResults[0];
+    const own = r.ownerReport;
+    return {
+      slug: r.slug,
+      brand: brand.displayName,
+      region: own?.testedNode?.split('（')[0] ?? rr?.region ?? '—',
+      latency: own ? `${own.speed.pingMs} ms` : typeof rr?.latencyMs === 'number' ? `${rr.latencyMs} ms` : '—',
+      download: own ? `${own.speed.downloadMbps} Mbps` : rr?.downloadMbps !== null && rr?.downloadMbps !== undefined ? `${rr.downloadMbps} Mbps` : '—',
+      loss: rr?.packetLossPct !== null && rr?.packetLossPct !== undefined ? `${rr.packetLossPct}%` : '未提供',
+      exit: own?.exit ? `${own.exit.org ?? own.exit.location}${own.exit.asn ? ` · ${own.exit.asn}` : ''}` : (r.isp ?? '未标注'),
+      time: formatTestedAt(r),
+    };
+  });
 ---
 
 <div class="feature-col">
@@ -104,9 +125,68 @@ const latestBrand = latestReport ? getBrand(latestReport.brandId) : undefined;
       </small>
     </a>
   </div>
+
+  <section class="card latest-speed" aria-labelledby="latest-speed-title">
+    <div class="section-head">
+      <h2 class="section-title" id="latest-speed-title"><Icon name="speed" size={18} />最新节点测速报告</h2>
+      <a class="section-link" href="/speed-tests/">全部报告 →</a>
+    </div>
+    {
+      latestRows.length ? (
+        <div class="table-wrap">
+          <table class="data speed-mini">
+            <thead>
+              <tr>
+                <th>品牌 · 节点</th>
+                <th class="num">延迟</th>
+                <th class="num">下载</th>
+                <th class="num">丢包</th>
+                <th>出口运营商</th>
+                <th>测速时间</th>
+              </tr>
+            </thead>
+            <tbody>
+              {latestRows.map((row) => (
+                <tr>
+                  <td><a href={`/speed-tests/${row.slug}/`}>{row.brand} · {row.region}</a></td>
+                  <td class="num">{row.latency}</td>
+                  <td class="num">{row.download}</td>
+                  <td class="num">{row.loss}</td>
+                  <td class="small">{row.exit}</td>
+                  <td class="small nowrap">{row.time}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      ) : (
+        <p class="empty">暂无实测数据</p>
+      )}
+    <p class="small muted latest-note">延迟为测速工具 Ping；丢包率资料未提供时显示“未提供”。不同品牌的节点、时段与网络环境不同，不能直接横向比较。</p>
+  </section>
+
+  <GuidePicks />
 </div>
 
 <style>
+  .latest-speed .section-head {
+    margin-bottom: 10px;
+  }
+
+  .speed-mini {
+    min-width: 520px;
+    font-size: 0.85rem;
+  }
+
+  .speed-mini th,
+  .speed-mini td {
+    padding: 8px 10px;
+  }
+
+  .latest-note {
+    margin: 10px 0 0;
+  }
+
   .feature-col {
     display: flex;
     flex-direction: column;

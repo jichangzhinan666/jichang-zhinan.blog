@@ -1,0 +1,78 @@
+---
+/** 最新更新文章：按 updatedAt 倒序，静态渲染真实链接 */
+import Icon from './Icon.astro';
+import { getPublishedArticles, articleUrl, categoryLabel } from '@/lib/articles';
+
+interface Props {
+  limit?: number;
+}
+
+const { limit = 6 } = Astro.props;
+const recent = (await getPublishedArticles())
+  .sort((a, b) => b.data.updatedAt.localeCompare(a.data.updatedAt) || b.data.publishedAt.localeCompare(a.data.publishedAt))
+  .slice(0, limit);
+---
+
+<section class="card recent" aria-labelledby="recent-title">
+  <div class="section-head">
+    <h2 class="section-title" id="recent-title"><Icon name="edit" size={18} />最新更新文章</h2>
+    <a class="section-link" href="/news/#changelog">更新日志 →</a>
+  </div>
+  {
+    recent.length ? (
+      <ul class="recent-list">
+        {recent.map((a) => (
+          <li>
+            <a href={articleUrl(a)}>{a.data.title}</a>
+            <span class="small muted">
+              {categoryLabel(a.data.category)} · <time datetime={a.data.updatedAt}>{a.data.updatedAt}</time>
+            </span>
+          </li>
+        ))}
+      </ul>
+    ) : (
+      <p class="empty">暂无文章</p>
+    )
+  }
+</section>
+
+<style>
+  .recent .section-head {
+    margin-bottom: 6px;
+  }
+
+  .recent-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .recent-list li {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    padding: 9px 0;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .recent-list li:last-child {
+    border-bottom: 0;
+    padding-bottom: 0;
+  }
+
+  .recent-list a {
+    color: var(--text);
+    font-size: 0.9rem;
+    font-weight: 600;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .recent-list a:hover {
+    color: var(--primary);
+  }
+</style>

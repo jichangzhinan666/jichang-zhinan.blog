@@ -1,0 +1,115 @@
+---
+/** 机场套餐选择指南入口：复用已发布的指南文章，全部静态渲染 */
+import Icon from './Icon.astro';
+import { getPublishedArticles, articleUrl } from '@/lib/articles';
+
+const guides = await getPublishedArticles('guides');
+const picks = [
+  { label: '低价套餐怎么比', desc: '每 GB 单价、年付小包与不限时流量包', slug: 'pianyi-jichang-taocan-bijiao-fangfa', icon: 'tag' },
+  { label: '大流量套餐怎么选', desc: '按用途估算月流量，再比单价', slug: '2026-jichang-xuangou-zhinan', icon: 'download' },
+  { label: '节点地区怎么选', desc: '香港、日本、新加坡、美国各适合什么', slug: 'butong-diqu-jiedian-zenme-xuan', icon: 'globe' },
+  { label: '月付、季付、年付怎么比', desc: '折合月付与长周期风险', slug: 'yuefu-jifu-nianfu-zenme-bijiao', icon: 'calendar' },
+  { label: '稳定机场怎么判断', desc: '延迟、抖动、丢包与晚高峰', slug: 'wending-jichang-zenme-xuan', icon: 'shield' },
+]
+  .map((g) => ({ ...g, article: guides.find((a) => a.id.endsWith(g.slug)) }))
+  .filter((g) => g.article);
+---
+
+<section class="card guide-picks" aria-labelledby="guide-picks-title">
+  <div class="section-head">
+    <h2 class="section-title" id="guide-picks-title"><Icon name="tag" size={18} />机场套餐选择指南</h2>
+    <a class="section-link" href="/guides/">全部指南 →</a>
+  </div>
+  <ul class="guide-list">
+    {
+      picks.map((g) => (
+        <li>
+          <a href={articleUrl(g.article!)}>
+            <span class="gl-icon"><Icon name={g.icon} size={18} /></span>
+            <span class="gl-text">
+              <strong>{g.label}</strong>
+              <small>{g.desc}</small>
+            </span>
+            <Icon name="arrow-right" size={14} class="gl-arrow" />
+          </a>
+        </li>
+      ))
+    }
+    <li>
+      <a href="/compare/">
+        <span class="gl-icon"><Icon name="compare" size={18} /></span>
+        <span class="gl-text">
+          <strong>套餐对比与每 GB 计算器</strong>
+          <small>8 个品牌全部档位横向比较</small>
+        </span>
+        <Icon name="arrow-right" size={14} class="gl-arrow" />
+      </a>
+    </li>
+  </ul>
+</section>
+
+<style>
+  .guide-picks .section-head {
+    margin-bottom: 10px;
+  }
+
+  .guide-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .guide-list a {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 9px 12px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    background: var(--surface-2);
+    color: var(--text);
+    text-decoration: none;
+    transition: border-color 0.15s ease, background 0.15s ease;
+  }
+
+  .guide-list a:hover {
+    border-color: var(--primary-200);
+    background: var(--primary-50);
+  }
+
+  .gl-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 34px;
+    height: 34px;
+    border-radius: 10px;
+    background: var(--primary-50);
+    color: var(--primary);
+    flex: none;
+  }
+
+  .gl-text {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+  }
+
+  .gl-text strong {
+    font-size: 0.9rem;
+  }
+
+  .gl-text small {
+    font-size: 0.75rem;
+    color: var(--muted);
+  }
+
+  .gl-arrow {
+    margin-left: auto;
+    color: var(--muted);
+    flex: none;
+  }
+</style>

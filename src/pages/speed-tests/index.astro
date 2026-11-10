@@ -13,7 +13,10 @@ const records = reports.filter((r) => r.verificationStatus === 'user-supplied-re
 const screenshots = reports.filter((r) => r.verificationStatus === 'user-supplied-screenshot');
 const untested = getBrands().filter((b) => b.speedTests.evidenceStatus === 'none');
 
-const bars = owner.map((r) => ({
+// 图表按榜单编辑顺序排列（灵动云在前），不按速度排序
+const bars = [...owner]
+  .sort((a, b) => getBrand(a.brandId)!.editorialRank - getBrand(b.brandId)!.editorialRank)
+  .map((r) => ({
   label: `${getBrand(r.brandId)!.displayName} · ${r.ownerReport!.testedNode?.split('（')[0] ?? ''}`,
   sublabel: `${formatTestedAt(r)} · ${r.ownerReport!.testServer ?? ''}`,
   value: r.ownerReport!.speed.downloadMbps,

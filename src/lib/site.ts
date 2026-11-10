@@ -53,7 +53,7 @@ export const NAV: NavItem[] = [
     icon: 'globe',
     children: [
       { label: '2026 机场推荐榜单', href: '/rankings/2026/', description: '编辑整理榜（年度版）' },
-      { label: '榜单索引与专题榜', href: '/rankings/', description: '入门价格、每 GB 单价、流量、地区' },
+      { label: '2026 机场分类榜单', href: '/rankings/', description: '低价机场、大流量套餐、节点地区与线路类型' },
       { label: '套餐对比', href: '/compare/', description: '8 个品牌全部套餐横向比较' },
       { label: '品牌资料库', href: '/reviews/', description: '按地区、价格、功能筛选' },
     ],
@@ -98,7 +98,7 @@ export type CategoryKey = keyof typeof CATEGORY_META;
  */
 export const STATIC_PAGES: Record<string, { title: string; lastmod: string; changefreq: string }> = {
   '/': { title: '首页', lastmod: '2026-11-10', changefreq: 'weekly' },
-  '/rankings/': { title: '榜单索引', lastmod: '2026-11-10', changefreq: 'monthly' },
+  '/rankings/': { title: '2026 机场分类榜单', lastmod: '2026-11-10', changefreq: 'monthly' },
   '/rankings/2026/': { title: '2026 机场推荐榜单', lastmod: '2026-11-10', changefreq: 'weekly' },
   '/reviews/': { title: '品牌评测索引', lastmod: '2026-11-10', changefreq: 'weekly' },
   '/speed-tests/': { title: '测速报告总览', lastmod: '2026-11-10', changefreq: 'weekly' },

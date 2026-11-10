@@ -498,6 +498,17 @@
     "vision": "成为中文用户熟悉并信赖的全球网络加速服务品牌。",
     "values": "线路优化、灵活选择、用户体验、持续改进。",
     "slogan": "暮光加速，让世界触手可及。",
+    "intro": {
+      "heading": "暮光加速 TWILIGHT ACCELERATOR",
+      "slogan": "跨越网络边界，畅享暮光速度。",
+      "paragraphs": [
+        "暮光加速（暮光网络）是一款主打 IEPL/IPLC 专线优化与 BGP 智能路由的全球网络加速服务，以多地区节点、灵活的流量套餐及多客户端兼容为主要特色，致力于为用户提供便捷的跨地区网络连接体验。",
+        "暮光加速覆盖香港、日本、新加坡、美国等热门节点地区，适用于日常网页浏览、AI 工具、海外流媒体、在线学习及跨境办公等多样化使用场景。",
+        "从每月 ¥20 的基础套餐到高达 1.5TB 的月度流量方案，暮光加速为轻度与高流量用户提供不同选择，让用户根据自身网络需求灵活管理预算与流量。"
+      ],
+      "tagline": "暮光加速——以专线连接世界，让网络体验更加自由。",
+      "source": "品牌介绍文案由站长于 2026-11-10 提供，属宣传性描述；线路、客户端兼容与套餐数据以下方资料为准"
+    },
     "officialWebsite": null,
     "affiliateUrl": "https://varnexa.twilightaff.com/#/?code=rkRvrsRc",
     "logo": null,
@@ -572,7 +583,8 @@
     ],
     "sourceRecords": [
       { "sourceType": "user-supplied-official", "sourceFile": "source-materials/brands/暮光加速.txt", "sourceLocation": "全文（一至十节）", "verifiedAt": "2026-11-09" },
-      { "sourceType": "unverified", "sourceFile": "source-materials/brands/暮光加速-客户端补充.txt", "sourceLocation": "客户端按系统说明", "verifiedAt": "2026-11-10", "note": "站长依据公开教程整理，未独立验证" }
+      { "sourceType": "unverified", "sourceFile": "source-materials/brands/暮光加速-客户端补充.txt", "sourceLocation": "客户端按系统说明", "verifiedAt": "2026-11-10", "note": "站长依据公开教程整理，未独立验证" },
+      { "sourceType": "unverified", "sourceFile": "source-materials/brands/暮光加速-品牌介绍.txt", "sourceLocation": "品牌介绍文案（页首展示）", "verifiedAt": "2026-11-10", "note": "站长提供的品牌介绍文案，属宣传性描述；其中“IEPL”与“多客户端兼容”未见于原资料，不作为事实依据" }
     ],
     "lastVerifiedAt": "2026-11-09",
     "editorialStatus": "published",

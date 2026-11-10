@@ -63,6 +63,15 @@
     "relatedBrandIds": ["twilight"]
   },
   {
+    "id": "src-twilight-intro",
+    "file": "source-materials/brands/暮光加速-品牌介绍.txt",
+    "sourceType": "unverified",
+    "collectedAt": "2026-11-10",
+    "description": "暮光加速品牌介绍文案（标题、口号、三段介绍与结语），用于品牌页页首展示",
+    "credibility": "站长提供的宣传性文案；其中“IEPL”与“多客户端兼容”未见于原资料，不作为事实依据，相关数据以品牌资料为准。",
+    "relatedBrandIds": ["twilight"]
+  },
+  {
     "id": "src-lingdongyun-intro",
     "file": "source-materials/brands/灵动云-品牌介绍.txt",
     "sourceType": "unverified",

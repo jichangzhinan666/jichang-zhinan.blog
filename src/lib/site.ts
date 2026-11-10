@@ -63,7 +63,6 @@ export const NAV: NavItem[] = [
     href: '/reviews/',
     icon: 'chart',
     children: [
-      { label: '品牌评测索引', href: '/reviews/', description: '每个品牌的资料与证据' },
       { label: '节点测速报告', href: '/speed-tests/', description: '站长实测与用户提供的测速记录' },
       { label: '测评与测速方法', href: '/methodology/', description: '排序规则、数据来源与局限' },
     ],

@@ -101,19 +101,366 @@ const tools = [
 
   <section class="card side-card subscribe" aria-labelledby="subscribe-title">
     <h2 class="side-title" id="subscribe-title">
-      <Icon name="mail" size={18} />
-      订阅更新
-    </h2>
-    <p class="small">获取最新的机场推荐、测评与使用教程。</p>
-    <a class="btn btn-primary subscribe-rss" href="/rss.xml">
       <Icon name="rss" size={18} />
-      通过 RSS 订阅
-    </a>
-    <p class="side-note">
-      邮件订阅尚未接入服务商，接入前不会收集任何邮箱地址；也可关注 <a href="/news/">资讯与更新</a> 页面。
+      订阅机场指南更新
+    </h2>
+    <p class="small">及时获取机场测评、节点测速报告、新手教程及最新文章。</p>
+    <div class="subscribe-actions">
+      <a class="btn btn-primary subscribe-rss" href="/rss.xml" type="application/rss+xml">
+        <Icon name="rss" size={18} />
+        通过 RSS 订阅
+      </a>
+      <a class="btn btn-outline subscribe-news" href="/news/">
+        <Icon name="bolt" size={16} />
+        资讯与更新
+      </a>
+    </div>
+    <p class="side-note">RSS 源包含全部文章与测速报告的标题、链接、摘要与发布时间，可在任意 RSS 阅读器中订阅。</p>
+  </section>
+
+  <section class="card side-card ios-help" aria-labelledby="ios-help-title">
+    <div class="ios-head">
+      <span class="ios-icon" aria-hidden="true">
+        <Icon name="device" size={22} />
+      </span>
+      <div class="ios-head-text">
+        <p class="ios-eyebrow">iOS / iPadOS 用户专属指南</p>
+        <h2 class="side-title ios-title" id="ios-help-title">苹果 Nextin 下载协助</h2>
+      </div>
+    </div>
+    <p class="small ios-intro">iPhone / iPad 用户无法在 App Store 搜索 Nextin？这里为你整理海外 Apple ID 获取指南、客户端下载入口及新手安装教程。</p>
+    <ul class="ios-list">
+      <li><Icon name="check" size={14} />海外 Apple ID 获取参考</li>
+      <li><Icon name="check" size={14} />Nextin 官方 App Store 下载</li>
+      <li><Icon name="check" size={14} />iOS 安装与登录步骤</li>
+    </ul>
+    <div class="ios-actions">
+      <a class="btn btn-primary ios-btn" href="https://www.ermao.net/blog/freeappleid/" target="_blank" rel="nofollow noopener noreferrer">
+        <Icon name="book" size={16} />
+        查看海外 Apple ID 指南
+        <Icon name="external" size={14} />
+      </a>
+      <a class="btn btn-outline ios-btn" href="https://apps.apple.com/us/app/nextin/id6754002454" target="_blank" rel="noopener noreferrer">
+        <Icon name="download" size={16} />
+        前往 App Store 下载 Nextin
+      </a>
+    </div>
+    <p class="ios-links small">
+      <a href="https://support.apple.com/zh-cn/108647" target="_blank" rel="noopener noreferrer">Apple 官方账户注册教程</a>
+      <span aria-hidden="true">·</span>
+      <a href="/tutorials/ios-shiyong-jiaocheng/">本站 iOS 使用教程</a>
+    </p>
+    <p class="side-note ios-note">
+      <Icon name="shield" size={14} />
+      <span>建议优先使用自己的 Apple 账户。共享账号仅限在 App Store 临时登录，切勿登录 iCloud 或设备设置。账号可用性不作保证。</span>
     </p>
   </section>
 </aside>
 
 <style>
+  .sidebar {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .side-card {
+    padding: 16px;
+  }
+
+  .side-title {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 0 0 12px;
+    font-size: 1.05rem;
+  }
+
+  .side-title .icon {
+    color: var(--primary);
+  }
+
+  .side-search {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .side-search-icon {
+    color: var(--muted);
+    flex: none;
+  }
+
+  .side-search input {
+    flex: 1;
+    min-width: 0;
+    height: 40px;
+    padding: 0 12px;
+    border: 1px solid var(--border-strong);
+    border-radius: var(--radius-sm);
+    background: var(--surface-2);
+    color: var(--text);
+    font: inherit;
+  }
+
+  .quickstart {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .quickstart li + li {
+    border-top: 1px solid var(--border);
+  }
+
+  .quickstart a {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 2px;
+    color: var(--text);
+    font-size: 0.9rem;
+  }
+
+  .quickstart a:hover {
+    color: var(--primary);
+    text-decoration: none;
+  }
+
+  .qs-no {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background: var(--primary);
+    color: #fff;
+    font-size: 0.75rem;
+    font-weight: 700;
+    flex: none;
+  }
+
+  .qs-title {
+    flex: 1;
+    display: -webkit-box;
+    -webkit-line-clamp: 1;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .qs-chevron {
+    transform: rotate(-90deg);
+    color: var(--muted);
+    flex: none;
+  }
+
+  .tools {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+  }
+
+  .tool a {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    padding: 12px 8px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    background: var(--surface-2);
+    color: var(--text);
+    text-align: center;
+    text-decoration: none;
+    transition: border-color 0.15s ease, background 0.15s ease;
+    height: 100%;
+  }
+
+  .tool a:hover {
+    border-color: var(--primary-200);
+    background: var(--primary-50);
+  }
+
+  .tool-icon {
+    color: var(--primary);
+  }
+
+  .tool-label {
+    font-size: 0.875rem;
+    font-weight: 600;
+  }
+
+  .tool-sub {
+    font-size: 0.72rem;
+    color: var(--muted);
+  }
+
+  .tool.planned a {
+    opacity: 0.75;
+    border-style: dashed;
+  }
+
+  .tool.planned .tool-icon {
+    color: var(--muted);
+  }
+
+  .side-note {
+    margin: 10px 0 0;
+    font-size: 0.78rem;
+    color: var(--muted);
+  }
+
+  .subscribe-rss {
+    width: 100%;
+  }
+
+  .subscribe-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin: 10px 0 8px;
+  }
+
+  .subscribe-actions .btn {
+    width: 100%;
+    justify-content: center;
+  }
+
+  /* iOS Nextin 下载协助卡片 */
+  .ios-help {
+    position: relative;
+    overflow: hidden;
+    background: linear-gradient(160deg, var(--primary-50) 0%, var(--surface) 62%);
+    border-color: var(--primary-100);
+    transition: box-shadow 0.2s ease, transform 0.2s ease;
+  }
+
+  .ios-help:hover {
+    box-shadow: 0 10px 28px rgba(37, 99, 235, 0.12);
+  }
+
+  .ios-head {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .ios-icon {
+    flex: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    border-radius: 14px;
+    background: linear-gradient(145deg, var(--primary) 0%, var(--primary-700, var(--primary)) 100%);
+    color: #fff;
+    box-shadow: 0 6px 16px rgba(37, 99, 235, 0.25);
+  }
+
+  .ios-head-text {
+    min-width: 0;
+  }
+
+  .ios-eyebrow {
+    margin: 0 0 2px;
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 999px;
+    background: var(--primary-100);
+    color: var(--primary-700, var(--primary));
+    font-size: 0.72rem;
+    font-weight: 600;
+  }
+
+  .ios-title {
+    margin: 0;
+    font-size: 1.05rem;
+  }
+
+  .ios-intro {
+    margin: 8px 0 0;
+    color: var(--text-2);
+  }
+
+  .ios-list {
+    list-style: none;
+    margin: 8px 0 0;
+    padding: 8px 10px;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--border);
+    background: var(--surface);
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    font-size: 0.82rem;
+    color: var(--text-2);
+  }
+
+  .ios-list li {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .ios-list li :global(svg) {
+    color: var(--primary);
+    flex: none;
+  }
+
+  .ios-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-top: 10px;
+  }
+
+  .ios-btn {
+    width: 100%;
+    justify-content: center;
+    transition: transform 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
+  }
+
+  .ios-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 14px rgba(37, 99, 235, 0.2);
+  }
+
+  .ios-links {
+    margin: 8px 0 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    color: var(--muted);
+  }
+
+  .ios-note {
+    display: flex;
+    gap: 6px;
+    align-items: flex-start;
+    margin-top: 8px;
+  }
+
+  .ios-note :global(svg) {
+    flex: none;
+    margin-top: 2px;
+    color: var(--muted);
+  }
+
+  @media (max-width: 767px) {
+    .subscribe-actions,
+    .ios-actions {
+      flex-direction: row;
+      flex-wrap: wrap;
+    }
+
+    .subscribe-actions .btn,
+    .ios-btn {
+      flex: 1 1 200px;
+    }
+  }
 </style>

@@ -15,6 +15,9 @@ const latestBrand = latestReport ? getBrand(latestReport.brandId) : undefined;
 /** 最新节点测速报告：只取有下载速度数值的记录（站长实测 / 资料文字记录），按时间倒序 */
 const latestRows = getSpeedReports()
   .filter((r) => r.testedAt && (r.ownerReport || r.regionResults.some((rr) => rr.downloadMbps !== null)))
+  // 每个品牌只取最新一条，按榜单（站长编辑推荐）顺序排列
+  .filter((r, i, arr) => arr.findIndex((x) => x.brandId === r.brandId) === i)
+  .sort((a, b) => getBrand(a.brandId)!.editorialRank - getBrand(b.brandId)!.editorialRank)
   .slice(0, 4)
   .map((r) => {
     const brand = getBrand(r.brandId)!;
@@ -27,8 +30,9 @@ const latestRows = getSpeedReports()
       latency: own ? `${own.speed.pingMs} ms` : typeof rr?.latencyMs === 'number' ? `${rr.latencyMs} ms` : '—',
       download: own ? `${own.speed.downloadMbps} Mbps` : rr?.downloadMbps !== null && rr?.downloadMbps !== undefined ? `${rr.downloadMbps} Mbps` : '—',
       loss: rr?.packetLossPct !== null && rr?.packetLossPct !== undefined ? `${rr.packetLossPct}%` : '未提供',
-      exit: own?.exit ? `${own.exit.org ?? own.exit.location}${own.exit.asn ? ` · ${own.exit.asn}` : ''}` : (r.isp ?? '未标注'),
-      time: formatTestedAt(r),
+      exitOrg: own?.exit ? (own.exit.org ?? own.exit.location) : (r.isp ?? '未标注'),
+      exitAsn: own?.exit?.asn ?? '',
+      time: formatTestedAt(r).replace('（北京时间）', ''),
     };
   });
 ---
@@ -148,11 +152,14 @@ const latestRows = getSpeedReports()
             <tbody>
               {latestRows.map((row) => (
                 <tr>
-                  <td><a href={`/speed-tests/${row.slug}/`}>{row.brand} · {row.region}</a></td>
-                  <td class="num">{row.latency}</td>
-                  <td class="num">{row.download}</td>
-                  <td class="num">{row.loss}</td>
-                  <td class="small">{row.exit}</td>
+                  <td class="nowrap"><a href={`/speed-tests/${row.slug}/`}>{row.brand} · {row.region}</a></td>
+                  <td class="num nowrap">{row.latency}</td>
+                  <td class="num nowrap">{row.download}</td>
+                  <td class="num nowrap">{row.loss}</td>
+                  <td class="exit-cell" title={`${row.exitOrg}${row.exitAsn ? ` · ${row.exitAsn}` : ''}`}>
+                    <span class="exit-org">{row.exitOrg}</span>
+                    {row.exitAsn && <span class="exit-asn">{row.exitAsn}</span>}
+                  </td>
                   <td class="small nowrap">{row.time}</td>
                 </tr>
               ))}
@@ -181,6 +188,27 @@ const latestRows = getSpeedReports()
   .speed-mini th,
   .speed-mini td {
     padding: 8px 10px;
+    vertical-align: middle;
+    white-space: nowrap;
+  }
+
+  .exit-cell {
+    max-width: 150px;
+  }
+
+  .exit-org {
+    display: block;
+    max-width: 150px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font-size: 0.8rem;
+  }
+
+  .exit-asn {
+    display: block;
+    font-size: 0.72rem;
+    color: var(--muted);
+    font-family: var(--font-mono);
   }
 
   .latest-note {

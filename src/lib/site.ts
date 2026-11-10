@@ -8,10 +8,11 @@ export const SITE = {
   domain: 'jichang-zhinan.blog',
   url: 'https://jichang-zhinan.blog',
   /** 首页 H1 */
-  heroTitle: '2026 机场指南大全',
-  heroSubtitle: '机场推荐 · 真实测评 · 使用教程 · 排行榜 · 一站式指南',
+  heroTitle: '2026 机场指南大全｜机场推荐、真实测评、节点测速与排行榜',
+  /** 留空则不渲染副标题行 */
+  heroSubtitle: '',
   heroIntro:
-    '从机场选购、套餐对比、节点测速到 Clash 等客户端教程，为你提供全面、客观、持续更新的网络加速使用指南。',
+    '一站式了解 2026 年机场推荐、机场排行榜、套餐价格对比与节点测速。涵盖香港、日本、新加坡、美国等地区节点分析、出口运营商信息、线路稳定性、流媒体与 AI 兼容性，以及 Clash 客户端使用教程，为你提供全面、客观、持续更新的机场选择指南。',
   tagline: '2026 机场指南大全｜机场推荐、测评、教程、排名一体化',
   headerTagline: '2026 专业机场指南 · 推荐 · 测评 · 教程 · 排名',
   description:

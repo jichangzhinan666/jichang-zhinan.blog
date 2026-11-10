@@ -303,6 +303,16 @@
     "vision": "成为学生与年轻用户熟悉的高性价比网络加速品牌。",
     "values": "轻量连接、专线优化、亲民价格、便捷体验。",
     "slogan": "飞猫云，轻盈连接世界。",
+    "intro": {
+      "heading": "飞猫云 FLYCAT CLOUD",
+      "slogan": "轻盈飞跃，畅连世界。",
+      "paragraphs": [
+        "飞猫云（FlyCat Cloud）是一款主打 IPLC 专线、高性价比套餐与多地区节点的全球网络加速服务，以低门槛订阅、灵活的流量方案和多设备使用体验为主要特色，满足用户日常浏览、AI 工具、海外流媒体、学习办公等多元化网络需求。",
+        "飞猫云提供香港、日本、新加坡、美国等热门地区节点，并推出适合不同使用习惯的套餐，从 ¥84/年的学生轻量版，到每月 1000GB 的大流量方案，让轻度用户与高频用户均可根据实际需求灵活选择。"
+      ],
+      "tagline": "飞猫云——让全球连接更轻盈，让高速网络触手可及。",
+      "source": "品牌介绍文案由站长于 2026-11-10 提供，属宣传性描述；套餐、节点与测速数据以下方资料为准"
+    },
     "officialWebsite": null,
     "affiliateUrl": "https://flycat1.flycatvipaff.cc/#/?code=Gja6RpJ8",
     "logo": null,
@@ -376,7 +386,8 @@
     ],
     "sourceRecords": [
       { "sourceType": "user-supplied-official", "sourceFile": "source-materials/brands/飞猫云.txt", "sourceLocation": "全文（一至九节）", "verifiedAt": "2026-11-09" },
-      { "sourceType": "user-supplied-screenshot", "sourceFile": "source-materials/evidence/飞猫测速图 (5).webp", "sourceLocation": "价格表截图（两年付/三年付）", "verifiedAt": "2026-11-09" }
+      { "sourceType": "user-supplied-screenshot", "sourceFile": "source-materials/evidence/飞猫测速图 (5).webp", "sourceLocation": "价格表截图（两年付/三年付）", "verifiedAt": "2026-11-09" },
+      { "sourceType": "unverified", "sourceFile": "source-materials/brands/飞猫云-品牌介绍.txt", "sourceLocation": "品牌介绍文案（页首展示）", "verifiedAt": "2026-11-10", "note": "站长提供的品牌介绍文案，属宣传性描述，不作为价格、节点或测速的事实依据；文中价格与流量与登记套餐一致" }
     ],
     "lastVerifiedAt": "2026-11-09",
     "editorialStatus": "published",

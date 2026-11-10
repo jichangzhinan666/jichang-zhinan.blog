@@ -41,7 +41,6 @@ function verification(b: Brand) {
     official: officialDates.length ? officialDates[officialDates.length - 1] : null,
     pub: pub.length ? pubLabel : null,
     owner: owner.length ? `${testedDateOnly(owner[0]) ?? ''}${owner.length > 1 ? ` 等 ${owner.length} 份` : ''}`.trim() : null,
-    supplement: b.sourceRecords.some((s) => s.sourceType === 'unverified'),
   };
 }
 
@@ -227,12 +226,6 @@ const jsonLd = [
                   <dt>本站实测</dt>
                   <dd>{v.owner ?? '无'}</dd>
                 </div>
-                {v.supplement && (
-                  <div class="note">
-                    <dt>站长补充</dt>
-                    <dd>部分字段为站长补充，未独立验证</dd>
-                  </div>
-                )}
               </dl>
               <div class="bi-foot">
                 <EvidenceBadge brand={b} />
@@ -472,20 +465,8 @@ const jsonLd = [
     background: var(--success-bg);
   }
 
-  .bi-verify > div.note {
-    grid-column: 1 / -1;
-    border-style: solid;
-    border-color: #fde3b5;
-    background: var(--warning-bg);
-    color: var(--text-2);
-  }
-
   :root[data-theme="dark"] .bi-verify > div.strong {
     border-color: #2f6b4f;
-  }
-
-  :root[data-theme="dark"] .bi-verify > div.note {
-    border-color: #5b4214;
   }
 
   .bi-verify dt {

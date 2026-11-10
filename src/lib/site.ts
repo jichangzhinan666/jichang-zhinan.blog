@@ -54,8 +54,8 @@ export const NAV: NavItem[] = [
     children: [
       { label: '2026 机场推荐榜单', href: '/rankings/2026/', description: '编辑整理榜（年度版）' },
       { label: '2026 机场分类榜单', href: '/rankings/', description: '低价机场、大流量套餐、节点地区与线路类型' },
-      { label: '套餐对比', href: '/compare/', description: '8 个品牌全部套餐横向比较' },
-      { label: '品牌资料库', href: '/reviews/', description: '按地区、价格、功能筛选' },
+      { label: '2026 机场套餐价格对比', href: '/compare/', description: '月付费用、流量与每 GB 单价' },
+      { label: '2026 机场品牌测评大全', href: '/reviews/', description: '节点线路、客户端与详细资料库' },
     ],
   },
   {
@@ -100,9 +100,9 @@ export const STATIC_PAGES: Record<string, { title: string; lastmod: string; chan
   '/': { title: '首页', lastmod: '2026-11-10', changefreq: 'weekly' },
   '/rankings/': { title: '2026 机场分类榜单', lastmod: '2026-11-10', changefreq: 'monthly' },
   '/rankings/2026/': { title: '2026 机场推荐榜单', lastmod: '2026-11-10', changefreq: 'weekly' },
-  '/reviews/': { title: '品牌评测索引', lastmod: '2026-11-10', changefreq: 'weekly' },
+  '/reviews/': { title: '2026 机场品牌测评大全', lastmod: '2026-11-10', changefreq: 'weekly' },
   '/speed-tests/': { title: '测速报告总览', lastmod: '2026-11-10', changefreq: 'weekly' },
-  '/compare/': { title: '套餐对比', lastmod: '2026-11-10', changefreq: 'weekly' },
+  '/compare/': { title: '2026 机场套餐价格对比', lastmod: '2026-11-10', changefreq: 'weekly' },
   '/tutorials/': { title: '使用教程', lastmod: '2026-11-10', changefreq: 'weekly' },
   '/guides/': { title: '选购指南', lastmod: '2026-11-10', changefreq: 'weekly' },
   '/wiki/': { title: '机场百科', lastmod: '2026-11-10', changefreq: 'monthly' },

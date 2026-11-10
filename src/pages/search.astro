@@ -1,0 +1,264 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import Breadcrumbs from '@/components/Breadcrumbs.astro';
+import Icon from '@/components/Icon.astro';
+import { QUICK_LINKS } from '@/lib/site';
+
+const crumbs = [
+  { name: '首页', href: '/' },
+  { name: '站内搜索', href: '/search/' },
+];
+---
+
+<BaseLayout title="站内搜索：文章、品牌资料、测速报告与术语" description="在机场指南站内搜索文章、品牌资料、测速报告与百科术语。支持中文标题、品牌别名（如 FlyV、Breezenet）、标签与摘要全文，匹配在浏览器本地完成，不向第三方发送关键词。" noindex canonicalPath="/search/">
+  <div class="container">
+    <Breadcrumbs crumbs={crumbs} />
+    <header class="page-hero">
+      <h1>站内搜索</h1>
+      <p class="lead">支持中文标题、品牌别名（如 FlyV、Breezenet）、标签与摘要全文；索引在浏览器本地匹配，不会把关键词发送到第三方。</p>
+    </header>
+
+    <section class="card section">
+      <form class="search-page-form" action="/search/" method="get" role="search" id="search-page-form">
+        <Icon name="search" size={20} class="spf-icon" />
+        <input id="search-page-input" name="q" type="search" placeholder="例如：优惠码、IEPL、Clash Verge Rev、灵动云" aria-label="搜索关键词" autocomplete="off" />
+        <button type="submit" class="btn btn-primary">搜索</button>
+      </form>
+      <p class="small muted" id="search-status" aria-live="polite">输入关键词后按回车。</p>
+      <div id="search-results" class="search-results" aria-live="polite"></div>
+      <noscript>
+        <p class="callout callout-info">站内搜索需要启用 JavaScript。你也可以直接浏览下方栏目。</p>
+      </noscript>
+    </section>
+
+    <section class="card section" aria-labelledby="browse-title">
+      <h2 class="section-title" id="browse-title"><Icon name="layers" size={20} />直接浏览栏目</h2>
+      <ul class="browse">
+        {QUICK_LINKS.map((q) => <li><a href={q.href}><Icon name={q.icon} size={18} />{q.label}<span class="small muted">{q.sub}</span></a></li>)}
+        <li><a href="/compare/"><Icon name="compare" size={18} />套餐对比<span class="small muted">8 个品牌全部套餐</span></a></li>
+        <li><a href="/reviews/"><Icon name="chart" size={18} />品牌资料库<span class="small muted">按地区、价格、功能筛选</span></a></li>
+      </ul>
+    </section>
+  </div>
+</BaseLayout>
+
+<style>
+  .search-page-form {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+  }
+
+  .spf-icon {
+    color: var(--muted);
+    flex: none;
+  }
+
+  .search-page-form input {
+    flex: 1;
+    min-width: 0;
+    height: 48px;
+    padding: 0 14px;
+    border: 1px solid var(--border-strong);
+    border-radius: var(--radius);
+    background: var(--surface-2);
+    color: var(--text);
+    font: inherit;
+    font-size: 1.05rem;
+  }
+
+  #search-status {
+    margin: 10px 0 0;
+  }
+
+  .search-results :global(ol) {
+    list-style: none;
+    margin: 12px 0 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .search-results :global(li) {
+    padding: 14px 0;
+    border-top: 1px solid var(--border);
+  }
+
+  .search-results :global(.r-type) {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--primary);
+  }
+
+  .search-results :global(.r-title) {
+    display: block;
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--text);
+    margin: 2px 0 4px;
+  }
+
+  .search-results :global(.r-title:hover) {
+    color: var(--primary);
+  }
+
+  .search-results :global(.r-desc) {
+    margin: 0;
+    font-size: 0.925rem;
+    color: var(--text-2);
+  }
+
+  .search-results :global(.r-url) {
+    font-size: 0.78rem;
+    color: var(--muted);
+  }
+
+  .search-results :global(mark) {
+    background: #fef08a;
+    color: inherit;
+    border-radius: 2px;
+    padding: 0 2px;
+  }
+
+  :global(:root[data-theme="dark"]) .search-results :global(mark) {
+    background: #854d0e;
+  }
+
+  .browse {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 10px;
+  }
+
+  .browse a {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    padding: 12px 14px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    color: var(--text);
+    font-weight: 600;
+    text-decoration: none;
+  }
+
+  .browse a:hover {
+    border-color: var(--primary-200);
+    background: var(--primary-50);
+  }
+
+  .browse .icon {
+    color: var(--primary);
+  }
+
+  @media (max-width: 1023px) {
+    .browse {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  @media (max-width: 639px) {
+    .browse {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
+
+<script>
+  type IndexItem = { title: string; url: string; type: string; description: string; keywords: string[]; body?: string };
+  const input = document.getElementById('search-page-input') as HTMLInputElement | null;
+  const status = document.getElementById('search-status');
+  const results = document.getElementById('search-results');
+  const form = document.getElementById('search-page-form') as HTMLFormElement | null;
+
+  const escapeHtml = (s: string) =>
+    s.replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c] as string);
+  const highlight = (text: string, terms: string[]) => {
+    let out = escapeHtml(text);
+    for (const t of terms) {
+      if (!t) continue;
+      const re = new RegExp(t.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'gi');
+      out = out.replace(re, (m) => `<mark>${m}</mark>`);
+    }
+    return out;
+  };
+
+  const score = (item: IndexItem, terms: string[]) => {
+    let s = 0;
+    const title = item.title.toLowerCase();
+    const desc = item.description.toLowerCase();
+    const body = (item.body ?? '').toLowerCase();
+    for (const t of terms) {
+      if (title.includes(t)) s += 6;
+      if (item.keywords.some((k) => k.toLowerCase().includes(t))) s += 4;
+      if (desc.includes(t)) s += 2;
+      if (body.includes(t)) s += 1;
+    }
+    return s;
+  };
+
+  const snippet = (item: IndexItem, terms: string[]) => {
+    const body = item.body ?? '';
+    const lower = body.toLowerCase();
+    const pos = terms.map((t) => lower.indexOf(t)).filter((p) => p >= 0).sort((a, b) => a - b)[0];
+    if (pos === undefined) return item.description;
+    const start = Math.max(0, pos - 40);
+    return `${start > 0 ? '…' : ''}${body.slice(start, pos + 80)}…`;
+  };
+
+  let indexCache: IndexItem[] | null = null;
+  const loadIndex = async () => {
+    if (indexCache) return indexCache;
+    const r = await fetch('/search-index.json');
+    indexCache = (await r.json()) as IndexItem[];
+    return indexCache;
+  };
+
+  const run = async (q: string) => {
+    if (!results || !status) return;
+    const terms = q.toLowerCase().split(/\s+/).filter(Boolean);
+    if (!terms.length) {
+      status.textContent = '输入关键词后按回车。';
+      results.innerHTML = '';
+      return;
+    }
+    status.textContent = '正在搜索…';
+    const data = await loadIndex();
+    const ranked = data
+      .map((it) => ({ it, s: score(it, terms) }))
+      .filter((x) => x.s > 0)
+      .sort((a, b) => b.s - a.s)
+      .slice(0, 30);
+    if (!ranked.length) {
+      status.textContent = `没有找到与“${q}”相关的内容。试试更短的关键词、品牌别名，或浏览下方栏目。`;
+      results.innerHTML = '';
+      return;
+    }
+    status.textContent = `找到 ${ranked.length} 条与“${q}”相关的内容：`;
+    results.innerHTML = `<ol>${ranked
+      .map(
+        ({ it }) =>
+          `<li><span class="r-type">${escapeHtml(it.type)}</span><a class="r-title" href="${escapeHtml(it.url)}">${highlight(it.title, terms)}</a><p class="r-desc">${highlight(snippet(it, terms), terms)}</p><span class="r-url">${escapeHtml(it.url)}</span></li>`,
+      )
+      .join('')}</ol>`;
+    document.title = `“${q}” 的搜索结果｜机场指南`;
+  };
+
+  const params = new URLSearchParams(window.location.search);
+  const initial = params.get('q') ?? '';
+  if (input) input.value = initial;
+  if (initial) run(initial);
+
+  form?.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const q = input?.value.trim() ?? '';
+    const url = new URL(window.location.href);
+    if (q) url.searchParams.set('q', q);
+    else url.searchParams.delete('q');
+    window.history.replaceState({}, '', url);
+    run(q);
+  });
+</script>

@@ -1,0 +1,738 @@
+[
+  {
+    "id": "lingdongyun",
+    "slug": "lingdongyun",
+    "displayName": "灵动云",
+    "englishName": "LingDongYun / LingDong Cloud",
+    "aliases": ["LingDongYun", "LingDong Cloud", "灵动云机场", "灵动"],
+    "tagline": "主打 IEPL / IPLC 专线，全节点 1x 倍率、不限设备，月付 ¥20 起",
+    "description": "灵动云（LingDongYun）是面向中文用户的全球网络加速服务品牌，采用 IEPL / IPLC 优化线路，提供香港、台湾、日本、新加坡、美国 5 个地区共 60 个节点。产品以官方客户端为主要入口，账号登录即可连接；符合条件的高流量套餐可向客服申请订阅链接，用于兼容的第三方客户端。资料显示周期套餐月付 ¥20（100 GB）起，另有 IPLC 年付小包、不限时流量包与独享定制线路。",
+    "mission": "让更多用户以简单、灵活的方式连接全球网络。",
+    "vision": "成为中文用户值得信赖的全球网络加速服务品牌。",
+    "values": "用户体验、技术优化、透明服务、持续改进。",
+    "slogan": "灵动云，让全球连接更简单，让世界因灵动云而灵动起来。",
+    "officialWebsite": null,
+    "affiliateUrl": "https://varnexa.lingdongaff.com/#/?code=HHoxxHGa",
+    "logo": null,
+    "brandColor": "#2E7CF6",
+    "supportedPlatforms": [],
+    "platformsNote": "资料未逐一列出支持系统；客服说明中提及可协助处理 iOS 客户端、TUN 与 DNS 相关问题，站长实测报告显示使用“客户端 V3.0.0”。",
+    "nodeRegions": ["香港", "台湾", "日本", "新加坡", "美国"],
+    "nodeCount": 60,
+    "nodeCountNote": null,
+    "nodeCountByRegion": { "香港": 20, "台湾": 10, "日本": 10, "新加坡": 10, "美国": 10 },
+    "lineTypes": ["IEPL 专线", "BGP 智能调度", "穿云套餐为 IPLC 专线"],
+    "protocol": null,
+    "ratio": "全节点统一 1x 倍率",
+    "streamingSupport": ["Netflix", "Disney+", "HBO", "YouTube", "TikTok", "Abema", "Spotify"],
+    "aiSupport": ["ChatGPT", "Claude", "Midjourney"],
+    "streamingNote": "资料注明：速度、稳定性及流媒体、AI 工具的可用性不作持续保证，以实测为准。至尊私人定制适合跨境电商、独立站与 TikTok 直播。",
+    "serviceFeatures": [
+      "IEPL / IPLC 优化线路，覆盖香港、日本、台湾、新加坡、美国",
+      "官方客户端账号登录即可连接，减少手动导入订阅、配置规则等操作",
+      "月付 ¥20（100 GB）起，另有年付小包（穿云，¥99/年）与一次性流量包",
+      "符合条件的高流量套餐可联系客服申请订阅链接，使用兼容的第三方客户端",
+      "官方客服可协助处理安装、节点切换、DNS、TUN、iOS 客户端及连接异常"
+    ],
+    "audiences": [
+      "经常使用 ChatGPT、Claude、Gemini、Perplexity 等海外 AI 工具的用户",
+      "观看 YouTube、Netflix、Disney+ 等海外流媒体的用户",
+      "不想掌握复杂代理配置的机场新手与普通用户",
+      "跨境电商与远程办公人员",
+      "需要海外公开课、技术论坛与学术资源的学生与科研用户",
+      "希望按流量需求灵活选择月付、年付或一次性流量包的用户",
+      "需要在电脑和移动设备上同时使用的多设备用户",
+      "熟悉 Clash、Mihomo 等客户端、希望自行管理规则的进阶用户（需向客服申请订阅）"
+    ],
+    "deviceLimit": "不限同时在线设备数",
+    "trafficRules": [
+      "周期套餐流量每月重置，未用完的流量不结转到下月",
+      "月内流量用完，可购买同档重置包，价格等于该套餐月付价",
+      "穿云套餐从购买日起每 30 天刷新 70 GB",
+      "所有套餐不限速"
+    ],
+    "clientPolicy": {
+      "officialClient": true,
+      "subscriptionLink": "订阅链接需询问客服获取最新情报",
+      "thirdPartyClients": "订阅链接支持导入兼容的第三方客户端，但相关资讯必须通过客服渠道确认",
+      "downloadChannel": "仅限官网；网上出售的订阅链接或网盘分发的客户端均非官方渠道",
+      "note": "官网客户端由官方统一发布和更新；已购套餐不受影响，登录客户端即可继续使用"
+    },
+    "coupon": {
+      "code": "ld888",
+      "discount": "8 折",
+      "appliesTo": ["拂风", "驭浪", "破晓", "凌霄（含长周期）"],
+      "excludes": ["穿云", "不限时流量包", "至尊私人定制"],
+      "limits": [],
+      "usage": "在结算页优惠码栏填写，实付金额以结算页显示为准"
+    },
+    "support": {
+      "channels": ["Crisp 在线客服", "工单", "Telegram 公告频道"],
+      "hours": "工单 24 小时内回复",
+      "refund": "可申请退款与升级补差价，具体条件以平台指引为准",
+      "trial": "无免费试用",
+      "payment": null,
+      "antiFraud": "只通过官网注册购买，价格与优惠以结算页为准"
+    },
+    "purchaseSteps": [
+      "进入灵动云官网，注册账号（可通过推广链接进入）",
+      "首次购买建议先选月付或最小的套餐试用",
+      "在结算页填写优惠码 ld888，确认折扣生效后付款",
+      "下载官方客户端，用账号登录",
+      "选择节点连接，建议在晚高峰（20:00~23:00）多用几天，确认满意再考虑长周期"
+    ],
+    "peakTestNote": "资料附 2026-10-28 晚高峰（21:26–21:45，中国联通）文字记录；另有站长 2026-11-10 10:54 日本5 节点实测报告。",
+    "speedTests": {
+      "reportSlugs": ["lingdongyun-2026-11-10-japan5", "lingdongyun-2026-10-28-evening-peak"],
+      "evidenceStatus": "owner-report",
+      "latestDatedTest": "2026-11-10"
+    },
+    "dataCaveats": [
+      "资料未列出官方客户端支持的具体操作系统。",
+      "2026-10-28 晚高峰记录未注明测速工具与具体城市，仅注明测试网络为中国联通。"
+    ],
+    "sourceRecords": [
+      { "sourceType": "user-supplied-official", "sourceFile": "source-materials/brands/灵动云.txt", "sourceLocation": "全文（一至十节）", "verifiedAt": "2026-11-09" },
+      { "sourceType": "independently-measured", "sourceFile": "source-materials/evidence/reports/灵动云_实测报告_浅色版.png", "sourceLocation": "站长实测报告图（2026-11-10 10:54）", "verifiedAt": "2026-11-10" }
+    ],
+    "lastVerifiedAt": "2026-11-10",
+    "editorialStatus": "published",
+    "keywords": ["灵动云机场", "灵动云优惠码", "灵动云测速", "灵动云套餐", "IEPL 机场", "ld888"]
+  },
+  {
+    "id": "flyv",
+    "slug": "flyv",
+    "displayName": "飞V",
+    "englishName": "FlyV",
+    "aliases": ["FLYV", "FlyV", "飞V机场", "飞 V"],
+    "tagline": "主打专线线路和官方客户端，登录即用，不对外发放订阅链接",
+    "description": "飞V（FlyV）主打专线线路与官方客户端，用户登录账号即可连接，分流规则已内置。品牌明确不对外发放订阅链接、不支持导入 Clash 等第三方客户端，以此保护账号隐私与线路稳定。节点覆盖香港、台湾、日本、新加坡、美国 5 个地区共 60 个节点，常规会员套餐全节点 1x 倍率，入门方案 ¥25/月（150 GB）。",
+    "mission": "让每个人都能简单、安全、稳定地连接世界。用专线和官方客户端，省掉繁琐的配置，同时保护用户的隐私和线路品质。",
+    "vision": "成为用户最放心、最省心的跨境网络连接品牌，让工作、学习和娱乐不再被网络限制。",
+    "values": "省心、安全、稳定、透明、尊重。",
+    "slogan": "中国人能飞，网速也要飞",
+    "officialWebsite": "https://flyv.site",
+    "affiliateUrl": "https://varnexa.flyvaff.com/#/?code=1mq17Z8C",
+    "logo": null,
+    "brandColor": "#1A8CFF",
+    "supportedPlatforms": ["Windows", "macOS", "Android", "iOS"],
+    "platformsNote": "电视盒子、软路由等其他设备请先咨询客服。",
+    "nodeRegions": ["香港", "台湾", "日本", "新加坡", "美国"],
+    "nodeCount": 60,
+    "nodeCountNote": "资料称节点是否超时可在官网检测。",
+    "nodeCountByRegion": { "香港": 20, "台湾": 10, "日本": 10, "新加坡": 10, "美国": 10 },
+    "lineTypes": ["香港：IEPL 专线", "台湾：IEPL 专线", "日本：IPLC / IEPL 专线", "新加坡：IPLC / IEPL 专线", "美国：BGP 直连优化"],
+    "protocol": null,
+    "ratio": "常规会员套餐全节点统一 1x 倍率",
+    "streamingSupport": ["Netflix", "Disney+", "YouTube Premium", "Prime Video", "Abema", "TVer"],
+    "aiSupport": ["ChatGPT", "Claude", "Midjourney", "GitHub Copilot"],
+    "streamingNote": "资料称使用原生 IP；速度、稳定性及流媒体、AI 工具的可用性不作持续保证，以实测为准。",
+    "serviceFeatures": [
+      "港台日新专线接入，美国为 BGP 直连优化",
+      "官方客户端登录即用，分流规则已内置",
+      "不对外发放订阅链接，防止订阅外泄导致节点拥挤",
+      "常规周期套餐不限同时在线设备数，所有设备共享套餐流量",
+      "线路类型、套餐规则、优惠条件公开说明"
+    ],
+    "audiences": [],
+    "deviceLimit": "常规周期套餐不限同时在线设备数，所有设备共享同一套餐流量",
+    "trafficRules": [
+      "周期套餐流量每月重置，未用完的流量不结转到下月",
+      "月内流量用完，可购买同档重置包，价格等于该套餐月付价"
+    ],
+    "clientPolicy": {
+      "officialClient": true,
+      "subscriptionLink": "不对外发放，防止订阅外泄被他人盗用导致节点拥挤",
+      "thirdPartyClients": "不支持导入 Clash、小火箭等",
+      "downloadChannel": "仅限官网用户中心；网上出售的「飞V 订阅链接」或网盘分发的「飞V 客户端」均非官方渠道",
+      "note": null
+    },
+    "coupon": {
+      "code": "fly20",
+      "discount": "8 折（例如入门方案月付折后约 ¥20）",
+      "appliesTo": ["入门方案", "进阶方案", "高端方案", "商业方案（含长周期）"],
+      "excludes": ["年付标准轻量版", "不限时流量包", "独享黄金专线"],
+      "limits": ["新用户首单专享", "每个账号限用一次"],
+      "usage": "在结算页优惠码栏填写，实付金额以结算页显示为准"
+    },
+    "support": {
+      "channels": ["官网用户中心工单"],
+      "hours": null,
+      "refund": null,
+      "trial": null,
+      "payment": null,
+      "antiFraud": "客服不会私下索要账号凭证；宣称「¥9.9/月」「1 折码」「全场免费」的都不是官方，官方入门价为 ¥25/月，正规优惠码只有 fly20"
+    },
+    "purchaseSteps": [
+      "进入飞V 官网（flyv.site），注册账号",
+      "首次购买建议先选月付或最小的套餐试用",
+      "在结算页填写优惠码 fly20，确认折扣生效后付款",
+      "在用户中心下载客户端，用账号登录",
+      "选择节点连接，建议在晚高峰（20:00~23:00）多用几天，确认满意再考虑长周期"
+    ],
+    "peakTestNote": "文本资料无晚高峰实测；站长于 2026-11-10 12:09 完成新加坡节点实测报告。",
+    "speedTests": {
+      "reportSlugs": ["flyv-2026-11-10-singapore"],
+      "evidenceStatus": "owner-report",
+      "latestDatedTest": "2026-11-10"
+    },
+    "dataCaveats": [
+      "长周期价格资料只给出比例（季付约 95%、半年付约 90%、年付约 85%），未给出具体金额，本站不自行推算。",
+      "资料未列出具体适合人群。"
+    ],
+    "sourceRecords": [
+      { "sourceType": "user-supplied-official", "sourceFile": "source-materials/brands/FLYV.txt", "sourceLocation": "全文（一至九节）", "verifiedAt": "2026-11-09" },
+      { "sourceType": "independently-measured", "sourceFile": "source-materials/evidence/reports/FlyV_新加坡节点_实测报告.png", "sourceLocation": "站长实测报告图（2026-11-10 12:09）", "verifiedAt": "2026-11-10" }
+    ],
+    "lastVerifiedAt": "2026-11-10",
+    "editorialStatus": "published",
+    "keywords": ["飞V机场", "FlyV 机场", "飞V优惠码", "fly20", "飞V测速", "不发订阅链接的机场"]
+  },
+  {
+    "id": "dalaoyun",
+    "slug": "dalaoyun",
+    "displayName": "大佬云",
+    "englishName": "DalaoYun",
+    "aliases": ["DalaoYun", "大佬云机场"],
+    "tagline": "2026 年新上线的低价专线机场，最低月付 ¥19.99，全节点 1x、不限设备",
+    "description": "大佬云（DalaoYun）是一款以高性价比、VLESS 协议与 IEPL 专线优化为特色的全球网络加速服务品牌，面向希望控制订阅成本的中文用户。节点覆盖香港、台湾、日本、新加坡、美国、韩国 6 个地区共 60 个节点，周期套餐全节点 1x 倍率，最低月付 ¥19.99（120 GB），并提供年付活动包与一次性流量包。资料显示其官方客户端支持 Windows、macOS、Android，iOS 通过 Nextin 使用，同时可导入 Clash。",
+    "mission": "让更多用户以合理的成本获得便捷的全球网络连接体验。",
+    "vision": "打造兼顾经济性、实用性与用户体验的全球网络加速品牌。",
+    "values": "亲民价格、线路优化、灵活计费、简洁体验。",
+    "slogan": "大佬云，让专线连接更有性价比。",
+    "officialWebsite": null,
+    "affiliateUrl": "https://a01vipaff.dalaoyunaff.com/#/?code=yN6HqG0d",
+    "logo": null,
+    "brandColor": "#0EA5A4",
+    "supportedPlatforms": ["Windows", "macOS", "Android", "iOS（通过 Nextin）"],
+    "platformsNote": null,
+    "nodeRegions": ["香港", "台湾", "日本", "新加坡", "美国", "韩国"],
+    "nodeCount": 60,
+    "nodeCountNote": "资料未给出各地区节点数。",
+    "nodeCountByRegion": {},
+    "lineTypes": ["IEPL 专线"],
+    "protocol": "VLESS",
+    "ratio": "周期套餐全节点 1x 倍率",
+    "streamingSupport": ["Netflix", "Disney+", "TikTok"],
+    "aiSupport": ["ChatGPT", "Claude"],
+    "streamingNote": "资料称使用原生 IP；速度、稳定性及流媒体、AI 工具的可用性不作持续保证，以实测为准。",
+    "serviceFeatures": [
+      "最低月付 ¥19.99（120 GB），入门门槛低",
+      "VLESS 协议 + IEPL 专线优化",
+      "晚高峰不限速，单节点最高 2.5Gbps（资料说法）",
+      "不限同时在线设备数",
+      "官方客户端之外可导入 Clash"
+    ],
+    "audiences": [
+      "预算有限、想先买一个月试试的人",
+      "多设备用户",
+      "用量不大、想年付的人"
+    ],
+    "deviceLimit": "不限同时在线设备数",
+    "trafficRules": [
+      "周期套餐流量每月重置，未用完的流量不结转到下月",
+      "晚高峰不限速，单节点最高 2.5Gbps"
+    ],
+    "clientPolicy": {
+      "officialClient": true,
+      "subscriptionLink": "不推荐使用，避免订阅外泄被他人盗用导致节点拥挤",
+      "thirdPartyClients": "可导入 Clash",
+      "downloadChannel": "仅限官网；网上出售的订阅链接或网盘分发的客户端均非官方渠道",
+      "note": "官网客户端由官方统一发布和更新，同样可以安全使用"
+    },
+    "coupon": {
+      "code": "dly888",
+      "discount": "7 折",
+      "appliesTo": [],
+      "excludes": [],
+      "limits": ["一次性使用"],
+      "usage": "在结算页优惠码栏填写，实付金额以结算页显示为准"
+    },
+    "support": {
+      "channels": ["7×24 小时真人即时客服（相关资讯需通过永久官网询问）"],
+      "hours": "7×24 小时",
+      "refund": null,
+      "trial": "官方不提供试用",
+      "payment": "仅支持支付宝",
+      "antiFraud": "只通过官网注册购买，价格与优惠以结算页为准"
+    },
+    "purchaseSteps": [
+      "进入大佬云官网，注册账号（可通过推广链接进入）",
+      "首次购买建议先选月付或最小的套餐试用",
+      "在结算页填写优惠码 dly888，确认折扣生效后付款",
+      "下载官方客户端，用账号登录",
+      "选择节点连接，建议在晚高峰（20:00~23:00）多用几天，确认满意再考虑长周期"
+    ],
+    "peakTestNote": "资料标注“待观察实测中”，暂无测速记录。",
+    "speedTests": { "reportSlugs": [], "evidenceStatus": "none", "latestDatedTest": null },
+    "dataCaveats": [
+      "资料称“入门价低于 34 家中位数”，该对比样本未随资料提供，本站未采用。",
+      "优惠码 dly888 的适用套餐范围资料未说明。",
+      "资料未给出各地区节点数。"
+    ],
+    "sourceRecords": [
+      { "sourceType": "user-supplied-official", "sourceFile": "source-materials/brands/大佬云.txt", "sourceLocation": "全文（一至十节）", "verifiedAt": "2026-11-10" }
+    ],
+    "lastVerifiedAt": "2026-11-10",
+    "editorialStatus": "published",
+    "keywords": ["大佬云机场", "大佬云优惠码", "dly888", "便宜机场", "19.99 机场", "VLESS 机场"]
+  },
+  {
+    "id": "flycat",
+    "slug": "flycat",
+    "displayName": "飞猫云",
+    "englishName": "FlyCat Cloud",
+    "aliases": ["FlyCat", "FlyCat Cloud", "飞猫", "飞猫云机场"],
+    "tagline": "多地区覆盖的 IPLC 专线机场，入门 ¥25/月含 150 GB，另有 ¥84 学生年付版",
+    "description": "飞猫云（FlyCat）以高性价比、低门槛专线服务及灵活流量套餐为特色，重点面向学生、机场新手与轻度用户。资料显示其采用全 IPLC 专线，节点地区覆盖香港、台湾、日本、新加坡、美国、韩国以及马来西亚、越南、菲律宾、泰国、印度、英国、法国、德国、阿根廷等，共 63 个节点，全节点 1x 倍率、高峰不降速。周期套餐从 ¥25/月（150 GB）起，学生版 ¥84/年（每月 50 GB），并支持导入 Clash、小火箭等第三方客户端。",
+    "mission": "让专线网络服务更加亲民、简单、易于使用。",
+    "vision": "成为学生与年轻用户熟悉的高性价比网络加速品牌。",
+    "values": "轻量连接、专线优化、亲民价格、便捷体验。",
+    "slogan": "飞猫云，轻盈连接世界。",
+    "officialWebsite": null,
+    "affiliateUrl": "https://flycat1.flycatvipaff.cc/#/?code=Gja6RpJ8",
+    "logo": null,
+    "brandColor": "#7C5CFF",
+    "supportedPlatforms": [],
+    "platformsNote": "资料未列出官方客户端支持的操作系统。",
+    "nodeRegions": ["香港", "台湾", "日本", "新加坡", "美国", "韩国", "马来西亚", "越南", "菲律宾", "泰国", "印度", "英国", "法国", "德国", "阿根廷"],
+    "nodeCount": 63,
+    "nodeCountNote": "资料列出香港 20、台湾 10、日本 10、新加坡 10、美国 10、韩国 3，其余地区节点数未给出。",
+    "nodeCountByRegion": { "香港": 20, "台湾": 10, "日本": 10, "新加坡": 10, "美国": 10, "韩国": 3 },
+    "lineTypes": ["全 IPLC 专线"],
+    "protocol": null,
+    "ratio": "全节点 1x 倍率，高峰不降速",
+    "streamingSupport": ["Netflix", "Disney+", "TikTok"],
+    "aiSupport": ["ChatGPT", "Claude"],
+    "streamingNote": "资料称使用原生 IP；速度、稳定性及流媒体、AI 工具的可用性不作持续保证，以实测为准。",
+    "serviceFeatures": [
+      "节点地区覆盖广，含韩国、东南亚、欧洲、南美（资料说法）",
+      "全 IPLC 专线，单节点最高 2.5Gbps（资料说法）",
+      "学生版 ¥84/年（每月 50 GB），面向学生与低预算用户",
+      "支持导入 Clash、小火箭等第三方客户端",
+      "季付及以上套餐从购买日起每 30 天刷新流量"
+    ],
+    "audiences": ["学生群体", "低预算用户", "机场新手", "AI 轻度用户", "日常浏览用户", "开发者与学习用户", "轻度流媒体用户", "低频使用用户"],
+    "deviceLimit": "不限同时在线设备数",
+    "trafficRules": [
+      "季付及以上从购买日起每 30 天刷新流量，未用完的流量不结转",
+      "高峰不降速，单节点最高 2.5Gbps"
+    ],
+    "clientPolicy": {
+      "officialClient": true,
+      "subscriptionLink": "不推荐使用，避免订阅外泄被他人盗用导致节点拥挤",
+      "thirdPartyClients": "支持导入 Clash、小火箭等",
+      "downloadChannel": "仅限官网；网上出售的订阅链接或网盘分发的客户端均非官方渠道",
+      "note": "官网客户端由官方统一发布和更新，同样可以安全使用"
+    },
+    "coupon": {
+      "code": "flycat888",
+      "discount": "8 折",
+      "appliesTo": ["季付及以上周期套餐"],
+      "excludes": ["月付"],
+      "limits": ["新用户专享"],
+      "usage": "在结算页优惠码栏填写，实付金额以结算页显示为准"
+    },
+    "support": {
+      "channels": [],
+      "hours": null,
+      "refund": null,
+      "trial": null,
+      "payment": null,
+      "antiFraud": "只通过官网注册购买，价格与优惠以结算页为准"
+    },
+    "purchaseSteps": [
+      "进入飞猫云官网，注册账号（可通过推广链接进入）",
+      "首次购买可先选季付试用",
+      "在结算页填写优惠码 flycat888，确认折扣生效后付款",
+      "下载官方客户端，用账号登录",
+      "选择节点连接，建议在晚高峰（20:00~23:00）多用几天，确认满意再考虑长周期"
+    ],
+    "peakTestNote": "文本资料无晚高峰记录；用户提供 5 张截图（拓扑、测速、解锁矩阵、价格表），均未标注测试时间。",
+    "speedTests": {
+      "reportSlugs": ["flycat-speedcentre-undated"],
+      "evidenceStatus": "undated-screenshot",
+      "latestDatedTest": null
+    },
+    "dataCaveats": [
+      "资料称 63 个节点，但测速截图显示 49 个节点（含澳大利亚、英国各 1 个），地区与数量与文本不完全一致。",
+      "一张名为“飞猫测速图 (2)”的截图订阅标识与其余截图不同，归属待确认，未在本页展示。",
+      "宇宙版两年付/三年付价格在价格表截图中与资料折扣规则不一致，暂不收录。",
+      "资料未提供客服渠道信息。"
+    ],
+    "sourceRecords": [
+      { "sourceType": "user-supplied-official", "sourceFile": "source-materials/brands/飞猫云.txt", "sourceLocation": "全文（一至九节）", "verifiedAt": "2026-11-09" },
+      { "sourceType": "user-supplied-screenshot", "sourceFile": "source-materials/evidence/飞猫测速图 (5).webp", "sourceLocation": "价格表截图（两年付/三年付）", "verifiedAt": "2026-11-09" }
+    ],
+    "lastVerifiedAt": "2026-11-09",
+    "editorialStatus": "published",
+    "keywords": ["飞猫云机场", "飞猫云优惠码", "flycat888", "学生机场", "IPLC 机场", "飞猫云测速"]
+  },
+  {
+    "id": "langwang",
+    "slug": "langwang",
+    "displayName": "浪网",
+    "englishName": "WaveNet",
+    "aliases": ["WaveNet", "浪网机场", "浪網"],
+    "tagline": "VLESS 协议、企业级 IEPL 专线与三网优化，真人客服，入口套餐 ¥30/月起",
+    "description": "浪网以 VLESS 协议、企业级 IEPL 专线、三网优化与智能负载均衡为主要卖点，拥有 60+ 全球节点，覆盖香港、台湾、日本、新加坡、美国等地区。资料显示其周期套餐从入口版 ¥30/月（150 GB）到商业版 ¥200/月（2 TB），另有年付标准、不限时流量包与仅支持月付的定制线路包。目前通过官网主页下载客户端一键登录使用，暂不支持订阅链接。",
+    "mission": "让用户以清晰、便捷的方式获得顺畅、稳定的网络连接体验，并通过及时的真人服务减少使用障碍。",
+    "vision": "成为用户长期信赖、兼顾连接品质、透明服务与持续运营的网络服务品牌。",
+    "values": "通畅、稳健、诚信、务实、以用户体验为中心。",
+    "slogan": "浪网恢恢，通畅稳健。",
+    "officialWebsite": "https://varnexa.wavenetaff.com",
+    "affiliateUrl": "https://varnexa.wavenetaff.com",
+    "logo": null,
+    "brandColor": "#0E9F8E",
+    "supportedPlatforms": [],
+    "platformsNote": "资料称进入主页后选择对应设备系统下载客户端，未逐一列出系统。",
+    "nodeRegions": ["香港", "台湾", "日本", "新加坡", "美国"],
+    "nodeCount": 60,
+    "nodeCountNote": "资料写作“60+ 节点”，地区列表以“等”结尾；2026-07-19 测速截图显示 50 个节点。",
+    "nodeCountByRegion": {},
+    "lineTypes": ["企业级 IEPL 专线", "三网优化", "智能负载均衡"],
+    "protocol": "VLESS",
+    "ratio": null,
+    "streamingSupport": ["Netflix", "Disney+", "HBO", "YouTube"],
+    "aiSupport": ["ChatGPT", "Gemini"],
+    "streamingNote": "资料另列出 TikTok；可用性以实测为准。",
+    "serviceFeatures": [
+      "VLESS 协议、企业级 IEPL 专线",
+      "三网优化与智能负载均衡",
+      "60+ 全球节点，多地区线路",
+      "支持流媒体与 AI 工具使用场景",
+      "真人客服与专业技术团队维护"
+    ],
+    "audiences": [
+      "日常跨境网络使用者",
+      "远程办公与在线学习用户",
+      "Netflix、YouTube 等流媒体用户",
+      "ChatGPT、Gemini 等 AI 工具用户",
+      "需要高流量套餐的用户",
+      "有专属线路需求的企业及个人用户"
+    ],
+    "deviceLimit": "无限",
+    "trafficRules": [
+      "入口、进阶、高端、商业及年付标准套餐按每月流量额度展示",
+      "不限时流量包按总流量计算，用完为止",
+      "每月流量重置日期：购买当日算起为期一个月",
+      "未使用流量不结转",
+      "流量耗尽后可复购",
+      "支持流量包叠加"
+    ],
+    "clientPolicy": {
+      "officialClient": true,
+      "subscriptionLink": "目前暂不支持订阅",
+      "thirdPartyClients": "资料未提供（“无需宣传第三方订阅导入功能，优先指导用户使用目前开放的官方客户端”）",
+      "downloadChannel": "进入主页，选择对应设备系统下载客户端",
+      "note": null
+    },
+    "coupon": {
+      "code": "lw888",
+      "discount": "8 折（优惠 20%）",
+      "appliesTo": ["符合条件的常规周期套餐"],
+      "excludes": ["年付标准"],
+      "limits": [],
+      "usage": "在结算页输入优惠码，确认优惠后的实际支付金额并完成付款"
+    },
+    "support": {
+      "channels": ["Telegram：https://t.me/winson3262（资料提供的客服渠道）", "主页正式客服"],
+      "hours": null,
+      "refund": null,
+      "trial": null,
+      "payment": null,
+      "antiFraud": null
+    },
+    "purchaseSteps": [
+      "点击指定入口进入主页",
+      "根据页面提示注册或登录账号",
+      "查看当前在售套餐及价格，选择适合自己的套餐周期与流量额度",
+      "符合条件的常规周期套餐可输入优惠码 lw888，确认优惠后的实际支付金额并完成付款",
+      "返回主页下载对应设备的客户端，按照客户端指引一键登录使用",
+      "如遇连接或账户问题，可联系主页正式客服"
+    ],
+    "peakTestNote": "资料附 2026-07-19 MiaoKo 订阅测速截图（珠海联通）；站长于 2026-11-10 13:31 完成香港节点实测报告。",
+    "speedTests": {
+      "reportSlugs": ["langwang-2026-11-10-hongkong", "langwang-2026-07-19-miaoko"],
+      "evidenceStatus": "owner-report",
+      "latestDatedTest": "2026-11-10"
+    },
+    "dataCaveats": [
+      "英文名 WaveNet 来自站长实测报告图，文本资料中未出现。",
+      "资料给出的“统一官网”与推广入口为同一地址。",
+      "资料未说明倍率、支持系统与退款/试用政策。"
+    ],
+    "sourceRecords": [
+      { "sourceType": "user-supplied-official", "sourceFile": "source-materials/brands/浪网.txt", "sourceLocation": "全文（一至十节）", "verifiedAt": "2026-11-09" },
+      { "sourceType": "independently-measured", "sourceFile": "source-materials/evidence/reports/浪网_香港节点_实测报告.png", "sourceLocation": "站长实测报告图（2026-11-10 13:31）", "verifiedAt": "2026-11-10" }
+    ],
+    "lastVerifiedAt": "2026-11-10",
+    "editorialStatus": "published",
+    "keywords": ["浪网机场", "WaveNet 机场", "浪网优惠码", "lw888", "浪网测速", "VLESS IEPL 机场"]
+  },
+  {
+    "id": "twilight",
+    "slug": "twilight",
+    "displayName": "暮光加速",
+    "englishName": "Twilight",
+    "aliases": ["Twilight", "暮光网络", "暮光加速机场", "暮光"],
+    "tagline": "大流量档位机场，至尊版每月 1500 GB 只要 ¥180，全节点 1x、不限速",
+    "description": "暮光加速（Twilight，又称暮光网络）面向人工智能工具用户、海外流媒体爱好者、远程办公人员及高流量用户，采用 BGP 智能路由 + IPLC 专线出口，节点覆盖香港、台湾、日本、新加坡、美国 5 个地区共 60 个节点。资料显示周期套餐从基础版 ¥20/月（120 GB）到至尊版 ¥180/月（1500 GB），全节点 1x 倍率、不限速、不限设备，并提供年付轻量版与不限时流量包。",
+    "mission": "提供灵活、便捷的全球网络连接体验。",
+    "vision": "成为中文用户熟悉并信赖的全球网络加速服务品牌。",
+    "values": "线路优化、灵活选择、用户体验、持续改进。",
+    "slogan": "暮光加速，让世界触手可及。",
+    "officialWebsite": null,
+    "affiliateUrl": "https://varnexa.twilightaff.com/#/?code=rkRvrsRc",
+    "logo": null,
+    "brandColor": "#6D5BD0",
+    "supportedPlatforms": ["Windows", "macOS", "iOS", "Android"],
+    "platformsNote": null,
+    "nodeRegions": ["香港", "台湾", "日本", "新加坡", "美国"],
+    "nodeCount": 60,
+    "nodeCountNote": "资料未给出各地区节点数。",
+    "nodeCountByRegion": {},
+    "lineTypes": ["BGP 智能路由", "IPLC 专线出口"],
+    "protocol": null,
+    "ratio": "全节点 1x 倍率",
+    "streamingSupport": ["Netflix", "Hulu", "HBO", "Disney+", "DAZN"],
+    "aiSupport": ["ChatGPT", "Claude"],
+    "streamingNote": "资料注明：速度、稳定性及流媒体、AI 工具的可用性不作持续保证，以实测为准。",
+    "serviceFeatures": [
+      "多线路优化（BGP 智能路由 + IPLC 专线出口）",
+      "流量档位从 120 GB 到 1500 GB，选择灵活",
+      "全节点 1x 倍率、所有套餐不限速",
+      "不限同时在线设备数",
+      "支持支付宝；微信、USDT 需联系客服"
+    ],
+    "audiences": ["AI 人工智能用户", "海外流媒体用户", "中高流量用户", "跨境办公人员", "机场进阶用户", "学生及开发者", "预算有限的用户", "低频网络用户"],
+    "deviceLimit": "不限同时在线设备数",
+    "trafficRules": [
+      "周期套餐流量每月重置，未用完的流量不结转到下月",
+      "年付轻量版每 30 天刷新 70 GB",
+      "所有套餐不限速"
+    ],
+    "clientPolicy": {
+      "officialClient": true,
+      "subscriptionLink": "不推荐使用，避免订阅外泄被他人盗用导致节点拥挤",
+      "thirdPartyClients": "不推荐导入 Clash、小火箭等",
+      "downloadChannel": "仅限官网；网上出售的订阅链接或网盘分发的客户端均非官方渠道",
+      "note": "官网客户端由官方统一发布和更新，同样可以安全使用"
+    },
+    "coupon": {
+      "code": "mm88",
+      "discount": "8 折",
+      "appliesTo": ["周期套餐"],
+      "excludes": ["年付轻量版"],
+      "limits": [],
+      "usage": "在结算页优惠码栏填写，实付金额以结算页显示为准"
+    },
+    "support": {
+      "channels": ["工单"],
+      "hours": "24 小时",
+      "refund": "提供退款，具体条件请先询问客服",
+      "trial": "无免费试用",
+      "payment": "支付宝；微信、USDT 需联系客服",
+      "antiFraud": "只通过官网注册购买，价格与优惠以结算页为准"
+    },
+    "purchaseSteps": [
+      "进入暮光加速官网，注册账号（可通过推广链接进入）",
+      "首次购买建议先选月付或最小的套餐试用",
+      "在结算页填写优惠码 mm88，确认折扣生效后付款",
+      "下载官方客户端，用账号登录",
+      "选择节点连接，建议在晚高峰（20:00~23:00）多用几天，确认满意再考虑长周期"
+    ],
+    "peakTestNote": "资料标注“待观察实测中”，暂无测速记录。",
+    "speedTests": { "reportSlugs": [], "evidenceStatus": "none", "latestDatedTest": null },
+    "dataCaveats": [
+      "资料未给出各地区节点数。",
+      "不限时流量包是否适用优惠码资料未说明。"
+    ],
+    "sourceRecords": [
+      { "sourceType": "user-supplied-official", "sourceFile": "source-materials/brands/暮光加速.txt", "sourceLocation": "全文（一至十节）", "verifiedAt": "2026-11-09" }
+    ],
+    "lastVerifiedAt": "2026-11-09",
+    "editorialStatus": "published",
+    "keywords": ["暮光加速机场", "暮光网络", "Twilight 机场", "暮光优惠码", "mm88", "大流量机场"]
+  },
+  {
+    "id": "breezenet",
+    "slug": "breezenet",
+    "displayName": "微风网络",
+    "englishName": "Breezenet",
+    "aliases": ["Breezenet", "微风", "微风网络机场", "微风机场"],
+    "tagline": "低单价入门机场，每 GB 成本低，不限设备、所有设备共享流量",
+    "description": "微风网络（Breezenet）主打高性价比、大流量套餐与 IPLC 专线优化，节点覆盖香港、台湾、日本、新加坡、美国 5 个地区共 53 个节点，资料称全节点使用住宅 IP。周期套餐从乘风 ¥25/月（200 GB）到御风 ¥125/月（1200 GB），并提供清风年付小包与三档不限时流量包，所有套餐不限速、不限设备。自 2026 年 10 月起新订单仅能使用官方客户端，不提供订阅链接。",
+    "mission": "让全球网络连接更加轻松、便捷。",
+    "vision": "成为兼顾使用体验与性价比的全球网络加速服务品牌。",
+    "values": "专线优化、流量自由、灵活订阅、便捷连接。",
+    "slogan": "微风网络，让每一次连接都轻松自如。",
+    "officialWebsite": null,
+    "affiliateUrl": "https://downloadshare.breezenetttt.sbs/#/?code=eS6rgePR",
+    "logo": null,
+    "brandColor": "#12A3C9",
+    "supportedPlatforms": ["Windows 10 及以上", "macOS 10.15 及以上", "Android 5.0 及以上", "iOS 15 及以上（通过 Nextin 登录）"],
+    "platformsNote": null,
+    "nodeRegions": ["香港", "台湾", "日本", "新加坡", "美国"],
+    "nodeCount": 53,
+    "nodeCountNote": "资料：香港 14、日本 14（含直连）、新加坡 10、美国 10、台湾 5；测速截图显示香港 15、台湾 5、新加坡 10、日本 10、美国 10（共 50）。",
+    "nodeCountByRegion": { "香港": 14, "日本": 14, "新加坡": 10, "美国": 10, "台湾": 5 },
+    "lineTypes": ["全 IPLC 专线"],
+    "protocol": null,
+    "ratio": null,
+    "streamingSupport": ["Netflix", "Disney+", "HBO Max", "TikTok"],
+    "aiSupport": ["ChatGPT", "Claude", "Gemini"],
+    "streamingNote": "资料称全节点使用住宅 IP；速度、稳定性及流媒体、AI 工具的可用性不作持续保证，以实测为准。",
+    "serviceFeatures": [
+      "入门档乘风 200 GB/月仅 ¥25，每 GB 约 ¥0.13",
+      "全 IPLC 专线，资料称全节点住宅 IP",
+      "所有套餐不限速、不限同时在线设备数，所有设备共用同一份流量",
+      "提供月付、季付、半年付、年付及三档不限时流量包",
+      "7×24 小时在线客服，夜间由 AI 客服值守"
+    ],
+    "audiences": ["海外流媒体用户", "家庭多设备用户", "大流量用户", "高性价比用户", "AI 工具用户", "跨境办公人员", "学生及开发者", "低频使用用户"],
+    "deviceLimit": "不限同时在线设备数，所有设备共用同一份流量",
+    "trafficRules": [
+      "周期套餐从购买日起按月重置，未用完的流量不结转到下月",
+      "不限时流量永不过期，用完为止",
+      "所有套餐不限速"
+    ],
+    "clientPolicy": {
+      "officialClient": true,
+      "subscriptionLink": "不提供（2026 年 10 月起新订单只能使用官方客户端，老用户原有订阅不受影响）",
+      "thirdPartyClients": "不支持导入 Clash、小火箭等",
+      "downloadChannel": "仅限官网；网上出售的订阅链接或网盘分发的客户端均非官方渠道",
+      "note": "官网客户端由官方统一发布和更新，同样可以安全使用"
+    },
+    "coupon": {
+      "code": "weifeng90",
+      "discount": "9 折",
+      "appliesTo": ["乘风", "破风", "御风"],
+      "excludes": ["清风", "微风·不限时", "信风·不限时", "长风·不限时"],
+      "limits": [],
+      "usage": "在结算页优惠码栏填写，实付金额以结算页显示为准"
+    },
+    "support": {
+      "channels": ["7×24 小时在线客服（夜间由 AI 客服值守）"],
+      "hours": "7×24 小时",
+      "refund": null,
+      "trial": "无免费试用",
+      "payment": null,
+      "antiFraud": "只通过官网注册购买，价格与优惠以结算页为准"
+    },
+    "purchaseSteps": [
+      "进入微风网络官网，注册账号（可通过推广链接进入）",
+      "首次购买建议先选月付或最小的套餐试用",
+      "在结算页填写优惠码 weifeng90，确认折扣生效后付款",
+      "下载官方客户端，用账号登录",
+      "选择节点连接，建议在晚高峰（20:00~23:00）多用几天，确认满意再考虑长周期"
+    ],
+    "peakTestNote": "文本资料标注“待观察实测中”；用户另提供 2 张 MiaoKo 截图（订阅速度、御三家流媒体解锁），均未标注测试时间。",
+    "speedTests": {
+      "reportSlugs": ["breezenet-miaoko-undated"],
+      "evidenceStatus": "undated-screenshot",
+      "latestDatedTest": null
+    },
+    "dataCaveats": [
+      "资料称“入门档每 GB 约 ¥0.13，在 34 家中并列第 1”，该对比样本未随资料提供，本站只采用可复算的每 GB 单价。",
+      "文本节点数（53）与截图节点数（50）不一致。"
+    ],
+    "sourceRecords": [
+      { "sourceType": "user-supplied-official", "sourceFile": "source-materials/brands/微风网络.txt", "sourceLocation": "全文（一至十节）", "verifiedAt": "2026-11-09" }
+    ],
+    "lastVerifiedAt": "2026-11-09",
+    "editorialStatus": "published",
+    "keywords": ["微风网络机场", "Breezenet", "微风优惠码", "weifeng90", "住宅 IP 机场", "微风测速"]
+  },
+  {
+    "id": "invisible",
+    "slug": "invisible",
+    "displayName": "隐形人",
+    "englishName": "INVISIBLE NETWORK",
+    "aliases": ["INVISIBLE NETWORK", "Invisible", "隐形人机场", "YINXINGREN"],
+    "tagline": "大流量、多地区的专线机场，入门月付 ¥24 含 144 GB，顶档每月 1600 GB",
+    "description": "隐形人（INVISIBLE NETWORK）采用 IEPL 专线网络架构（全节点 IEPL + BGP 智能优化），提供香港、台湾、日本、新加坡、马来西亚、美国等地区共 60 个节点，面向日常浏览、流媒体观看、跨境社交与 AI 工具访问。周期套餐从白银纪元 ¥24/月（144 GB）到钻石穹顶 ¥185/月（1600 GB），另有年付小包、按设备数限制的一次性流量包与独享带宽定制版；支持 Windows、macOS、Linux、iOS、Android。",
+    "mission": "以稳定、高效与便捷的网络连接体验为核心，通过 IEPL 专线及多地区节点布局，为用户提供灵活、可靠的网络连接选择，让每一次连接都更加简单、顺畅。",
+    "vision": "成为值得用户信赖的国际网络连接服务品牌，持续完善全球节点布局、网络基础设施与服务体验。",
+    "values": "稳定至上、用户为本、专业可靠、持续创新、开放连接。",
+    "slogan": "隐于无形，连接无限。",
+    "officialWebsite": null,
+    "affiliateUrl": "https://varnexa.invisibleaff.com/#/?code=PoecAA0c",
+    "logo": null,
+    "brandColor": "#8B5CF6",
+    "supportedPlatforms": ["Windows", "macOS", "Linux", "iOS", "Android"],
+    "platformsNote": null,
+    "nodeRegions": ["香港", "台湾", "日本", "新加坡", "马来西亚", "美国"],
+    "nodeCount": 60,
+    "nodeCountNote": "马来西亚节点数量资料标注“待确认”；站长实测报告图标注“5 个地区 · 60 个节点 · VLESS 协议”。",
+    "nodeCountByRegion": { "香港": 20, "台湾": 10, "日本": 10, "新加坡": 10, "马来西亚": null, "美国": 10 },
+    "lineTypes": ["IEPL 专线（覆盖所有节点）", "BGP 智能优化"],
+    "protocol": "VLESS",
+    "ratio": "全节点 1x 倍率",
+    "streamingSupport": ["Netflix", "Disney+", "Prime Video", "BBC", "Abema", "TVer"],
+    "aiSupport": ["ChatGPT", "GitHub Copilot", "Hugging Face"],
+    "streamingNote": "资料注明：速度、稳定性及流媒体、AI 工具的可用性不作持续保证，以实测为准。",
+    "serviceFeatures": [
+      "IEPL 专线网络架构，覆盖所有节点",
+      "顶档钻石穹顶 1600 GB/月，约 ¥0.12/GB",
+      "周期套餐不限设备数量；一次性流量包限 1/2/3 台",
+      "支持 Windows、macOS、Linux、iOS、Android",
+      "提供周期订阅与一次性买断流量套餐，支持不满意退款（适用范围以条款为准）"
+    ],
+    "audiences": ["流量用得多的人", "需要多个出口地区的人", "需要独享带宽的人"],
+    "deviceLimit": "周期套餐不限设备；一次性流量包限 1 / 2 / 3 台",
+    "trafficRules": [
+      "周期套餐流量每月重置，未用完的流量不结转到下月",
+      "所有套餐不限速"
+    ],
+    "clientPolicy": {
+      "officialClient": true,
+      "subscriptionLink": "不推荐使用，避免订阅外泄被他人盗用导致节点拥挤",
+      "thirdPartyClients": "不推荐导入 Clash、小火箭等（品牌特色中亦提到“支持主流第三方客户端”，以客服确认为准）",
+      "downloadChannel": "仅限官网；网上出售的订阅链接或网盘分发的客户端均非官方渠道",
+      "note": "官网客户端由官方统一发布和更新，同样可以安全使用"
+    },
+    "coupon": {
+      "code": "yxr888",
+      "discount": null,
+      "appliesTo": [],
+      "excludes": [],
+      "limits": [],
+      "usage": "在结算页优惠码栏填写，实付金额以结算页显示为准"
+    },
+    "support": {
+      "channels": [],
+      "hours": null,
+      "refund": "支持不满意退款，适用范围以条款为准",
+      "trial": "无免费试用",
+      "payment": null,
+      "antiFraud": "只通过官网注册购买，价格与优惠以结算页为准"
+    },
+    "purchaseSteps": [
+      "进入隐形人官网，注册账号（可通过推广链接进入）",
+      "首次购买建议先选月付或最小的套餐试用",
+      "在结算页填写优惠码 yxr888，确认折扣生效后付款",
+      "下载官方客户端，用账号登录",
+      "选择节点连接，建议在晚高峰（20:00~23:00）多用几天，确认满意再考虑长周期"
+    ],
+    "peakTestNote": "文本资料无晚高峰记录；站长于 2026-11-10 11:43 完成香港03 节点实测报告。",
+    "speedTests": {
+      "reportSlugs": ["invisible-2026-11-10-hongkong03"],
+      "evidenceStatus": "owner-report",
+      "latestDatedTest": "2026-11-10"
+    },
+    "dataCaveats": [
+      "优惠码 yxr888 的折扣幅度与适用范围资料未注明。",
+      "马来西亚节点数量资料标注“待确认”，实测报告图只标注 5 个地区。",
+      "资料对第三方客户端的描述前后不一致（“支持主流第三方客户端” 与 “不推荐导入 Clash、小火箭”），以客服确认为准。",
+      "资料未提供客服渠道信息。"
+    ],
+    "sourceRecords": [
+      { "sourceType": "user-supplied-official", "sourceFile": "source-materials/brands/隐形人.txt", "sourceLocation": "全文（一至九节）", "verifiedAt": "2026-11-09" },
+      { "sourceType": "independently-measured", "sourceFile": "source-materials/evidence/reports/隐形人_香港节点_实测报告.png", "sourceLocation": "站长实测报告图（2026-11-10 11:43）", "verifiedAt": "2026-11-10" }
+    ],
+    "lastVerifiedAt": "2026-11-10",
+    "editorialStatus": "published",
+    "keywords": ["隐形人机场", "INVISIBLE NETWORK", "隐形人优惠码", "yxr888", "大流量机场", "隐形人测速"]
+  }
+]

@@ -1,0 +1,259 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import Breadcrumbs from '@/components/Breadcrumbs.astro';
+import RankList from '@/components/RankList.astro';
+import FAQ from '@/components/FAQ.astro';
+import Icon from '@/components/Icon.astro';
+import { SITE, STATIC_PAGES } from '@/lib/site';
+import { computeRanking, getEntryPlan, getTopPlan, formatPrice, formatTraffic, formatPerGB, getStats } from '@/lib/data';
+import { articleLd, breadcrumbLd, faqLd, itemListLd } from '@/lib/seo';
+
+const ranking = computeRanking();
+const stats = getStats();
+const lastmod = STATIC_PAGES['/rankings/2027/'].lastmod;
+
+const cheapest = [...ranking].filter((r) => r.entry).sort((a, b) => a.entry!.price - b.entry!.price)[0];
+const bestPerGB = [...ranking].filter((r) => r.pricePerGB !== null).sort((a, b) => a.pricePerGB! - b.pricePerGB!)[0];
+const biggest = ranking
+  .map((r) => ({ r, top: getTopPlan(r.brand.id) }))
+  .filter((x) => x.top)
+  .sort((a, b) => (b.top!.trafficGB ?? 0) - (a.top!.trafficGB ?? 0))[0];
+const mostRegions = [...ranking].sort((a, b) => b.regionCount - a.regionCount)[0];
+const thirdParty = ranking.filter((r) => /支持导入|可导入/.test(r.brand.clientPolicy.thirdPartyClients) && !/不支持/.test(r.brand.clientPolicy.thirdPartyClients));
+const officialOnly = ranking.filter((r) => /不对外发放|不提供|暂不支持/.test(r.brand.clientPolicy.subscriptionLink));
+const withEvidence = ranking.filter((r) => r.brand.speedTests.evidenceStatus === 'owner-report');
+
+const faq = [
+  {
+    q: '这个榜单的名次代表速度快慢吗？',
+    a: '不代表。名次只反映“证据等级 → 入门档每 GB 单价 → 地区数”的排序结果。四份站长实测分别连接不同品牌的不同地区节点，测速服务器与时段都不同，不能用来比较品牌速度。要看速度，请进入各品牌页的测速报告并注意其局限说明。',
+  },
+  {
+    q: '为什么叫“2027 前瞻版”？',
+    a: `本站于 ${SITE.launchedAt} 上线，当前资料整理与实测均发生在 2026 年 11 月。2027 年到来后，本页会在同一 URL 下更新数据与说明，不会另建新页面覆盖；2028 年榜单将使用 /rankings/2028/。`,
+  },
+  {
+    q: '“编辑推荐”“推广合作”“实测排名”有什么区别？',
+    a: '本页是“编辑整理榜”：由公开规则从资料派生，不含主观评分。页面中的品牌入口都是推广链接（推广合作），这一点在披露页说明，但不影响排序规则。本站目前没有“实测排名”——因为现有实测的网络环境与节点不统一，不满足横向排名的前提。',
+  },
+  {
+    q: '为什么没有收录更多品牌？',
+    a: `目前只收录了提供了完整资料（套餐、节点、客户端政策）的 ${stats.brands} 个品牌。新增品牌需要同样格式的资料与可核实的信息，模板见“关于”页面。`,
+  },
+];
+
+const crumbs = [
+  { name: '首页', href: '/' },
+  { name: '机场推荐', href: '/rankings/' },
+  { name: '2027 机场推荐榜单', href: '/rankings/2027/' },
+];
+const title = '2027 机场推荐榜单（前瞻版）：8 个品牌套餐、线路与实测证据对比';
+const description = `2027 机场推荐排行榜（编辑整理榜，前瞻版）：按证据等级、入门档每 GB 单价与节点地区数排序 ${stats.brands} 个品牌，列出入门价格、线路类型、设备与客户端政策、优惠码与实测证据，不含虚构评分。资料更新 ${lastmod}。`;
+const jsonLd = [
+  articleLd({
+    type: 'Article',
+    headline: title,
+    description,
+    url: '/rankings/2027/',
+    datePublished: '2026-11-10',
+    dateModified: lastmod,
+    keywords: ['2027 机场推荐', '机场排行榜', '机场推荐榜单', 'IEPL 机场', 'IPLC 机场'],
+    section: '机场推荐',
+  }),
+  breadcrumbLd(crumbs),
+  itemListLd(
+    '2027 机场推荐榜单（编辑整理榜）',
+    ranking.map((r) => ({ name: r.brand.displayName, url: `/reviews/${r.brand.slug}/`, description: r.brand.tagline })),
+    '按证据等级、入门档每 GB 单价与节点地区数排序；不含评分。',
+  ),
+  faqLd(faq),
+];
+---
+
+<BaseLayout title="2027 机场推荐榜单（前瞻版）：套餐、线路与实测证据" description={description} jsonLd={jsonLd} ogType="article" publishedTime="2026-11-10" modifiedTime={lastmod}>
+  <div class="container">
+    <Breadcrumbs crumbs={crumbs} />
+    <header class="page-hero">
+      <span class="pill"><Icon name="trophy" size={14} />编辑整理榜 · 2027 前瞻版 · 更新于 {lastmod}</span>
+      <h1>2027 机场推荐榜单：套餐、线路和使用场景指南</h1>
+      <p class="lead">
+        这份榜单整理了 {stats.brands} 个机场品牌的 {stats.tiers} 档套餐、节点地区、线路类型、客户端政策与测速证据。排序规则公开可复现，不含主观评分；每个品牌的名次理由都写在卡片里，点进品牌页可以看到全部资料来源与核实时间。
+      </p>
+    </header>
+
+    <div class="callout callout-info">
+      <Icon name="info" size={18} />
+      <div>
+        <strong>排序规则（详见<a href="/methodology/">方法说明</a>）</strong>
+        <ol class="small" style="margin:6px 0 0">
+          <li>证据等级：站长实测报告 → 带日期的截图 / 文字记录 → 未标注日期的截图 → 暂无证据。</li>
+          <li>同一等级内，按入门档（月付最低的周期套餐）每 GB 单价从低到高。</li>
+          <li>仍相同时，按节点地区数从多到少；最后按品牌标识字母序。</li>
+        </ol>
+        <p class="small" style="margin:6px 0 0">名次不代表速度或稳定性；现有实测的网络环境、节点与时段不统一，不能横向比较。</p>
+      </div>
+    </div>
+
+    <section class="card section" aria-labelledby="full-rank-title">
+      <h2 class="section-title" id="full-rank-title"><Icon name="list" size={20} />完整榜单（{ranking.length} 个品牌）</h2>
+      <RankList showReasons />
+    </section>
+
+    <section class="card section" aria-labelledby="scenario-title">
+      <h2 class="section-title" id="scenario-title"><Icon name="tag" size={20} />按使用场景怎么看这份榜单</h2>
+      <p class="small muted">以下结论全部由套餐表与客户端政策直接推出，不涉及速度判断。</p>
+      <div class="scenario-grid">
+        {
+          cheapest && (
+            <div class="scenario">
+              <h3>预算优先：入门月付最低</h3>
+              <p>
+                <a href={`/reviews/${cheapest.brand.slug}/`}>{cheapest.brand.displayName}</a> {cheapest.entry!.planName}：{formatPrice(cheapest.entry!.price)}/月，{formatTraffic(cheapest.entry!.trafficGB)}。
+              </p>
+            </div>
+          )
+        }
+        {
+          bestPerGB && (
+            <div class="scenario">
+              <h3>按流量算最便宜：入门档每 GB 单价最低</h3>
+              <p>
+                <a href={`/reviews/${bestPerGB.brand.slug}/`}>{bestPerGB.brand.displayName}</a> {bestPerGB.entry!.planName}：{formatPerGB(bestPerGB.pricePerGB)}（{formatPrice(bestPerGB.entry!.price)}/月，{formatTraffic(bestPerGB.entry!.trafficGB)}）。
+              </p>
+            </div>
+          )
+        }
+        {
+          biggest && (
+            <div class="scenario">
+              <h3>大流量：单档月流量最高</h3>
+              <p>
+                <a href={`/reviews/${biggest.r.brand.slug}/`}>{biggest.r.brand.displayName}</a> {biggest.top!.planName}：{formatTraffic(biggest.top!.trafficGB)}/月，月付 {biggest.top!.prices.monthly !== undefined ? formatPrice(biggest.top!.prices.monthly) : '—'}。
+              </p>
+            </div>
+          )
+        }
+        {
+          mostRegions && (
+            <div class="scenario">
+              <h3>多地区出口：资料列出的地区最多</h3>
+              <p>
+                <a href={`/reviews/${mostRegions.brand.slug}/`}>{mostRegions.brand.displayName}</a>：{mostRegions.regionCount} 个地区（{mostRegions.brand.nodeRegions.slice(0, 8).join('、')}{mostRegions.brand.nodeRegions.length > 8 ? ' 等' : ''}）。
+              </p>
+            </div>
+          )
+        }
+        <div class="scenario">
+          <h3>要用 Clash 等第三方客户端</h3>
+          <p>
+            资料写明可导入第三方客户端：{thirdParty.length ? thirdParty.map((r, i) => <>{i > 0 && '、'}<a href={`/reviews/${r.brand.slug}/`}>{r.brand.displayName}</a></>) : '暂无'}。其中灵动云需向客服申请订阅链接。
+          </p>
+        </div>
+        <div class="scenario">
+          <h3>只想用官方客户端、不折腾</h3>
+          <p>
+            明确不发放/不提供订阅链接的品牌：{officialOnly.length ? officialOnly.map((r, i) => <>{i > 0 && '、'}<a href={`/reviews/${r.brand.slug}/`}>{r.brand.displayName}</a></>) : '暂无'}。这类品牌无法导入 Clash，请先确认自己的设备在支持列表内。
+          </p>
+        </div>
+        <div class="scenario">
+          <h3>想看有实测报告的</h3>
+          <p>
+            目前有站长实测报告（2026-11-10）的品牌：{withEvidence.map((r, i) => <>{i > 0 && '、'}<a href={`/reviews/${r.brand.slug}/`}>{r.brand.displayName}</a></>)}，各一份，均为单次单节点测试。
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <section class="card section" aria-labelledby="table-title">
+      <h2 class="section-title" id="table-title"><Icon name="compare" size={20} />关键参数速查表</h2>
+      <div class="table-wrap">
+        <table class="data">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>品牌</th>
+              <th>入门档</th>
+              <th class="num">月付</th>
+              <th class="num">月流量</th>
+              <th class="num">每 GB</th>
+              <th>地区</th>
+              <th>线路</th>
+              <th>第三方客户端</th>
+              <th>证据</th>
+            </tr>
+          </thead>
+          <tbody>
+            {
+              ranking.map((r) => {
+                const e = getEntryPlan(r.brand.id);
+                return (
+                  <tr>
+                    <td>{r.position}</td>
+                    <td><a href={`/reviews/${r.brand.slug}/`}>{r.brand.displayName}</a></td>
+                    <td>{e?.planName ?? '—'}</td>
+                    <td class="num">{e ? formatPrice(e.price) : '—'}</td>
+                    <td class="num">{e ? formatTraffic(e.trafficGB) : '—'}</td>
+                    <td class="num">{e ? formatPerGB(e.pricePerGB) : '—'}</td>
+                    <td>{r.regionCount} 个</td>
+                    <td class="small">{r.brand.lineTypes[0]}</td>
+                    <td class="small">{r.brand.clientPolicy.thirdPartyClients.split('（')[0]}</td>
+                    <td class="small">{r.reasons[0].replace('证据等级：', '')}</td>
+                  </tr>
+                );
+              })
+            }
+          </tbody>
+        </table>
+      </div>
+      <p class="small muted" style="margin-top:10px">价格均为资料中的名义价格（人民币），不含优惠码；资料核实日期见各品牌页。想比较全部档位请用<a href="/compare/">套餐对比</a>。</p>
+    </section>
+
+    <section class="card section" aria-labelledby="preview-title">
+      <h2 class="section-title" id="preview-title"><Icon name="calendar" size={20} />关于“2027 前瞻版”的数据时间范围</h2>
+      <ul class="small">
+        <li>品牌资料整理日期：2026-11-09 至 2026-11-10；套餐价格以品牌结算页实时显示为准。</li>
+        <li>站长实测：2026-11-10 上午至下午，共 4 份单节点报告（隐形人 香港03、飞V 新加坡、浪网 香港、灵动云 日本5）。</li>
+        <li>用户提供的截图：浪网 2026-07-19（MiaoKo，珠海联通）；微风网络与飞猫云的截图未标注日期。</li>
+        <li>进入 2027 年后，本页将在同一 URL 更新并在<a href="/news/#changelog">更新日志</a>记录变化。</li>
+      </ul>
+    </section>
+
+    <FAQ items={faq} title="关于榜单的常见问题" id="rank-faq" />
+  </div>
+</BaseLayout>
+
+<style>
+  .page-hero .pill {
+    margin-bottom: 12px;
+  }
+
+  .scenario-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 14px;
+    margin-top: 8px;
+  }
+
+  .scenario {
+    padding: 14px 16px;
+    border-radius: var(--radius);
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+  }
+
+  .scenario h3 {
+    font-size: 1rem;
+    margin-bottom: 6px;
+  }
+
+  .scenario p {
+    margin: 0;
+    font-size: 0.925rem;
+  }
+
+  @media (max-width: 767px) {
+    .scenario-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

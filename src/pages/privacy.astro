@@ -1,0 +1,34 @@
+---
+import StaticPageLayout from '@/layouts/StaticPageLayout.astro';
+---
+
+<StaticPageLayout
+  path="/privacy/"
+  title="隐私政策"
+  seoTitle="隐私政策：本站收集什么、不收集什么"
+  description="机场指南隐私政策：本站为静态网站，不设置追踪 Cookie、不收集邮箱、不接入第三方分析；仅使用浏览器本地存储记住主题偏好；说明托管服务商可能记录的访问日志，以及为什么不提供需要订阅链接的在线工具。"
+  lead="静态站点，不登录、不收集邮箱、不埋第三方统计。"
+>
+  <h2>一、我们收集什么</h2>
+  <ul>
+    <li><strong>不收集</strong>姓名、邮箱、账号、订阅链接或任何可识别个人身份的信息。本站没有注册、评论或邮件订阅表单；“订阅更新”通过 RSS 提供。</li>
+    <li><strong>浏览器本地存储（localStorage）</strong>：仅保存一项“jz-theme”（深色/浅色模式偏好），只存在于你的浏览器，不会发送到服务器。清除浏览器数据即可删除。</li>
+    <li><strong>站内搜索</strong>：搜索索引是一个静态 JSON 文件，匹配在你的浏览器本地完成，关键词不会发送到任何服务器或第三方。</li>
+    <li><strong>不使用</strong>第三方统计脚本、广告脚本或社交媒体插件。如将来接入统计工具，会在本页更新并说明收集范围。</li>
+  </ul>
+
+  <h2>二、托管与访问日志</h2>
+  <p>本站部署在 Cloudflare Pages。Cloudflare 作为 CDN 与托管服务商可能出于安全与运维目的记录请求的 IP 地址、User-Agent 与访问时间等日志，其处理方式以 <a href="https://www.cloudflare.com/privacypolicy/" rel="nofollow noopener noreferrer" target="_blank">Cloudflare 隐私政策</a>为准。本站不主动导出或分析这些日志。</p>
+
+  <h2>三、外部链接</h2>
+  <p>品牌页的推广链接、教程中的软件官网链接会跳转到第三方网站，它们有各自的隐私政策。本站对第三方网站的数据处理不承担责任；点击前请留意地址栏域名。</p>
+
+  <h2 id="tools">四、为什么不提供 IP 查询、订阅转换、配置生成</h2>
+  <p>这些工具需要把你的出口 IP 或订阅链接提交给某个服务器。订阅链接等同于账号凭据，经由第三方转换服务有被记录、泄露或盗用的风险；IP 查询类工具则会把你的访问行为交给外部服务。在没有自建、可审计且不留存数据的后端之前，本站不上线这些功能，也不会在页面上放置伪装成工具的按钮。相关知识请参考<a href="/tutorials/dns-xielou-jiance-paicha/">DNS 泄露检测与排查</a>教程中对检测站点的说明。</p>
+
+  <h2>五、未成年人</h2>
+  <p>本站内容面向成年读者，不针对未成年人收集任何信息。</p>
+
+  <h2>六、政策变更</h2>
+  <p>本页变更会更新顶部的“最后更新”日期并记录在<a href="/news/#changelog">更新日志</a>。如有疑问，请通过<a href="/contact/">联系页面</a>反馈。</p>
+</StaticPageLayout>

@@ -1,0 +1,456 @@
+---
+import { render } from 'astro:content';
+import BaseLayout from './BaseLayout.astro';
+import Breadcrumbs from '@/components/Breadcrumbs.astro';
+import FAQ from '@/components/FAQ.astro';
+import Icon from '@/components/Icon.astro';
+import BrandMark from '@/components/BrandMark.astro';
+import { CATEGORY_META, SITE } from '@/lib/site';
+import { articleUrl, getPublishedArticles, readingMinutes, wordCount, type Article } from '@/lib/articles';
+import { getBrand } from '@/lib/data';
+import { articleLd, breadcrumbLd, faqLd } from '@/lib/seo';
+
+interface Props {
+  entry: Article;
+}
+
+const { entry } = Astro.props;
+const { Content, headings } = await render(entry);
+const data = entry.data;
+const meta = CATEGORY_META[data.category];
+const url = articleUrl(entry);
+const toc = headings.filter((h) => h.depth === 2 || h.depth === 3);
+const minutes = readingMinutes(entry.body);
+const words = wordCount(entry.body);
+
+const siblings = await getPublishedArticles(data.category);
+const idx = siblings.findIndex((s) => s.id === entry.id);
+const related = siblings.filter((s) => s.id !== entry.id).slice(0, 4);
+const prev = idx > 0 ? siblings[idx - 1] : null;
+const next = idx >= 0 && idx < siblings.length - 1 ? siblings[idx + 1] : null;
+const relatedBrands = data.relatedBrands.map((id) => getBrand(id)).filter((b): b is NonNullable<typeof b> => !!b);
+
+const ldType = data.category === 'tutorials' ? 'TechArticle' : 'Article';
+const crumbs = [
+  { name: '首页', href: '/' },
+  { name: meta.label, href: meta.href },
+  { name: data.title, href: url },
+];
+const jsonLd: Record<string, unknown>[] = [
+  articleLd({
+    type: ldType,
+    headline: data.title,
+    description: data.description,
+    url,
+    datePublished: data.publishedAt,
+    dateModified: data.updatedAt,
+    keywords: [data.primaryKeyword, ...data.tags].filter((x): x is string => !!x),
+    section: meta.label,
+    wordCount: words,
+  }),
+  breadcrumbLd(crumbs),
+];
+if (data.faq.length) jsonLd.push(faqLd(data.faq));
+---
+
+<BaseLayout
+  title={data.title}
+  description={data.description}
+  canonicalPath={url}
+  jsonLd={jsonLd}
+  ogType="article"
+  publishedTime={data.publishedAt}
+  modifiedTime={data.updatedAt}
+>
+  <div class="container">
+    <Breadcrumbs crumbs={crumbs} />
+    <div class="article-layout">
+      <article class="article-main">
+        <header class="article-head card">
+          <a class="pill" href={meta.href}>{meta.label}</a>
+          <h1>{data.title}</h1>
+          <p class="lead">{data.description}</p>
+          <div class="article-meta">
+            <span><Icon name="user" size={14} /><a href="/about/">{data.author}</a></span>
+            <span><Icon name="calendar" size={14} />发布 <time datetime={data.publishedAt}>{data.publishedAt}</time></span>
+            {data.updatedAt !== data.publishedAt && <span><Icon name="edit" size={14} />更新 <time datetime={data.updatedAt}>{data.updatedAt}</time></span>}
+            <span><Icon name="clock" size={14} />约 {minutes} 分钟 · {words} 字</span>
+          </div>
+          {data.tags.length > 0 && <ul class="tag-row">{data.tags.map((t) => <li class="tag">{t}</li>)}</ul>}
+        </header>
+
+        {
+          toc.length > 2 && (
+            <nav class="toc-inline card" aria-label="本文目录">
+              <h2 class="toc-inline-title">本文目录</h2>
+              <ol>
+                {toc.map((h) => (
+                  <li class={`depth-${h.depth}`}>
+                    <a href={`#${h.slug}`}>{h.text}</a>
+                  </li>
+                ))}
+              </ol>
+            </nav>
+          )
+        }
+
+        <div class="card prose-card">
+          <div class="prose">
+            <Content />
+          </div>
+
+          {
+            data.references.length > 0 && (
+              <section class="refs" aria-labelledby="refs-title">
+                <h2 id="refs-title">参考与资料来源</h2>
+                <ol>
+                  {data.references.map((r) => (
+                    <li>
+                      {r.url ? (
+                        <a href={r.url} rel="nofollow noopener noreferrer" target="_blank">
+                          {r.label}
+                        </a>
+                      ) : (
+                        r.label
+                      )}
+                    </li>
+                  ))}
+                </ol>
+              </section>
+            )
+          }
+
+          <footer class="article-foot">
+            <p class="small muted">
+              本文由{SITE.author.name}整理撰写，涉及品牌的价格、节点与政策均以站内资料库为准（含核实日期）。发现错误或过时信息，请通过<a href="/contact/">联系与纠错</a>反馈；更正记录见<a href="/news/#changelog">更新日志</a>。
+            </p>
+          </footer>
+        </div>
+
+        {data.faq.length > 0 && <FAQ items={data.faq} title="本文常见问题" id="article-faq" />}
+
+        {
+          relatedBrands.length > 0 && (
+            <section class="card related-brands" aria-labelledby="rb-title">
+              <h2 class="section-title" id="rb-title"><Icon name="layers" size={18} />文中涉及的品牌资料</h2>
+              <ul>
+                {relatedBrands.map((b) => (
+                  <li>
+                    <a href={`/reviews/${b.slug}/`}>
+                      <BrandMark brand={b} size={32} />
+                      <span>
+                        <strong>{b.displayName}</strong>
+                        <small>{b.tagline}</small>
+                      </span>
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </section>
+          )
+        }
+
+        <nav class="prev-next" aria-label="同栏目上一篇 / 下一篇">
+          {prev ? <a class="card card-hover" href={articleUrl(prev)}><small>上一篇</small><span>{prev.data.title}</span></a> : <span />}
+          {next ? <a class="card card-hover" href={articleUrl(next)}><small>下一篇</small><span>{next.data.title}</span></a> : <span />}
+        </nav>
+      </article>
+
+      <aside class="article-aside">
+        <div class="card author-box">
+          <span class="author-avatar" aria-hidden="true"><Icon name="plane" size={22} /></span>
+          <div>
+            <strong>{SITE.author.name}</strong>
+            <p class="small muted">整理机场资料、套餐与测速记录，所有数据注明来源与日期，不虚构评分。</p>
+            <a class="small" href="/about/">关于我们 →</a>
+          </div>
+        </div>
+        {
+          related.length > 0 && (
+            <section class="card" aria-labelledby="related-title">
+              <h2 class="aside-title" id="related-title">同栏目文章</h2>
+              <ul class="related-list">
+                {related.map((r) => (
+                  <li>
+                    <a href={articleUrl(r)}>{r.data.title}</a>
+                    <time class="small muted" datetime={r.data.publishedAt}>{r.data.publishedAt}</time>
+                  </li>
+                ))}
+              </ul>
+              <a class="small" href={meta.href}>全部{meta.label} →</a>
+            </section>
+          )
+        }
+        <section class="card" aria-labelledby="quick-title">
+          <h2 class="aside-title" id="quick-title">快速入口</h2>
+          <ul class="related-list">
+            <li><a href="/rankings/2027/">2027 机场推荐榜单</a></li>
+            <li><a href="/compare/">套餐对比</a></li>
+            <li><a href="/speed-tests/">节点测速报告</a></li>
+            <li><a href="/methodology/">测评与测速方法</a></li>
+          </ul>
+        </section>
+      </aside>
+    </div>
+  </div>
+</BaseLayout>
+
+<style>
+  .article-layout {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 300px;
+    gap: 24px;
+    margin-top: 16px;
+  }
+
+  .article-main {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    min-width: 0;
+  }
+
+  .article-head {
+    padding: 28px;
+  }
+
+  .article-head .pill {
+    margin-bottom: 12px;
+  }
+
+  .article-head h1 {
+    margin-bottom: 10px;
+  }
+
+  .article-head .lead {
+    color: var(--text-2);
+    font-size: 1.05rem;
+    margin-bottom: 14px;
+  }
+
+  .article-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 18px;
+    font-size: 0.85rem;
+    color: var(--muted);
+  }
+
+  .article-meta span {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+  }
+
+  .tag-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    list-style: none;
+    margin: 12px 0 0;
+    padding: 0;
+  }
+
+  .toc-inline {
+    padding: 16px 20px;
+  }
+
+  .toc-inline-title {
+    font-size: 0.95rem;
+    margin-bottom: 8px;
+  }
+
+  .toc-inline ol {
+    margin: 0;
+    padding-left: 1.2em;
+    font-size: 0.9rem;
+    columns: 2;
+    column-gap: 24px;
+  }
+
+  .toc-inline li {
+    break-inside: avoid;
+    margin-bottom: 4px;
+  }
+
+  .toc-inline .depth-3 {
+    list-style: circle;
+    margin-left: 1em;
+    font-size: 0.85rem;
+  }
+
+  .prose-card {
+    padding: 28px 32px;
+  }
+
+  .refs {
+    margin-top: 36px;
+    padding-top: 20px;
+    border-top: 1px solid var(--border);
+  }
+
+  .refs h2 {
+    font-size: 1.1rem;
+  }
+
+  .refs ol {
+    font-size: 0.9rem;
+    color: var(--text-2);
+  }
+
+  .article-foot {
+    margin-top: 28px;
+    padding-top: 16px;
+    border-top: 1px dashed var(--border);
+  }
+
+  .related-brands ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+  }
+
+  .related-brands a {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    padding: 10px;
+    border-radius: var(--radius);
+    border: 1px solid var(--border);
+    color: var(--text);
+    text-decoration: none;
+  }
+
+  .related-brands a:hover {
+    border-color: var(--primary-200);
+    background: var(--primary-50);
+  }
+
+  .related-brands span {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .related-brands small {
+    font-size: 0.75rem;
+    color: var(--muted);
+    display: -webkit-box;
+    -webkit-line-clamp: 1;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .prev-next {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+  }
+
+  .prev-next a {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    color: var(--text);
+    text-decoration: none;
+    padding: 14px 16px;
+  }
+
+  .prev-next small {
+    color: var(--muted);
+    font-size: 0.75rem;
+  }
+
+  .prev-next span {
+    font-weight: 600;
+  }
+
+  .article-aside {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    align-self: start;
+    position: sticky;
+    top: calc(var(--header-h) + 16px);
+  }
+
+  .author-box {
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+  }
+
+  .author-avatar {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+    background: linear-gradient(135deg, #3b82f6, var(--primary));
+    color: #fff;
+    flex: none;
+  }
+
+  .author-box p {
+    margin: 4px 0 6px;
+  }
+
+  .aside-title {
+    font-size: 0.95rem;
+    margin-bottom: 10px;
+  }
+
+  .related-list {
+    list-style: none;
+    margin: 0 0 8px;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .related-list li {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    font-size: 0.9rem;
+  }
+
+  .related-list a {
+    color: var(--text);
+    font-weight: 600;
+  }
+
+  .related-list a:hover {
+    color: var(--primary);
+  }
+
+  @media (max-width: 1023px) {
+    .article-layout {
+      grid-template-columns: 1fr;
+    }
+
+    .article-aside {
+      position: static;
+    }
+  }
+
+  @media (max-width: 639px) {
+    .article-head,
+    .prose-card {
+      padding: 20px;
+    }
+
+    .toc-inline ol {
+      columns: 1;
+    }
+
+    .related-brands ul,
+    .prev-next {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

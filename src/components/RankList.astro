@@ -1,0 +1,186 @@
+---
+import Icon from './Icon.astro';
+import BrandMark from './BrandMark.astro';
+import EvidenceBadge from './EvidenceBadge.astro';
+import { computeRanking, formatPrice, formatTraffic } from '@/lib/data';
+
+interface Props {
+  limit?: number;
+  /** 是否显示排序依据明细 */
+  showReasons?: boolean;
+  compact?: boolean;
+}
+
+const { limit, showReasons = false, compact = false } = Astro.props;
+const ranking = computeRanking();
+const rows = limit ? ranking.slice(0, limit) : ranking;
+---
+
+<ol class:list={['rank-list', { compact }]}>
+  {
+    rows.map((r) => (
+      <li class="rank-row">
+        <span class={`rank-no rank-${r.position}`} aria-label={`第 ${r.position} 位`}>
+          {r.position}
+        </span>
+        <BrandMark brand={r.brand} size={compact ? 40 : 48} />
+        <div class="rank-main">
+          <div class="rank-title">
+            <a class="rank-name" href={`/reviews/${r.brand.slug}/`}>
+              {r.brand.displayName}
+            </a>
+            {r.brand.englishName && <span class="rank-en">{r.brand.englishName}</span>}
+          </div>
+          <p class="rank-highlight">{r.highlight}</p>
+          <div class="rank-meta">
+            <EvidenceBadge brand={r.brand} />
+            {r.entry && (
+              <span class="rank-price">
+                {formatPrice(r.entry.price)}/月起 · {formatTraffic(r.entry.trafficGB)}
+              </span>
+            )}
+            <span class="rank-regions">{r.regionCount} 个地区</span>
+          </div>
+          {showReasons && (
+            <ul class="rank-reasons">
+              {r.reasons.map((reason) => (
+                <li>{reason}</li>
+              ))}
+            </ul>
+          )}
+        </div>
+        <a class="btn btn-secondary btn-sm rank-cta" href={`/reviews/${r.brand.slug}/`}>
+          查看详情
+          <Icon name="arrow-right" size={14} />
+        </a>
+      </li>
+    ))
+  }
+</ol>
+
+<style>
+  .rank-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .rank-row {
+    display: grid;
+    grid-template-columns: 32px auto minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 0;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .rank-row:last-child {
+    border-bottom: 0;
+  }
+
+  .rank-no {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background: var(--surface-3);
+    color: var(--text-2);
+    font-weight: 700;
+    font-size: 0.9rem;
+  }
+
+  .rank-1 {
+    background: linear-gradient(135deg, #fbbf24, #f59e0b);
+    color: #fff;
+  }
+
+  .rank-2 {
+    background: linear-gradient(135deg, #cbd5e1, #94a3b8);
+    color: #fff;
+  }
+
+  .rank-3 {
+    background: linear-gradient(135deg, #fdba74, #ea580c);
+    color: #fff;
+  }
+
+  .rank-main {
+    min-width: 0;
+  }
+
+  .rank-title {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+
+  .rank-name {
+    font-weight: 700;
+    font-size: 1.05rem;
+    color: var(--text);
+  }
+
+  .rank-en {
+    font-size: 0.75rem;
+    color: var(--muted);
+  }
+
+  .rank-highlight {
+    margin: 2px 0 6px;
+    font-size: 0.85rem;
+    color: var(--muted);
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .rank-meta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 6px 10px;
+    font-size: 0.8125rem;
+    color: var(--text-2);
+  }
+
+  .rank-price {
+    font-weight: 600;
+    color: var(--primary);
+  }
+
+  .rank-regions {
+    color: var(--muted);
+  }
+
+  .rank-reasons {
+    margin: 8px 0 0;
+    padding-left: 1.2em;
+    font-size: 0.8125rem;
+    color: var(--muted);
+  }
+
+  .rank-cta {
+    white-space: nowrap;
+  }
+
+  .compact .rank-row {
+    padding: 10px 0;
+  }
+
+  @media (max-width: 639px) {
+    .rank-row {
+      grid-template-columns: 28px auto minmax(0, 1fr);
+    }
+
+    .rank-cta {
+      grid-column: 2 / -1;
+      justify-self: start;
+    }
+  }
+</style>

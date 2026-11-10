@@ -1,0 +1,77 @@
+---
+import StaticPageLayout from '@/layouts/StaticPageLayout.astro';
+import { computeRanking, EVIDENCE_LABEL } from '@/lib/data';
+
+const ranking = computeRanking();
+---
+
+<StaticPageLayout
+  path="/methodology/"
+  title="测评、排序与测速方法"
+  seoTitle="测评、排序与测速方法：榜单规则、证据等级与实测流程"
+  description="机场指南的方法说明：2027 榜单的可复现排序规则、测速证据等级、站长实测流程（IPCheck.ing、客户端测试延迟、YouTube 统计）、单位与转录规范，以及现有数据的局限。"
+  lead="所有规则都写在这里，任何人拿同一份资料都能得到同样的榜单。"
+>
+  <h2>一、榜单的性质</h2>
+  <p>
+    <a href="/rankings/2027/">2027 机场推荐榜单</a>是<strong>编辑整理榜</strong>：名次由公开规则从资料中派生，不含主观打分，也不显示任何“9.7 / 10”之类的数值。它与“推广合作”“实测排名”的关系如下：
+  </p>
+  <ul>
+    <li><strong>编辑推荐 / 编辑整理</strong>：本页规则产生的名次，依据是资料完整度与证据，不是速度。</li>
+    <li><strong>推广合作</strong>：页面中的品牌入口是推广链接，详见<a href="/disclosure/">披露</a>；推广关系不进入排序规则。</li>
+    <li><strong>实测排名</strong>：目前没有。现有实测的网络环境、节点与时段不统一，不满足横向排名的前提（见第四节）。</li>
+  </ul>
+
+  <h2>二、排序规则（可复现）</h2>
+  <ol>
+    <li><strong>证据等级</strong>，由高到低：站长实测报告 → 带日期的测速截图或文字记录 → 未标注日期的截图 → 暂无证据。</li>
+    <li>同一等级内，按<strong>入门档每 GB 单价</strong>从低到高。入门档 = 月付价格最低的周期套餐；每 GB 单价 = 月付价 ÷ 月流量，不含优惠码。</li>
+    <li>仍相同时，按资料列出的<strong>节点地区数</strong>从多到少。</li>
+    <li>最后按品牌标识（slug）字母序。</li>
+  </ol>
+  <p>当前结果：</p>
+  <ol>
+    {ranking.map((r) => <li><a href={`/reviews/${r.brand.slug}/`}>{r.brand.displayName}</a> —— {r.reasons.join('；')}</li>)}
+  </ol>
+  <p>规则实现在仓库的 <code>src/lib/data.ts</code>（<code>computeRanking</code>），数据改动后榜单自动重新计算，不手工调整名次。</p>
+
+  <h2>三、证据等级的定义</h2>
+  <ul>
+    <li><strong>{EVIDENCE_LABEL['owner-report']}</strong>：站长亲自完成的测试，报告图标注测试时间（北京时间）、测速工具、出口节点/服务器。原始截图未附时在报告页注明。</li>
+    <li><strong>{EVIDENCE_LABEL['dated-screenshot']}</strong> / <strong>{EVIDENCE_LABEL['dated-record']}</strong>：资料方或用户提供的、带明确测试时间的截图或文字记录。</li>
+    <li><strong>{EVIDENCE_LABEL['undated-screenshot']}</strong>：截图本身未标注测试时间，只能说明某一时刻的状态。</li>
+    <li><strong>{EVIDENCE_LABEL.none}</strong>：资料标注“待观察实测中”或未提供任何记录。</li>
+  </ul>
+  <p>归属存疑的截图（例如订阅标识与同品牌其他截图不一致）不计入任何等级，也不公开展示，待确认后再处理。</p>
+
+  <h2>四、站长实测流程（2026-11-10 版）</h2>
+  <ol>
+    <li>通过品牌官方客户端连接一个节点，记录客户端版本、所用套餐与节点名称。</li>
+    <li>在 <a href="https://ipcheck.ing/" rel="nofollow noopener noreferrer" target="_blank">IPCheck.ing</a> 读取出口 IP 的地区、运营商与 ASN；运行 Cloudflare 测速，记录下载、上传、Ping、抖动、满载延迟与工具给出的“网络质量”判定；运行网络连通性测试，记录 23 项服务的连通状态与延迟。</li>
+    <li>用客户端内置“测试延迟”读取各地区节点延迟，记录最低 / 平均 / 最高与超时节点。</li>
+    <li>在 YouTube 播放页打开“详细统计信息”，记录连接速度、清晰度、丢帧与缓冲。</li>
+    <li>整理为报告图，标注测试时间（北京时间）与“数据未经修改”。</li>
+  </ol>
+  <p><strong>局限：</strong>每份报告只测一个节点、一次；未记录本地接入运营商与城市；测速服务器与节点地区各不相同；均在白天完成，未覆盖晚高峰。因此这些报告可以说明“该节点在那个时刻能跑到什么水平”，不能说明品牌之间谁更快。</p>
+
+  <h2>五、未来的“实测排名”需要满足什么</h2>
+  <ul>
+    <li>同一台设备、同一本地网络（记录运营商与城市），在同一时间窗口内依次测试全部品牌。</li>
+    <li>每个品牌至少测同一地区（如香港、日本、新加坡）各 1 个节点，使用同一测速服务器。</li>
+    <li>至少覆盖 1 个工作日晚高峰（20:00–23:00）与 1 个非高峰时段，各重复 3 次取中位数。</li>
+    <li>记录丢包率（现有资料均未提供）与 UDP 类型。</li>
+  </ul>
+  <p>满足上述条件前，本站不会发布任何速度排名。</p>
+
+  <h2>六、单位、转录与更新规范</h2>
+  <ul>
+    <li>IPCheck.ing、Speedtest 的速度单位为 Mbps；MiaoKo、SpeedCentre 的速度单位为 MB/s（1 MB/s ≈ 8 Mbps）。页面保留工具原始单位并标注换算关系，不混用。</li>
+    <li>从截图转录的区间数值可能有读数误差，报告页标注“约”并附截图原件；分辨率不足以读取的截图不提取数值。</li>
+    <li>价格全部为人民币名义价格，不含优惠码；资料只给比例未给金额时（如“季付约 95%”）不自行推算。</li>
+    <li>品牌资料的 <code>lastVerifiedAt</code> 为资料整理日期；文章的更新日期只在内容实质修改时变动，不随构建自动更新。</li>
+    <li>每次数据变更记录在<a href="/news/#changelog">更新日志</a>。</li>
+  </ul>
+
+  <h2>七、测速方法教程</h2>
+  <p>想自己复测，请看<a href="/tutorials/jiedian-cesu-fangfa-nekospeed-speedtest/">节点测速方法：NekoSpeed 与 Speedtest 的记录规范</a>；想理解“延迟低却速度慢”的原因，请看<a href="/wiki/jiedian-di-yanchi-que-sudu-man/">百科解释</a>。</p>
+</StaticPageLayout>

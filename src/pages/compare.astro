@@ -1,0 +1,475 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import Breadcrumbs from '@/components/Breadcrumbs.astro';
+import Icon from '@/components/Icon.astro';
+import { STATIC_PAGES } from '@/lib/site';
+import {
+  getBrands,
+  getBrand,
+  getPlanTiers,
+  flattenPlans,
+  PERIOD_LABEL,
+  formatPrice,
+  formatTraffic,
+  formatPerGB,
+  getStats,
+  round3,
+} from '@/lib/data';
+import { breadcrumbLd, webPageLd } from '@/lib/seo';
+
+const brands = getBrands();
+const stats = getStats();
+const lastmod = STATIC_PAGES['/compare/'].lastmod;
+const periodic = getPlanTiers().filter((t) => t.category === 'periodic');
+const annual = getPlanTiers().filter((t) => t.category === 'annual-lite');
+const oneTime = getPlanTiers().filter((t) => t.category === 'one-time');
+const dedicated = getPlanTiers().filter((t) => t.category === 'dedicated');
+const periods = ['monthly', 'quarterly', 'half-yearly', 'yearly', 'two-yearly', 'three-yearly'] as const;
+const flat = flattenPlans();
+
+function perGBMonthly(t: (typeof periodic)[number]): number | null {
+  const p = flat.find((f) => f.id === `${t.id}--monthly`);
+  return p?.pricePerGB ?? null;
+}
+
+function deviceLabel(d: 'unlimited' | number | null): string {
+  if (d === 'unlimited') return '不限';
+  if (typeof d === 'number') return `限 ${d} 台`;
+  return '未说明';
+}
+
+const crumbs = [
+  { name: '首页', href: '/' },
+  { name: '机场推荐', href: '/rankings/' },
+  { name: '套餐对比', href: '/compare/' },
+];
+const title = `机场套餐对比 2027：${stats.brands} 个品牌价格、流量、每 GB 单价一览`;
+const description = `横向比较 ${stats.brands} 个机场品牌共 ${stats.tiers} 档套餐：周期套餐的月付/季付/半年付/年付价格、月流量与每 GB 单价，年付小包、不限时流量包与定制线路；支持按品牌筛选与排序，并附每 GB 单价计算器。数据更新 ${lastmod}，价格以结算页为准。`;
+const jsonLd = [webPageLd(title, '/compare/', description, lastmod), breadcrumbLd(crumbs)];
+---
+
+<BaseLayout title={`机场套餐对比 2027：${stats.brands} 个品牌价格与每 GB 单价`} description={description} jsonLd={jsonLd}>
+  <div class="container">
+    <Breadcrumbs crumbs={crumbs} />
+    <header class="page-hero">
+      <h1>机场套餐对比</h1>
+      <p class="lead">
+        {stats.brands} 个品牌、{stats.tiers} 档套餐的名义价格（人民币，不含优惠码）。表中“每 GB”按月付价 ÷ 月流量计算；一次性流量包按总价 ÷ 总流量。资料核实日期 2026-11-09 / 2026-11-10，实付以各品牌结算页为准。
+      </p>
+    </header>
+
+    <section class="card section" aria-labelledby="periodic-title">
+      <div class="section-head">
+        <h2 class="section-title" id="periodic-title"><Icon name="compare" size={20} />周期套餐（{periodic.length} 档）</h2>
+        <p class="small muted" id="cmp-count" aria-live="polite">显示全部 {periodic.length} 档</p>
+      </div>
+      <form class="cmp-filters" id="cmp-form">
+        <fieldset>
+          <legend>品牌</legend>
+          <div class="chips">
+            {brands.map((b) => (
+              <label class="chip"><input type="checkbox" name="brand" value={b.id} checked /><span>{b.displayName}</span></label>
+            ))}
+          </div>
+        </fieldset>
+        <div class="cmp-row">
+          <label>月流量不低于
+            <select name="mingb">
+              <option value="0">不限</option>
+              <option value="150">150 GB</option>
+              <option value="300">300 GB</option>
+              <option value="500">500 GB</option>
+              <option value="1000">1000 GB</option>
+            </select>
+          </label>
+          <label>月付不高于
+            <select name="maxprice">
+              <option value="">不限</option>
+              <option value="25">¥25</option>
+              <option value="50">¥50</option>
+              <option value="100">¥100</option>
+              <option value="200">¥200</option>
+            </select>
+          </label>
+          <label>排序
+            <select name="sort">
+              <option value="brand">按品牌</option>
+              <option value="monthly">月付（低→高）</option>
+              <option value="gb">月流量（高→低）</option>
+              <option value="pergb">每 GB（低→高）</option>
+              <option value="yearly">年付（低→高）</option>
+            </select>
+          </label>
+          <button type="reset" class="btn btn-outline btn-sm">清除筛选</button>
+        </div>
+      </form>
+      <div class="table-wrap">
+        <table class="data" id="cmp-table">
+          <thead>
+            <tr>
+              <th>品牌</th>
+              <th>套餐</th>
+              <th class="num">月流量</th>
+              {periods.map((p) => <th class="num">{PERIOD_LABEL[p]}</th>)}
+              <th class="num">每 GB（月付）</th>
+              <th>设备</th>
+              <th>优惠码</th>
+              <th>核实</th>
+            </tr>
+          </thead>
+          <tbody>
+            {
+              periodic.map((t) => {
+                const b = getBrand(t.brandId)!;
+                const pg = perGBMonthly(t);
+                return (
+                  <tr
+                    data-brand={t.brandId}
+                    data-gb={t.trafficGB ?? 0}
+                    data-monthly={t.prices.monthly ?? ''}
+                    data-yearly={t.prices.yearly ?? ''}
+                    data-pergb={pg ?? ''}
+                  >
+                    <td><a href={`/reviews/${b.slug}/`}>{b.displayName}</a></td>
+                    <td>
+                      <strong>{t.planName}</strong>
+                      {t.note && <div class="cell-note">{t.note}</div>}
+                    </td>
+                    <td class="num">{formatTraffic(t.trafficGB)}</td>
+                    {periods.map((p) => <td class="num">{t.prices[p] !== undefined ? formatPrice(t.prices[p]!) : '—'}</td>)}
+                    <td class="num">{formatPerGB(pg)}</td>
+                    <td class="nowrap">{deviceLabel(t.deviceLimit)}</td>
+                    <td class="nowrap">{t.couponEligible === true ? (b.coupon ? b.coupon.code : '适用') : t.couponEligible === false ? '不适用' : '未说明'}</td>
+                    <td class="nowrap small">{t.verifiedAt}</td>
+                  </tr>
+                );
+              })
+            }
+          </tbody>
+        </table>
+      </div>
+      <p class="empty" id="cmp-empty" hidden>没有符合条件的套餐，请放宽筛选条件。</p>
+      <p class="small muted" style="margin-top:10px">
+        飞V 的季付/半年付/年付资料只给出比例未给出金额，表中留空；大佬云没有半年付；飞猫云宇宙版两年付/三年付待核实。
+      </p>
+    </section>
+
+    <section class="card section" id="calculator" aria-labelledby="calc-title">
+      <h2 class="section-title" id="calc-title"><Icon name="tool" size={20} />每 GB 单价计算器</h2>
+      <p class="small muted">输入任意套餐的价格、流量与周期，换算为折合月付与每 GB 单价，方便和上表对照。纯本地计算，不发送任何数据。</p>
+      <form class="calc" id="calc-form">
+        <label>价格（¥）<input type="number" name="price" min="0" step="0.01" inputmode="decimal" value="25" required /></label>
+        <label>流量（GB / 每周期）<input type="number" name="gb" min="1" step="1" inputmode="numeric" value="150" required /></label>
+        <label>周期
+          <select name="months">
+            <option value="1">月付（流量每月重置）</option>
+            <option value="3">季付（流量每月重置）</option>
+            <option value="6">半年付（流量每月重置）</option>
+            <option value="12">年付（流量每月重置）</option>
+            <option value="24">两年付（流量每月重置）</option>
+            <option value="36">三年付（流量每月重置）</option>
+            <option value="0">一次性流量包（总流量）</option>
+          </select>
+        </label>
+        <label>优惠折扣（可选，例如 8 折填 0.8）<input type="number" name="discount" min="0.1" max="1" step="0.01" inputmode="decimal" placeholder="1" /></label>
+        <output class="calc-out" for="calc-form" aria-live="polite" id="calc-out"></output>
+      </form>
+    </section>
+
+    <section class="card section" aria-labelledby="annual-title">
+      <h2 class="section-title" id="annual-title"><Icon name="calendar" size={20} />年付小包（{annual.length} 档）</h2>
+      <div class="table-wrap">
+        <table class="data">
+          <thead><tr><th>品牌</th><th>套餐</th><th class="num">每月流量</th><th class="num">年付</th><th class="num">折合月付</th><th class="num">每 GB</th><th>刷新规则</th><th>优惠码</th></tr></thead>
+          <tbody>
+            {annual.map((t) => {
+              const b = getBrand(t.brandId)!;
+              const y = t.prices.yearly!;
+              const m = Math.round((y / 12) * 100) / 100;
+              return (
+                <tr>
+                  <td><a href={`/reviews/${b.slug}/`}>{b.displayName}</a></td>
+                  <td><strong>{t.planName}</strong>{t.note && <div class="cell-note">{t.note}</div>}</td>
+                  <td class="num">{formatTraffic(t.trafficGB)}</td>
+                  <td class="num">{formatPrice(y)}</td>
+                  <td class="num">{formatPrice(m)}</td>
+                  <td class="num">{t.trafficGB ? formatPerGB(round3(m / t.trafficGB)) : '—'}</td>
+                  <td class="small">{t.trafficNote}</td>
+                  <td class="nowrap">{t.couponEligible === true ? '适用' : t.couponEligible === false ? '不适用' : '未说明'}</td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="card section" aria-labelledby="onetime-title">
+      <h2 class="section-title" id="onetime-title"><Icon name="download" size={20} />不限时流量包（{oneTime.length} 档）</h2>
+      <div class="table-wrap">
+        <table class="data">
+          <thead><tr><th>品牌</th><th>套餐</th><th class="num">总流量</th><th class="num">价格</th><th class="num">每 GB</th><th>设备</th><th>说明</th></tr></thead>
+          <tbody>
+            {oneTime
+              .slice()
+              .sort((a, b) => (a.prices['one-time']! / (a.trafficGB ?? 1)) - (b.prices['one-time']! / (b.trafficGB ?? 1)))
+              .map((t) => {
+                const b = getBrand(t.brandId)!;
+                const p = t.prices['one-time']!;
+                return (
+                  <tr>
+                    <td><a href={`/reviews/${b.slug}/`}>{b.displayName}</a></td>
+                    <td><strong>{t.planName}</strong></td>
+                    <td class="num">{formatTraffic(t.trafficGB)}</td>
+                    <td class="num">{formatPrice(p)}</td>
+                    <td class="num">{t.trafficGB ? formatPerGB(round3(p / t.trafficGB)) : '—'}</td>
+                    <td class="nowrap">{deviceLabel(t.deviceLimit)}</td>
+                    <td class="small">{[t.trafficNote, ...t.features, t.note].filter(Boolean).join('；')}</td>
+                  </tr>
+                );
+              })}
+          </tbody>
+        </table>
+      </div>
+      <p class="small muted" style="margin-top:10px">已按每 GB 单价升序排列。不限时流量包适合低频使用者；每 GB 单价通常高于周期套餐，但没有“当月没用完作废”的问题。</p>
+    </section>
+
+    <section class="card section" aria-labelledby="dedicated-title">
+      <h2 class="section-title" id="dedicated-title"><Icon name="server" size={20} />独享 / 定制线路（{dedicated.length} 档）</h2>
+      <div class="table-wrap">
+        <table class="data">
+          <thead><tr><th>品牌</th><th>套餐</th><th class="num">月流量</th><th class="num">月付</th><th>说明</th></tr></thead>
+          <tbody>
+            {dedicated.map((t) => {
+              const b = getBrand(t.brandId)!;
+              return (
+                <tr>
+                  <td><a href={`/reviews/${b.slug}/`}>{b.displayName}</a></td>
+                  <td><strong>{t.planName}</strong></td>
+                  <td class="num">{formatTraffic(t.trafficGB)}</td>
+                  <td class="num">{t.prices.monthly !== undefined ? formatPrice(t.prices.monthly) : '—'}</td>
+                  <td class="small">{[...t.features, t.note].filter(Boolean).join('；')}</td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+      </div>
+      <p class="small muted" style="margin-top:10px">五个品牌的定制线路均为 500 GB/月、¥680/月，飞猫云为 ¥550/月；交付方式与带宽需向各品牌客服确认，本站未测试任何定制线路。</p>
+    </section>
+
+    <section class="card section">
+      <h2 class="section-title"><Icon name="info" size={20} />怎么读这些表</h2>
+      <ul class="small">
+        <li>月流量相近时先比每 GB 单价，再看是否需要长周期折扣；长周期前请先用月付在晚高峰试用，方法见<a href="/guides/yuefu-jifu-nianfu-zenme-bijiao/">月付、季付、年付怎么比较</a>。</li>
+        <li>“设备不限”并不等于流量不共享：多数品牌所有设备共用同一份流量。</li>
+        <li>优惠码只对资料注明的档位有效，且实付以结算页为准。</li>
+        <li>所有数值来自品牌/推广方资料，核实日期见表中“核实”列；发现变动请<a href="/contact/">告诉我们</a>。</li>
+      </ul>
+    </section>
+  </div>
+</BaseLayout>
+
+<style>
+  .cmp-filters {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-bottom: 14px;
+  }
+
+  fieldset {
+    border: 0;
+    padding: 0;
+    margin: 0;
+  }
+
+  legend {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--text-2);
+    margin-bottom: 8px;
+  }
+
+  .chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .chip {
+    position: relative;
+    display: inline-flex;
+  }
+
+  .chip input {
+    position: absolute;
+    opacity: 0;
+    width: 1px;
+    height: 1px;
+  }
+
+  .chip span {
+    display: inline-flex;
+    align-items: center;
+    min-height: 36px;
+    padding: 6px 14px;
+    border-radius: 999px;
+    border: 1px solid var(--border);
+    background: var(--surface);
+    color: var(--text-2);
+    font-size: 0.875rem;
+    cursor: pointer;
+  }
+
+  .chip input:checked + span {
+    background: var(--primary);
+    border-color: var(--primary);
+    color: #fff;
+  }
+
+  .chip input:focus-visible + span {
+    outline: 3px solid var(--primary-200);
+  }
+
+  .cmp-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    align-items: flex-end;
+  }
+
+  .cmp-row label,
+  .calc label {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    font-size: 0.8125rem;
+    font-weight: 600;
+    color: var(--text-2);
+  }
+
+  .cmp-row select,
+  .calc input,
+  .calc select {
+    min-height: 40px;
+    padding: 6px 10px;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--border-strong);
+    background: var(--surface);
+    color: var(--text);
+    font: inherit;
+    font-weight: 500;
+  }
+
+  .cell-note {
+    font-size: 0.72rem;
+    color: var(--muted);
+    max-width: 28ch;
+  }
+
+  .calc {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 12px;
+    align-items: end;
+  }
+
+  .calc-out {
+    grid-column: 1 / -1;
+    display: block;
+    padding: 14px 16px;
+    border-radius: var(--radius);
+    background: var(--primary-50);
+    border: 1px solid var(--primary-100);
+    font-size: 1rem;
+  }
+
+  .calc-out strong {
+    color: var(--primary);
+  }
+
+  @media (max-width: 767px) {
+    .calc {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+</style>
+
+<script>
+  // 周期套餐筛选与排序
+  const form = document.getElementById('cmp-form') as HTMLFormElement | null;
+  const tbody = document.querySelector<HTMLTableSectionElement>('#cmp-table tbody');
+  const rows = Array.from(document.querySelectorAll<HTMLTableRowElement>('#cmp-table tbody tr'));
+  const count = document.getElementById('cmp-count');
+  const empty = document.getElementById('cmp-empty');
+
+  const applyCmp = () => {
+    if (!form) return;
+    const data = new FormData(form);
+    const brandsSel = new Set(data.getAll('brand') as string[]);
+    const minGb = Number(data.get('mingb') ?? 0);
+    const maxPrice = data.get('maxprice') as string;
+    const sort = data.get('sort') as string;
+    let visible = 0;
+    rows.forEach((r) => {
+      const monthly = r.dataset.monthly ? Number(r.dataset.monthly) : null;
+      let ok = brandsSel.has(r.dataset.brand ?? '');
+      if (ok) ok = Number(r.dataset.gb ?? 0) >= minGb;
+      if (ok && maxPrice) ok = monthly !== null && monthly <= Number(maxPrice);
+      r.hidden = !ok;
+      if (ok) visible += 1;
+    });
+    const key = (r: HTMLTableRowElement) => {
+      const num = (v?: string) => (v ? Number(v) : Number.POSITIVE_INFINITY);
+      if (sort === 'monthly') return num(r.dataset.monthly);
+      if (sort === 'yearly') return num(r.dataset.yearly);
+      if (sort === 'pergb') return num(r.dataset.pergb);
+      if (sort === 'gb') return -Number(r.dataset.gb ?? 0);
+      return 0;
+    };
+    if (sort !== 'brand') {
+      rows
+        .slice()
+        .sort((a, b) => key(a) - key(b))
+        .forEach((r) => tbody?.appendChild(r));
+    } else {
+      rows.forEach((r) => tbody?.appendChild(r));
+    }
+    if (count) count.textContent = visible === rows.length ? `显示全部 ${rows.length} 档` : `符合条件：${visible} / ${rows.length} 档`;
+    if (empty) empty.hidden = visible > 0;
+  };
+  form?.addEventListener('change', applyCmp);
+  form?.addEventListener('reset', () => window.setTimeout(applyCmp, 0));
+
+  // 每 GB 计算器
+  const calc = document.getElementById('calc-form') as HTMLFormElement | null;
+  const out = document.getElementById('calc-out');
+  const fmt = (n: number) => (Number.isFinite(n) ? (Math.round(n * 1000) / 1000).toString() : '—');
+  const compute = () => {
+    if (!calc || !out) return;
+    const d = new FormData(calc);
+    const price = Number(d.get('price'));
+    const gb = Number(d.get('gb'));
+    const months = Number(d.get('months'));
+    const discountRaw = d.get('discount') as string;
+    const discount = discountRaw ? Number(discountRaw) : 1;
+    if (!(price >= 0) || !(gb > 0) || !(discount > 0)) {
+      out.textContent = '请输入有效的价格与流量。';
+      return;
+    }
+    const paid = price * discount;
+    if (months === 0) {
+      out.innerHTML = `一次性流量包：实付 <strong>¥${fmt(paid)}</strong>，总流量 ${gb} GB，每 GB <strong>¥${fmt(paid / gb)}</strong>（不随时间作废）。`;
+      return;
+    }
+    const monthly = paid / months;
+    out.innerHTML = `实付 <strong>¥${fmt(paid)}</strong> / ${months} 个月 → 折合月付 <strong>¥${fmt(monthly)}</strong>，每月 ${gb} GB，每 GB <strong>¥${fmt(monthly / gb)}</strong>。${discount !== 1 ? `（已按 ${discount} 折扣计算）` : ''}`;
+  };
+  calc?.addEventListener('input', compute);
+  calc?.addEventListener('submit', (e) => {
+    e.preventDefault();
+    compute();
+  });
+  compute();
+</script>

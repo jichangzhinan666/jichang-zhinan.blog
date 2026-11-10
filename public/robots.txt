@@ -1,0 +1,9 @@
+# jichang-zhinan.blog
+# All compliant crawlers may fetch public content. CSS/JS under /_astro/ is never blocked.
+# /search/ is handled with <meta name="robots" content="noindex"> on the page itself,
+# so it is intentionally not disallowed here (crawlers must be able to read that directive).
+
+User-agent: *
+Allow: /
+
+Sitemap: https://jichang-zhinan.blog/sitemap.xml

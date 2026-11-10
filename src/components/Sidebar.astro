@@ -1,0 +1,277 @@
+---
+import Icon from './Icon.astro';
+import { getQuickStart, articleUrl } from '@/lib/articles';
+import { getStats } from '@/lib/data';
+
+const quickStart = await getQuickStart(5);
+const stats = getStats();
+
+const tools = [
+  {
+    label: '套餐对比',
+    sub: `${stats.brands} 个品牌 · ${stats.tiers} 档套餐`,
+    href: '/compare/',
+    icon: 'compare',
+    status: 'live',
+  },
+  {
+    label: '每 GB 单价计算器',
+    sub: '输入价格与流量，即时换算',
+    href: '/compare/#calculator',
+    icon: 'tool',
+    status: 'live',
+  },
+  {
+    label: '节点测速报告',
+    sub: `${stats.reports} 份记录 · 含 ${stats.ownerReports} 份站长实测`,
+    href: '/speed-tests/',
+    icon: 'speed',
+    status: 'live',
+  },
+  {
+    label: 'IP 查询 / 订阅转换',
+    sub: '涉及第三方服务与订阅凭据，规划中',
+    href: '/privacy/#tools',
+    icon: 'shield',
+    status: 'planned',
+  },
+];
+---
+
+<aside class="sidebar" aria-label="侧栏工具">
+  <section class="card side-card" aria-labelledby="side-search-title">
+    <h2 class="visually-hidden" id="side-search-title">站内搜索</h2>
+    <form class="side-search" action="/search/" method="get" role="search">
+      <Icon name="search" size={18} class="side-search-icon" />
+      <input type="search" name="q" placeholder="搜索文章、机场、教程…" aria-label="搜索关键词" required />
+      <button type="submit" class="btn btn-primary btn-sm">搜索</button>
+    </form>
+  </section>
+
+  <section class="card side-card" aria-labelledby="quickstart-title">
+    <h2 class="side-title" id="quickstart-title">
+      <Icon name="plane" size={18} />
+      新手快速上手
+    </h2>
+    {
+      quickStart.length ? (
+        <ol class="quickstart">
+          {quickStart.map((a, i) => (
+            <li>
+              <a href={articleUrl(a)}>
+                <span class="qs-no">{i + 1}</span>
+                <span class="qs-title">{a.data.title}</span>
+                <Icon name="chevron" size={16} class="qs-chevron" />
+              </a>
+            </li>
+          ))}
+        </ol>
+      ) : (
+        <p class="empty">入门文章整理中</p>
+      )
+    }
+  </section>
+
+  <section class="card side-card" aria-labelledby="tools-title">
+    <h2 class="side-title" id="tools-title">
+      <Icon name="tool" size={18} />
+      实用工具
+    </h2>
+    <ul class="tools">
+      {
+        tools.map((t) => (
+          <li class:list={['tool', { planned: t.status === 'planned' }]}>
+            <a href={t.href} aria-describedby={t.status === 'planned' ? 'tools-note' : undefined}>
+              <span class="tool-icon">
+                <Icon name={t.icon} size={22} />
+              </span>
+              <span class="tool-label">{t.label}</span>
+              <span class="tool-sub">{t.sub}</span>
+              {t.status === 'planned' && <span class="badge badge-none">规划中</span>}
+            </a>
+          </li>
+        ))
+      }
+    </ul>
+    <p class="side-note" id="tools-note">
+      IP 查询、订阅转换与配置生成需要把订阅链接交给第三方服务，在没有可信后端与数据保护方案前不会上线。
+    </p>
+  </section>
+
+  <section class="card side-card subscribe" aria-labelledby="subscribe-title">
+    <h2 class="side-title" id="subscribe-title">
+      <Icon name="mail" size={18} />
+      订阅更新
+    </h2>
+    <p class="small">获取最新的机场推荐、测评与使用教程。</p>
+    <a class="btn btn-primary subscribe-rss" href="/rss.xml">
+      <Icon name="rss" size={18} />
+      通过 RSS 订阅
+    </a>
+    <p class="side-note">
+      邮件订阅尚未接入服务商，接入前不会收集任何邮箱地址；也可关注 <a href="/news/">资讯与更新</a> 页面。
+    </p>
+  </section>
+</aside>
+
+<style>
+  .sidebar {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .side-card {
+    padding: 16px;
+  }
+
+  .side-title {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 0 0 12px;
+    font-size: 1.05rem;
+  }
+
+  .side-title .icon {
+    color: var(--primary);
+  }
+
+  .side-search {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .side-search-icon {
+    color: var(--muted);
+    flex: none;
+  }
+
+  .side-search input {
+    flex: 1;
+    min-width: 0;
+    height: 40px;
+    padding: 0 12px;
+    border: 1px solid var(--border-strong);
+    border-radius: var(--radius-sm);
+    background: var(--surface-2);
+    color: var(--text);
+    font: inherit;
+  }
+
+  .quickstart {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .quickstart li + li {
+    border-top: 1px solid var(--border);
+  }
+
+  .quickstart a {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 2px;
+    color: var(--text);
+    font-size: 0.9rem;
+  }
+
+  .quickstart a:hover {
+    color: var(--primary);
+    text-decoration: none;
+  }
+
+  .qs-no {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background: var(--primary);
+    color: #fff;
+    font-size: 0.75rem;
+    font-weight: 700;
+    flex: none;
+  }
+
+  .qs-title {
+    flex: 1;
+    display: -webkit-box;
+    -webkit-line-clamp: 1;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .qs-chevron {
+    transform: rotate(-90deg);
+    color: var(--muted);
+    flex: none;
+  }
+
+  .tools {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+  }
+
+  .tool a {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    padding: 12px 8px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    background: var(--surface-2);
+    color: var(--text);
+    text-align: center;
+    text-decoration: none;
+    transition: border-color 0.15s ease, background 0.15s ease;
+    height: 100%;
+  }
+
+  .tool a:hover {
+    border-color: var(--primary-200);
+    background: var(--primary-50);
+  }
+
+  .tool-icon {
+    color: var(--primary);
+  }
+
+  .tool-label {
+    font-size: 0.875rem;
+    font-weight: 600;
+  }
+
+  .tool-sub {
+    font-size: 0.72rem;
+    color: var(--muted);
+  }
+
+  .tool.planned a {
+    opacity: 0.75;
+    border-style: dashed;
+  }
+
+  .tool.planned .tool-icon {
+    color: var(--muted);
+  }
+
+  .side-note {
+    margin: 10px 0 0;
+    font-size: 0.78rem;
+    color: var(--muted);
+  }
+
+  .subscribe-rss {
+    width: 100%;
+  }
+</style>

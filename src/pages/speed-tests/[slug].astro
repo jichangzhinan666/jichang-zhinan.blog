@@ -1,0 +1,603 @@
+---
+import { Image } from 'astro:assets';
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import Breadcrumbs from '@/components/Breadcrumbs.astro';
+import BrandMark from '@/components/BrandMark.astro';
+import Icon from '@/components/Icon.astro';
+import { getSpeedReports, getSpeedReport, getBrand, formatTestedAt, getReportsForBrand } from '@/lib/data';
+import { resolveEvidenceImage } from '@/lib/evidence';
+import { articleLd, breadcrumbLd } from '@/lib/seo';
+import type { Range, RegionResult } from '@/lib/types';
+
+export async function getStaticPaths() {
+  return getSpeedReports().map((r) => ({ params: { slug: r.slug }, props: { slug: r.slug } }));
+}
+
+const { slug } = Astro.props as { slug: string };
+const report = getSpeedReport(slug)!;
+const brand = getBrand(report.brandId)!;
+const others = getReportsForBrand(brand.id).filter((r) => r.slug !== report.slug);
+const own = report.ownerReport;
+
+const isRange = (v: number | Range | null): v is Range => v !== null && typeof v === 'object';
+const fmtLatency = (v: number | Range | null) => {
+  if (v === null) return '—';
+  if (isRange(v)) return v.avg !== undefined ? `${v.min} / ${v.avg} / ${v.max} ms` : `${v.min}–${v.max} ms`;
+  return `${v} ms`;
+};
+const fmtRange = (v: Range | null, unit: string, approx = false) =>
+  v === null ? '—' : `${approx ? '约 ' : ''}${v.min === v.max ? v.min : `${v.min}–${v.max}`} ${unit}`;
+const approx = report.transcriptionNote?.includes('约') ?? false;
+const hasRanges = report.regionResults.some((r) => isRange(r.latencyMs) && r.latencyMs.avg === undefined);
+const hasSpeedMbps = report.regionResults.some((r) => r.downloadMbps !== null);
+
+const statusLabel: Record<string, string> = {
+  'owner-measured': '站长实测（报告图由站长提供）',
+  'user-supplied-record': '资料提供方的文字记录',
+  'user-supplied-screenshot': '用户提供的测速截图',
+  'attribution-pending': '归属待确认',
+  unverified: '未核实',
+};
+
+const categories = ['AI', '视频', '音乐', '常用网站'] as const;
+const quality = own?.quality;
+const qualityTone = (v: string) => (v === '良好' ? 'strong' : v === '一般' ? 'medium' : 'weak');
+
+const crumbs = [
+  { name: '首页', href: '/' },
+  { name: '节点测速报告', href: '/speed-tests/' },
+  { name: report.title, href: `/speed-tests/${report.slug}/` },
+];
+const description = report.summary.length > 200 ? `${report.summary.slice(0, 197)}…` : report.summary;
+const jsonLd = [
+  articleLd({
+    type: 'TechArticle',
+    headline: report.title,
+    description,
+    url: `/speed-tests/${report.slug}/`,
+    datePublished: report.publishedAt,
+    dateModified: report.updatedAt,
+    keywords: [`${brand.displayName}测速`, `${brand.displayName}节点延迟`, report.tool.split('（')[0]],
+    section: '节点测速报告',
+  }),
+  breadcrumbLd(crumbs),
+];
+const regionLabelCol = (rr: RegionResult) => rr.latencyLabel ?? '延迟';
+---
+
+<BaseLayout title={report.title} description={description} jsonLd={jsonLd} ogType="article" publishedTime={report.publishedAt} modifiedTime={report.updatedAt}>
+  <div class="container report-page">
+    <Breadcrumbs crumbs={crumbs} />
+    <header class="page-hero">
+      <div class="rp-brand">
+        <BrandMark brand={brand} size={40} />
+        <a href={`/reviews/${brand.slug}/`}>{brand.displayName} 品牌资料页</a>
+      </div>
+      <h1>{report.title}</h1>
+      <p class="lead">{report.summary}</p>
+      <dl class="rp-meta">
+        <div><dt>证据状态</dt><dd>{statusLabel[report.verificationStatus]}</dd></div>
+        <div><dt>测试时间</dt><dd>{formatTestedAt(report)}{report.timezone && report.testedAt ? '' : ''}</dd></div>
+        <div><dt>测速工具</dt><dd>{report.tool}{report.toolVersion ? `（${report.toolVersion}）` : ''}</dd></div>
+        <div><dt>网络环境</dt><dd>{report.isp ?? '未标注'}</dd></div>
+        <div><dt>协议</dt><dd>{report.protocol ?? '未标注'}</dd></div>
+        <div><dt>报告发布 / 更新</dt><dd>{report.publishedAt} / {report.updatedAt}</dd></div>
+      </dl>
+    </header>
+
+    <div class="callout callout-info">
+      <Icon name="info" size={18} />
+      <div>
+        <strong>测试环境说明</strong>
+        <p class="small" style="margin:4px 0 0">{report.testOrigin}</p>
+        <p class="small" style="margin:4px 0 0"><strong>方法：</strong>{report.method}</p>
+      </div>
+    </div>
+
+    {
+      own && (
+        <section class="card section" aria-labelledby="speed-title">
+          <h2 class="section-title" id="speed-title"><Icon name="speed" size={20} />实测速度（{own.testedNode ?? '测速节点'}）</h2>
+          <div class="metric-grid">
+            <div class="metric"><span>下载速度</span><strong>{own.speed.downloadMbps}</strong><small>Mbps</small></div>
+            <div class="metric"><span>上传速度</span><strong>{own.speed.uploadMbps}</strong><small>Mbps</small></div>
+            <div class="metric"><span>延迟（Ping）</span><strong>{own.speed.pingMs}</strong><small>ms</small></div>
+            <div class="metric"><span>抖动</span><strong>{own.speed.jitterMs}</strong><small>ms</small></div>
+            <div class="metric"><span>满载延迟 · 下载</span><strong>{own.speed.loadedLatencyDownMs ?? '—'}</strong><small>ms</small></div>
+            <div class="metric"><span>满载延迟 · 上传</span><strong>{own.speed.loadedLatencyUpMs ?? '—'}</strong><small>ms</small></div>
+          </div>
+          <dl class="facts">
+            {own.plan && <div><dt>所测套餐</dt><dd>{own.plan}</dd></div>}
+            {own.client && <div><dt>客户端</dt><dd>{own.client}</dd></div>}
+            {own.testServer && <div><dt>测速服务器</dt><dd>{own.testServer}</dd></div>}
+            {own.exit && <div><dt>出口</dt><dd>{own.exit.location}{own.exit.org ? ` · ${own.exit.org}` : ''}{own.exit.asn ? ` · ${own.exit.asn}` : ''}</dd></div>}
+          </dl>
+          {quality && (
+            <div class="quality">
+              <h3>网络质量评估（IPCheck.ing 自动判定，非本站评分）</h3>
+              <ul>
+                <li>在线视频 <span class={`badge badge-${qualityTone(quality.onlineVideo)}`}>{quality.onlineVideo}</span></li>
+                <li>在线游戏 <span class={`badge badge-${qualityTone(quality.onlineGaming)}`}>{quality.onlineGaming}</span></li>
+                <li>视频会议 <span class={`badge badge-${qualityTone(quality.videoConference)}`}>{quality.videoConference}</span></li>
+              </ul>
+            </div>
+          )}
+          {own.suitability.length > 0 && (
+            <div class="suitability">
+              <h3>报告结论标签（依据本次实测数据）</h3>
+              <ul>
+                {own.suitability.map((s) => (
+                  <li class={`suit suit-${s.verdict}`}>
+                    <Icon name={s.verdict === 'ok' ? 'check' : s.verdict === 'warn' ? 'warn' : 'x'} size={14} />
+                    {s.label}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+        </section>
+      )
+    }
+
+    {
+      report.regionResults.length > 0 && (
+        <section class="card section" aria-labelledby="region-title">
+          <h2 class="section-title" id="region-title"><Icon name="globe" size={20} />各地区节点结果</h2>
+          {report.transcriptionNote && <p class="small muted">{report.transcriptionNote}</p>}
+          <div class="table-wrap">
+            <table class="data">
+              <thead>
+                <tr>
+                  <th>地区</th>
+                  <th class="num">节点数</th>
+                  {own && <th>最快节点</th>}
+                  <th class="num">{own ? '延迟 最低 / 平均 / 最高' : regionLabelCol(report.regionResults[0])}</th>
+                  {report.regionResults.some((r) => r.httpsLatencyMs) && <th class="num">HTTPS 延迟</th>}
+                  {hasSpeedMbps && <th class="num">下载</th>}
+                  {hasSpeedMbps && <th class="num">上传</th>}
+                  {report.regionResults.some((r) => r.jitterMs !== null) && <th class="num">抖动</th>}
+                  {report.regionResults.some((r) => r.avgSpeedMBps) && <th class="num">平均速度</th>}
+                  {report.regionResults.some((r) => r.maxSpeedMBps) && <th class="num">最高速度</th>}
+                  <th>状态 / 备注</th>
+                </tr>
+              </thead>
+              <tbody>
+                {report.regionResults.map((rr) => (
+                  <tr>
+                    <td><strong>{rr.region}</strong></td>
+                    <td class="num">{rr.nodeCount ?? '—'}</td>
+                    {own && <td>{rr.fastestNode ?? '—'}</td>}
+                    <td class="num">{fmtLatency(rr.latencyMs)}</td>
+                    {report.regionResults.some((r) => r.httpsLatencyMs) && <td class="num">{fmtRange(rr.httpsLatencyMs, 'ms')}</td>}
+                    {hasSpeedMbps && <td class="num">{rr.downloadMbps !== null ? `${rr.downloadMbps} Mbps` : '—'}</td>}
+                    {hasSpeedMbps && <td class="num">{rr.uploadMbps !== null ? `${rr.uploadMbps} Mbps` : '—'}</td>}
+                    {report.regionResults.some((r) => r.jitterMs !== null) && <td class="num">{rr.jitterMs !== null ? `${rr.jitterMs} ms` : '—'}</td>}
+                    {report.regionResults.some((r) => r.avgSpeedMBps) && <td class="num">{fmtRange(rr.avgSpeedMBps, 'MB/s', approx)}</td>}
+                    {report.regionResults.some((r) => r.maxSpeedMBps) && <td class="num">{fmtRange(rr.maxSpeedMBps, 'MB/s', approx)}</td>}
+                    <td class="small">
+                      {rr.status && <span class={`badge ${/超时|失败/.test(rr.status) ? 'badge-weak' : 'badge-strong'}`}>{rr.status}</span>}
+                      {rr.failedNodes.length > 0 && <div>失败：{rr.failedNodes.join('；')}</div>}
+                      {rr.notes.map((n) => <div class="muted">{n}</div>)}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+          {hasRanges && <p class="small muted" style="margin-top:8px">区间为该地区全部节点的最小值–最大值；MB/s 为工具原始单位，1 MB/s ≈ 8 Mbps。</p>}
+        </section>
+      )
+    }
+
+    {
+      own?.nodeLatencySamples && (
+        <section class="card section" aria-labelledby="nodes-title">
+          <h2 class="section-title" id="nodes-title"><Icon name="chart" size={20} />{own.nodeLatencySamples.label}</h2>
+          <div class="node-bars" role="img" aria-label={own.nodeLatencySamples.nodes.map((n) => `${n.node} ${n.ms} 毫秒`).join('，')}>
+            {own.nodeLatencySamples.nodes.map((n) => {
+              const max = Math.max(...own.nodeLatencySamples!.nodes.map((x) => x.ms));
+              const h = Math.round((n.ms / max) * 100);
+              return (
+                <div class="node-bar">
+                  <span class="node-val">{n.ms}</span>
+                  <span class="node-fill" style={`height:${h}%`} />
+                  <span class="node-name">{n.node.replace(/^[^\d]+/, '')}</span>
+                </div>
+              );
+            })}
+          </div>
+          <p class="small muted">横轴为节点编号，数值单位 ms；最低 {Math.min(...own.nodeLatencySamples.nodes.map((n) => n.ms))} ms，最高 {Math.max(...own.nodeLatencySamples.nodes.map((n) => n.ms))} ms。</p>
+        </section>
+      )
+    }
+
+    {
+      own && own.connectivity.length > 0 && (
+        <section class="card section" aria-labelledby="conn-title">
+          <h2 class="section-title" id="conn-title"><Icon name="check" size={20} />流媒体与 AI 连通性（IPCheck.ing{own.testedNode ? ` · ${own.testedNode.split('（')[0]}` : ''}）</h2>
+          <p class="small muted">
+            {own.connectivityTotal ? `${own.connectivityTotal} 项全部显示可用` : ''}{own.connectivityAvgMs ? `，平均连通延迟 ${own.connectivityAvgMs} ms` : ''}。“可用”为工具的连通性判定，不等于该服务的账号/地区限制全部解除。
+          </p>
+          <div class="conn-groups">
+            {categories.map((cat) => {
+              const items = own.connectivity.filter((c) => c.category === cat).sort((a, b) => a.latencyMs - b.latencyMs);
+              return items.length ? (
+                <div class="conn-group">
+                  <h3>{cat}</h3>
+                  <ul>
+                    {items.map((c) => (
+                      <li>
+                        <span>{c.name}</span>
+                        <span class="conn-ms">{c.latencyMs} ms</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              ) : null;
+            })}
+          </div>
+          {own.connectivityOthers.length > 0 && <p class="small">另有 {own.connectivityOthers.join('、')} 共 {own.connectivityOthers.length} 项均显示可用（报告图未列出延迟）。</p>}
+        </section>
+      )
+    }
+
+    {
+      own?.youtube && (
+        <section class="card section" aria-labelledby="yt-title">
+          <h2 class="section-title" id="yt-title"><Icon name="play" size={20} />YouTube 播放统计（{own.youtube.node}）</h2>
+          <dl class="facts">
+            <div><dt>连接速度</dt><dd>{own.youtube.connectionSpeedKbps.map((k) => `${k.toLocaleString('zh-CN')} Kbps（≈ ${Math.round(k / 100) / 10} Mbps）`).join('；')}</dd></div>
+            <div><dt>清晰度</dt><dd>{own.youtube.resolution}</dd></div>
+            <div><dt>丢帧</dt><dd>{own.youtube.droppedFrames}</dd></div>
+            <div><dt>缓冲</dt><dd>{own.youtube.bufferSeconds}</dd></div>
+          </dl>
+          {own.youtube.note && <p class="small muted">{own.youtube.note}</p>}
+        </section>
+      )
+    }
+
+    {
+      (report.streamingNotes.length > 0 || report.conclusion || (own && own.conclusions.length > 0)) && (
+        <section class="card section" aria-labelledby="concl-title">
+          <h2 class="section-title" id="concl-title"><Icon name="star" size={20} />记录中的结论</h2>
+          {own && own.conclusions.length > 0 && (
+            <ul>
+              {own.conclusions.map((c) => (
+                <li>{c}</li>
+              ))}
+            </ul>
+          )}
+          {report.streamingNotes.length > 0 && (
+            <>
+              <h3>流媒体 / AI 观察</h3>
+              <ul class="small">
+                {report.streamingNotes.map((n) => (
+                  <li>{n}</li>
+                ))}
+              </ul>
+            </>
+          )}
+          {report.conclusion && (
+            <blockquote>
+              <p>{report.conclusion}</p>
+              <footer class="small muted">—— 资料原文结论</footer>
+            </blockquote>
+          )}
+        </section>
+      )
+    }
+
+    <section class="card section" aria-labelledby="evidence-title">
+      <h2 class="section-title" id="evidence-title"><Icon name="image" size={20} />证据文件</h2>
+      <div class="evidence-list">
+        {
+          report.evidenceFiles.map((f) => {
+            const img = resolveEvidenceImage(f.file);
+            return (
+              <figure class="evidence">
+                {img ? (
+                  <a href={img.src} target="_blank" rel="noopener">
+                    <Image src={img} alt={`${f.caption}`} widths={[640, 960, 1280]} sizes="(max-width: 960px) 100vw, 920px" loading="lazy" decoding="async" />
+                  </a>
+                ) : (
+                  <div class="empty small">{f.kind === 'text-record' ? '该记录为文字记录，无截图。' : '图片文件未纳入构建（请确认 source-materials 中存在该文件并重新运行构建）。'}</div>
+                )}
+                <figcaption class="small">
+                  <strong>{f.caption}</strong>
+                  <span class="muted">
+                    {' '}· 类型：{f.kind === 'report' ? '站长实测报告图' : f.kind === 'speed' ? '测速截图' : f.kind === 'streaming' ? '流媒体解锁截图' : f.kind === 'topology' ? '拓扑截图' : f.kind === 'pricing' ? '价格表截图' : f.kind === 'text-record' ? '文字记录' : '其他'}
+                    {f.hasTimestamp ? ' · 含时间标注' : ' · 未标注时间'}
+                    {f.subscriptionTag ? ` · 订阅标识 ${f.subscriptionTag}` : ''}
+                    {' '}· 原文件：{f.file.replace('source-materials/', '')}
+                  </span>
+                </figcaption>
+              </figure>
+            );
+          })
+        }
+      </div>
+    </section>
+
+    <section class="card section" aria-labelledby="limit-title">
+      <h2 class="section-title" id="limit-title"><Icon name="warn" size={20} />局限与解读提示</h2>
+      <ul>{report.limitations.map((l) => <li>{l}</li>)}</ul>
+      <p class="small muted">想自己复测？见<a href="/tutorials/jiedian-cesu-fangfa-nekospeed-speedtest/">节点测速方法与记录规范</a>；想了解为什么“延迟低却速度慢”，见<a href="/wiki/jiedian-di-yanchi-que-sudu-man/">百科解释</a>。</p>
+    </section>
+
+    {
+      others.length > 0 && (
+        <section class="card section">
+          <h2 class="section-title"><Icon name="list" size={20} />{brand.displayName}的其他记录</h2>
+          <ul>
+            {others.map((o) => (
+              <li>
+                <a href={`/speed-tests/${o.slug}/`}>{o.title}</a> <span class="small muted">· {formatTestedAt(o)}</span>
+              </li>
+            ))}
+          </ul>
+        </section>
+      )
+    }
+  </div>
+</BaseLayout>
+
+<style>
+  .rp-brand {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 12px;
+    font-weight: 600;
+  }
+
+  .rp-meta {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 10px 20px;
+    margin: 16px 0 0;
+    font-size: 0.9rem;
+  }
+
+  .rp-meta dt {
+    font-size: 0.75rem;
+    color: var(--muted);
+  }
+
+  .rp-meta dd {
+    margin: 0;
+  }
+
+  .metric-grid {
+    display: grid;
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+    gap: 10px;
+    margin-bottom: 14px;
+  }
+
+  .metric {
+    display: flex;
+    flex-direction: column;
+    padding: 12px;
+    border-radius: var(--radius);
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+  }
+
+  .metric span {
+    font-size: 0.75rem;
+    color: var(--muted);
+  }
+
+  .metric strong {
+    font-size: 1.5rem;
+    color: var(--primary);
+    line-height: 1.2;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .metric small {
+    font-size: 0.75rem;
+    color: var(--muted);
+  }
+
+  .facts {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px 20px;
+    margin: 8px 0;
+    font-size: 0.925rem;
+  }
+
+  .facts dt {
+    font-size: 0.75rem;
+    color: var(--muted);
+  }
+
+  .facts dd {
+    margin: 0;
+  }
+
+  .quality h3,
+  .suitability h3,
+  .conn-group h3 {
+    font-size: 0.95rem;
+    margin: 14px 0 8px;
+  }
+
+  .quality ul,
+  .suitability ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px 20px;
+    font-size: 0.925rem;
+  }
+
+  .suit {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 4px 12px;
+    border-radius: 999px;
+    font-weight: 600;
+    font-size: 0.85rem;
+  }
+
+  .suit-ok {
+    background: var(--success-bg);
+    color: #067647;
+  }
+
+  .suit-warn {
+    background: var(--warning-bg);
+    color: #b54708;
+  }
+
+  .suit-bad {
+    background: var(--danger-bg);
+    color: #b42318;
+  }
+
+  :global(:root[data-theme="dark"]) .suit-ok {
+    color: #6ee7b7;
+  }
+
+  :global(:root[data-theme="dark"]) .suit-warn {
+    color: #fcd34d;
+  }
+
+  :global(:root[data-theme="dark"]) .suit-bad {
+    color: #fca5a5;
+  }
+
+  .node-bars {
+    display: grid;
+    grid-template-columns: repeat(20, minmax(0, 1fr));
+    gap: 4px;
+    height: 180px;
+    align-items: end;
+    padding: 8px 0 0;
+  }
+
+  .node-bar {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    height: 100%;
+    justify-content: flex-end;
+    gap: 4px;
+  }
+
+  .node-val {
+    font-size: 0.65rem;
+    color: var(--text-2);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .node-fill {
+    width: 100%;
+    max-width: 22px;
+    border-radius: 6px 6px 0 0;
+    background: linear-gradient(180deg, #60a5fa, var(--primary));
+  }
+
+  .node-name {
+    font-size: 0.65rem;
+    color: var(--muted);
+  }
+
+  .conn-groups {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 14px;
+  }
+
+  .conn-group ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    font-size: 0.875rem;
+  }
+
+  .conn-group li {
+    display: flex;
+    justify-content: space-between;
+    gap: 8px;
+    padding: 6px 10px;
+    border-radius: var(--radius-sm);
+    background: var(--surface-2);
+  }
+
+  .conn-ms {
+    font-variant-numeric: tabular-nums;
+    color: var(--primary);
+    font-weight: 600;
+  }
+
+  .evidence-list {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .evidence img {
+    width: 100%;
+    height: auto;
+    border-radius: var(--radius);
+    border: 1px solid var(--border);
+  }
+
+  .evidence figcaption {
+    margin-top: 8px;
+  }
+
+  blockquote {
+    margin: 12px 0 0;
+    padding: 12px 16px;
+    border-left: 4px solid var(--primary-200);
+    background: var(--surface-2);
+    border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+  }
+
+  blockquote p {
+    margin: 0 0 4px;
+  }
+
+  @media (max-width: 1023px) {
+    .metric-grid {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .conn-groups {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .rp-meta {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  @media (max-width: 639px) {
+    .metric-grid,
+    .facts,
+    .conn-groups,
+    .rp-meta {
+      grid-template-columns: 1fr 1fr;
+    }
+
+    .node-bars {
+      grid-template-columns: repeat(10, minmax(0, 1fr));
+      height: auto;
+      row-gap: 12px;
+    }
+
+    .node-bar {
+      height: 120px;
+    }
+  }
+</style>

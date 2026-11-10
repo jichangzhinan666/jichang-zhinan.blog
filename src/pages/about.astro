@@ -1,0 +1,61 @@
+---
+import StaticPageLayout from '@/layouts/StaticPageLayout.astro';
+import { SITE } from '@/lib/site';
+import { getStats, getBrands } from '@/lib/data';
+
+const stats = getStats();
+const brands = getBrands();
+---
+
+<StaticPageLayout
+  path="/about/"
+  title="关于机场指南"
+  seoTitle="关于机场指南：我们是谁、做什么、不做什么"
+  description="机场指南（jichang-zhinan.blog）是一个整理机场品牌资料、套餐价格、节点测速与客户端教程的信息型博客。本页说明站点定位、数据原则、作者信息与收录流程。"
+  lead="一个把“资料从哪里来、什么时候核实的、哪里还没有证据”写清楚的机场信息站。"
+>
+  <h2>我们是谁</h2>
+  <p>
+    {SITE.name}由{SITE.author.name}运营，于 {SITE.launchedAt} 上线。编辑部目前由站长一人负责资料整理、实测与校对；作者署名与个人简介待站长补充后在此公布。本站不隶属于任何机场服务商。
+  </p>
+
+  <h2>我们做什么</h2>
+  <ul>
+    <li>整理机场品牌的套餐、价格、节点地区、线路类型、客户端政策、优惠码与客服信息，并标注每一项的资料来源与核实日期。目前收录 {stats.brands} 个品牌、{stats.tiers} 档套餐。</li>
+    <li>发布可核查的测速记录：站长实测报告注明工具、出口、测速服务器与北京时间；用户提供的截图或文字记录则注明来源、是否带时间戳以及转录误差。目前共 {stats.reports} 份已发布记录，其中 {stats.ownerReports} 份为站长实测。</li>
+    <li>撰写与品牌无关的通用教程、选购方法与术语解释，帮助读者自己判断，而不是替读者下结论。</li>
+    <li>维护一份规则公开、可复现的 <a href="/rankings/2027/">2027 机场推荐榜单</a>（编辑整理榜）。</li>
+  </ul>
+
+  <h2>我们不做什么</h2>
+  <ul>
+    <li>不虚构评分、节点数、优惠、价格、实测结论、阅读量或发布日期。资料没有的字段显示“资料未提供”。</li>
+    <li>不把单次、单节点、未知本地网络环境的测速当作品牌间的速度排名。</li>
+    <li>不销售任何服务，不提供需要把订阅链接交给第三方的工具（IP 查询、订阅转换、配置生成）。</li>
+    <li>不承诺搜索引擎排名，也不以排名为目的堆砌重复关键词文章。</li>
+  </ul>
+
+  <h2>数据来源与可信度分级</h2>
+  <p>每条数据都归入以下类型之一，并在品牌页“资料来源与核实”中列出：</p>
+  <ul>
+    <li><strong>品牌/推广方资料</strong>：由品牌或推广方整理的文本，核实日期为资料整理日；价格以结算页为准。</li>
+    <li><strong>站长实测</strong>：站长使用 IPCheck.ing 等工具完成的测试，报告图标注时间、出口与服务器；原始截图未公开时会注明。</li>
+    <li><strong>用户提供截图</strong>：MiaoKo、SpeedCentre 等工具的截图，数值由人工转录并标注误差；未标注时间的截图只说明“曾经如此”。</li>
+    <li><strong>待确认</strong>：归属或数值存疑的资料不公开展示，只在更新日志与报告中记录。</li>
+  </ul>
+
+  <h2>目前收录的品牌</h2>
+  <ul>
+    {brands.map((b) => <li><a href={`/reviews/${b.slug}/`}>{b.displayName}</a>{b.englishName ? `（${b.englishName}）` : ''} —— 资料核实 {b.lastVerifiedAt}</li>)}
+  </ul>
+
+  <h2>如何新增或更正品牌资料</h2>
+  <p>
+    新增品牌需要按统一模板提供十个部分的资料（基本信息、线路与节点、套餐与价格、流量规则、设备与客户端、流媒体与 AI、优惠码、客服与防骗、购买流程、晚高峰实测），模板保存在仓库的 <code>source-materials/templates/资料填写.txt</code>。缺少的部分会在页面上如实标注为“资料未提供”，不会用推测填充。更正请求请通过<a href="/contact/">联系与纠错</a>提交，处理流程见<a href="/editorial-policy/">编辑与纠错政策</a>。
+  </p>
+
+  <h2>与品牌的关系</h2>
+  <p>
+    页面中的品牌入口为推广链接，用户通过链接购买时本站可能获得佣金；榜单排序规则与评语不受佣金影响。详细说明见<a href="/disclosure/">推广关系披露</a>。
+  </p>
+</StaticPageLayout>

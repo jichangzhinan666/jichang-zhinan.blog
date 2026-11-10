@@ -1,0 +1,150 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import Breadcrumbs from '@/components/Breadcrumbs.astro';
+import ReportCard from '@/components/ReportCard.astro';
+import SpeedBars from '@/components/SpeedBars.astro';
+import Icon from '@/components/Icon.astro';
+import { getSpeedReports, getBrand, getBrands, formatTestedAt } from '@/lib/data';
+import { breadcrumbLd, collectionPageLd, itemListLd } from '@/lib/seo';
+
+const reports = getSpeedReports();
+const owner = reports.filter((r) => r.verificationStatus === 'owner-measured');
+const records = reports.filter((r) => r.verificationStatus === 'user-supplied-record');
+const screenshots = reports.filter((r) => r.verificationStatus === 'user-supplied-screenshot');
+const untested = getBrands().filter((b) => b.speedTests.evidenceStatus === 'none');
+
+const bars = owner.map((r) => ({
+  label: `${getBrand(r.brandId)!.displayName} · ${r.ownerReport!.testedNode?.split('（')[0] ?? ''}`,
+  sublabel: `${formatTestedAt(r)} · ${r.ownerReport!.testServer ?? ''}`,
+  value: r.ownerReport!.speed.downloadMbps,
+}));
+
+const crumbs = [
+  { name: '首页', href: '/' },
+  { name: '实测评测', href: '/reviews/' },
+  { name: '节点测速报告', href: '/speed-tests/' },
+];
+const title = `机场节点测速报告总览：${owner.length} 份站长实测 + ${records.length + screenshots.length} 份资料记录`;
+const description = `机场指南测速报告总览：${owner.length} 份 2026-11-10 站长实测报告（IPCheck.ing，含出口、服务器与时间），${records.length} 份晚高峰文字记录，${screenshots.length} 份用户提供的 MiaoKo / SpeedCentre 截图。每份报告注明工具、网络环境与局限，并标注未测试的品牌。`;
+const jsonLd = [
+  collectionPageLd(title, '/speed-tests/', description),
+  breadcrumbLd(crumbs),
+  itemListLd('节点测速报告', reports.map((r) => ({ name: r.title, url: `/speed-tests/${r.slug}/`, description: r.summary }))),
+];
+---
+
+<BaseLayout title="机场节点测速报告总览（站长实测与资料记录）" description={description} jsonLd={jsonLd}>
+  <div class="container">
+    <Breadcrumbs crumbs={crumbs} />
+    <header class="page-hero">
+      <h1>节点测速报告总览</h1>
+      <p class="lead">
+        共 {reports.length} 份已发布记录，按证据等级分组。所有数值直接来自站长报告图、资料文字记录或用户提供的截图；本站不做推算、不做跨品牌排名。测速方法与记录规范见<a href="/methodology/">方法说明</a>与<a href="/tutorials/jiedian-cesu-fangfa-nekospeed-speedtest/">测速方法教程</a>。
+      </p>
+    </header>
+
+    <section class="card section" aria-labelledby="overview-title">
+      <h2 class="section-title" id="overview-title"><Icon name="chart" size={20} />站长实测下载速度（IPCheck.ing，Cloudflare 测速）</h2>
+      <SpeedBars bars={bars} unit="Mbps" title="站长实测下载速度" caption="四次测试连接的品牌、地区节点与测速服务器各不相同，时段也不同（10:54–13:31），本地接入运营商未标注，因此不构成品牌之间的速度比较。" />
+    </section>
+
+    <section class="section" aria-labelledby="owner-title">
+      <div class="section-head">
+        <h2 class="section-title" id="owner-title"><Icon name="check" size={20} />站长实测报告（{owner.length}）</h2>
+        <span class="badge badge-strong">2026-11-10</span>
+      </div>
+      <div class="report-grid">{owner.map((r) => <ReportCard report={r} />)}</div>
+    </section>
+
+    <section class="section" aria-labelledby="record-title">
+      <div class="section-head">
+        <h2 class="section-title" id="record-title"><Icon name="file" size={20} />资料中的文字记录（{records.length}）</h2>
+      </div>
+      {records.length ? <div class="report-grid">{records.map((r) => <ReportCard report={r} />)}</div> : <p class="empty">暂无</p>}
+    </section>
+
+    <section class="section" aria-labelledby="shot-title">
+      <div class="section-head">
+        <h2 class="section-title" id="shot-title"><Icon name="image" size={20} />用户提供的测速截图（{screenshots.length}）</h2>
+      </div>
+      <p class="small muted">MiaoKo / SpeedCentre 等工具的速度单位为 MB/s（1 MB/s ≈ 8 Mbps），测速端通常为服务器线路，不代表家庭宽带体验；未标注日期的截图只能说明“曾经如此”。</p>
+      {screenshots.length ? <div class="report-grid">{screenshots.map((r) => <ReportCard report={r} />)}</div> : <p class="empty">暂无</p>}
+    </section>
+
+    <section class="card section" aria-labelledby="untested-title">
+      <h2 class="section-title" id="untested-title"><Icon name="info" size={20} />尚无测速证据的品牌（{untested.length}）</h2>
+      {
+        untested.length ? (
+          <ul class="untested">
+            {untested.map((b) => (
+              <li>
+                <a href={`/reviews/${b.slug}/`}>{b.displayName}</a>
+                <span class="small muted">{b.peakTestNote}</span>
+              </li>
+            ))}
+          </ul>
+        ) : (
+          <p class="small">所有收录品牌都至少有一份测速记录。</p>
+        )
+      }
+      <p class="small muted">这些品牌在榜单中按规则排在有证据的品牌之后；补充实测后会同步更新榜单与本页。</p>
+    </section>
+
+    <section class="card section" aria-labelledby="table-title">
+      <h2 class="section-title" id="table-title"><Icon name="list" size={20} />全部记录一览</h2>
+      <div class="table-wrap">
+        <table class="data">
+          <thead>
+            <tr><th>品牌</th><th>报告</th><th>测试时间</th><th>工具</th><th>网络环境</th><th>证据状态</th></tr>
+          </thead>
+          <tbody>
+            {reports.map((r) => (
+              <tr>
+                <td><a href={`/reviews/${getBrand(r.brandId)!.slug}/`}>{getBrand(r.brandId)!.displayName}</a></td>
+                <td><a href={`/speed-tests/${r.slug}/`}>{r.title}</a></td>
+                <td class="nowrap">{formatTestedAt(r)}</td>
+                <td class="small">{r.tool.split('+')[0].trim()}</td>
+                <td class="small">{r.isp ?? '未标注'}</td>
+                <td class="small">{r.verificationStatus === 'owner-measured' ? '站长实测' : r.verificationStatus === 'user-supplied-record' ? '资料文字记录' : '用户提供截图'}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </section>
+  </div>
+</BaseLayout>
+
+<style>
+  .report-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px;
+  }
+
+  .untested {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .untested li {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px 12px;
+    align-items: baseline;
+  }
+
+  .untested a {
+    font-weight: 600;
+  }
+
+  @media (max-width: 767px) {
+    .report-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

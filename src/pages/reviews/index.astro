@@ -1,0 +1,435 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import Breadcrumbs from '@/components/Breadcrumbs.astro';
+import BrandMark from '@/components/BrandMark.astro';
+import EvidenceBadge from '@/components/EvidenceBadge.astro';
+import Icon from '@/components/Icon.astro';
+import { computeRanking, getEntryPlan, formatPrice, formatTraffic, formatPerGB, getStats } from '@/lib/data';
+import { breadcrumbLd, collectionPageLd, itemListLd } from '@/lib/seo';
+
+const ranking = computeRanking();
+const stats = getStats();
+const allRegions = [...new Set(ranking.flatMap((r) => r.brand.nodeRegions))];
+const regionOrder = ['香港', '台湾', '日本', '新加坡', '美国', '韩国', '马来西亚'];
+const regions = [
+  ...regionOrder.filter((r) => allRegions.includes(r)),
+  ...allRegions.filter((r) => !regionOrder.includes(r)).sort((a, b) => a.localeCompare(b, 'zh-CN')),
+];
+
+function features(brandId: string) {
+  const r = ranking.find((x) => x.brand.id === brandId)!;
+  const b = r.brand;
+  const tp = b.clientPolicy.thirdPartyClients;
+  const f: string[] = [];
+  if (/不限/.test(b.deviceLimit)) f.push('unlimited');
+  if (/支持导入|可导入/.test(tp) && !/不支持/.test(tp)) f.push('thirdparty');
+  if (/询问客服|申请/.test(b.clientPolicy.subscriptionLink)) f.push('sublink');
+  if (b.speedTests.evidenceStatus !== 'none') f.push('evidence');
+  if (b.coupon) f.push('coupon');
+  if (b.supportedPlatforms.some((p) => /iOS/i.test(p))) f.push('ios');
+  if (b.supportedPlatforms.some((p) => /Linux/i.test(p))) f.push('linux');
+  return f;
+}
+
+const title = '机场品牌评测与资料库：8 个品牌的套餐、节点、客户端政策与实测证据';
+const description = `按地区、入门价格与功能筛选 ${stats.brands} 个机场品牌。每个品牌页列出套餐价格、节点地区、线路类型、订阅/第三方客户端政策、优惠码、测速证据与资料核实日期，不含虚构评分。`;
+const crumbs = [
+  { name: '首页', href: '/' },
+  { name: '品牌评测', href: '/reviews/' },
+];
+const jsonLd = [
+  collectionPageLd(title, '/reviews/', description),
+  breadcrumbLd(crumbs),
+  itemListLd(
+    '机场品牌资料库',
+    ranking.map((r) => ({ name: r.brand.displayName, url: `/reviews/${r.brand.slug}/`, description: r.brand.tagline })),
+  ),
+];
+---
+
+<BaseLayout title="机场品牌评测与资料库（8 个品牌）" description={description} jsonLd={jsonLd}>
+  <div class="container">
+    <Breadcrumbs crumbs={crumbs} />
+    <header class="page-hero">
+      <h1>机场品牌评测与资料库</h1>
+      <p class="lead">
+        收录 {stats.brands} 个品牌、{stats.tiers} 档套餐。本页只做筛选与导航；每个品牌页按资料逐项列出套餐、节点、客户端政策、优惠码、测速证据与资料来源，缺失的字段如实标注“资料未提供”。
+      </p>
+    </header>
+
+    <section class="card filters" aria-labelledby="filters-title">
+      <h2 class="section-title" id="filters-title">
+        <Icon name="filter" size={20} />
+        筛选品牌
+      </h2>
+      <form id="brand-filter" class="filter-form" aria-describedby="filter-result">
+        <fieldset>
+          <legend>节点地区（需全部包含）</legend>
+          <div class="chips">
+            {
+              regions.map((r) => (
+                <label class="chip">
+                  <input type="checkbox" name="region" value={r} />
+                  <span>{r}</span>
+                </label>
+              ))
+            }
+          </div>
+        </fieldset>
+        <fieldset>
+          <legend>入门档月付上限</legend>
+          <div class="chips">
+            <label class="chip"><input type="radio" name="price" value="" checked /><span>不限</span></label>
+            <label class="chip"><input type="radio" name="price" value="20" /><span>≤ ¥20</span></label>
+            <label class="chip"><input type="radio" name="price" value="25" /><span>≤ ¥25</span></label>
+            <label class="chip"><input type="radio" name="price" value="30" /><span>≤ ¥30</span></label>
+          </div>
+        </fieldset>
+        <fieldset>
+          <legend>功能与政策</legend>
+          <div class="chips">
+            <label class="chip"><input type="checkbox" name="feature" value="unlimited" /><span>不限设备</span></label>
+            <label class="chip"><input type="checkbox" name="feature" value="thirdparty" /><span>可导入第三方客户端</span></label>
+            <label class="chip"><input type="checkbox" name="feature" value="sublink" /><span>可向客服申请订阅链接</span></label>
+            <label class="chip"><input type="checkbox" name="feature" value="ios" /><span>资料列出 iOS</span></label>
+            <label class="chip"><input type="checkbox" name="feature" value="linux" /><span>资料列出 Linux</span></label>
+            <label class="chip"><input type="checkbox" name="feature" value="evidence" /><span>有测速证据</span></label>
+            <label class="chip"><input type="checkbox" name="feature" value="coupon" /><span>有优惠码</span></label>
+          </div>
+        </fieldset>
+        <div class="filter-actions">
+          <label class="sort-label">
+            排序
+            <select name="sort" id="brand-sort">
+              <option value="rank">榜单顺序</option>
+              <option value="price">入门月付（低→高）</option>
+              <option value="pergb">每 GB 单价（低→高）</option>
+              <option value="regions">地区数（多→少）</option>
+            </select>
+          </label>
+          <button type="reset" class="btn btn-outline btn-sm" id="filter-reset">清除筛选</button>
+          <p class="small muted" id="filter-result" aria-live="polite">显示全部 {ranking.length} 个品牌</p>
+        </div>
+      </form>
+    </section>
+
+    <ul class="brand-list" id="brand-list">
+      {
+        ranking.map((r) => {
+          const b = r.brand;
+          const entry = getEntryPlan(b.id);
+          return (
+            <li
+              class="brand-item card card-hover"
+              data-regions={b.nodeRegions.join('|')}
+              data-entry={entry?.price ?? ''}
+              data-pergb={entry?.pricePerGB ?? ''}
+              data-regioncount={b.nodeRegions.length}
+              data-rank={r.position}
+              data-features={features(b.id).join('|')}
+            >
+              <div class="bi-head">
+                <BrandMark brand={b} size={52} />
+                <div>
+                  <h2 class="bi-name">
+                    <a href={`/reviews/${b.slug}/`}>{b.displayName}</a>
+                    {b.englishName && <span class="bi-en">{b.englishName}</span>}
+                  </h2>
+                  <p class="bi-tagline">{b.tagline}</p>
+                </div>
+                <span class="bi-rank" aria-label={`榜单第 ${r.position} 位`}>#{r.position}</span>
+              </div>
+              <dl class="bi-facts">
+                <div>
+                  <dt>入门档</dt>
+                  <dd>{entry ? `${entry.planName} ${formatPrice(entry.price)}/月 · ${formatTraffic(entry.trafficGB)}` : '资料未提供'}</dd>
+                </div>
+                <div>
+                  <dt>每 GB</dt>
+                  <dd>{entry ? formatPerGB(entry.pricePerGB) : '—'}</dd>
+                </div>
+                <div>
+                  <dt>节点</dt>
+                  <dd>
+                    {b.nodeRegions.length} 个地区{b.nodeCount ? ` · ${b.nodeCount} 节点` : ''}
+                  </dd>
+                </div>
+                <div>
+                  <dt>线路</dt>
+                  <dd>{b.lineTypes.join(' / ')}</dd>
+                </div>
+                <div>
+                  <dt>设备</dt>
+                  <dd>{b.deviceLimit}</dd>
+                </div>
+                <div>
+                  <dt>第三方客户端</dt>
+                  <dd>{b.clientPolicy.thirdPartyClients.split('（')[0]}</dd>
+                </div>
+              </dl>
+              <div class="bi-foot">
+                <EvidenceBadge brand={b} />
+                {b.coupon && (
+                  <span class="badge badge-medium">
+                    优惠码 {b.coupon.code}
+                    {b.coupon.discount ? ` · ${b.coupon.discount}` : ''}
+                  </span>
+                )}
+                <span class="small muted">资料核实 {b.lastVerifiedAt ?? '—'}</span>
+                <a class="btn btn-secondary btn-sm bi-cta" href={`/reviews/${b.slug}/`}>
+                  查看资料与测评
+                  <Icon name="arrow-right" size={14} />
+                </a>
+              </div>
+            </li>
+          );
+        })
+      }
+    </ul>
+    <p class="empty" id="brand-empty" hidden>没有符合全部筛选条件的品牌。放宽地区或功能条件再试。</p>
+
+    <section class="card section">
+      <h2 class="section-title">
+        <Icon name="info" size={20} />
+        如何使用这份资料库
+      </h2>
+      <ul class="small">
+        <li>“入门档”指月付价格最低的周期套餐，每 GB 单价按月付价 ÷ 月流量计算，不含优惠码。</li>
+        <li>“可导入第三方客户端”“可向客服申请订阅链接”均按品牌资料原文归类；不提供或不推荐导入的品牌不会出现在该筛选结果中。</li>
+        <li>“有测速证据”包含站长实测报告、带日期的截图/记录以及未标注日期的截图，具体等级见各品牌页与<a href="/methodology/">方法说明</a>。</li>
+        <li>想横向比较价格，请使用<a href="/compare/">套餐对比</a>；想看排序理由，请看<a href="/rankings/2027/">2027 榜单</a>。</li>
+      </ul>
+    </section>
+  </div>
+</BaseLayout>
+
+<style>
+  .filters {
+    margin-top: 16px;
+  }
+
+  .filter-form {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+
+  fieldset {
+    border: 0;
+    padding: 0;
+    margin: 0;
+  }
+
+  legend {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--text-2);
+    margin-bottom: 8px;
+  }
+
+  .chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .chip {
+    position: relative;
+    display: inline-flex;
+  }
+
+  .chip input {
+    position: absolute;
+    opacity: 0;
+    width: 1px;
+    height: 1px;
+  }
+
+  .chip span {
+    display: inline-flex;
+    align-items: center;
+    min-height: 36px;
+    padding: 6px 14px;
+    border-radius: 999px;
+    border: 1px solid var(--border);
+    background: var(--surface);
+    color: var(--text-2);
+    font-size: 0.875rem;
+    cursor: pointer;
+    transition: all 0.15s ease;
+  }
+
+  .chip input:checked + span {
+    background: var(--primary);
+    border-color: var(--primary);
+    color: #fff;
+  }
+
+  .chip input:focus-visible + span {
+    outline: 3px solid var(--primary-200);
+  }
+
+  .filter-actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .sort-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.875rem;
+    font-weight: 600;
+  }
+
+  .sort-label select {
+    min-height: 36px;
+    padding: 4px 10px;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--border-strong);
+    background: var(--surface);
+    color: var(--text);
+    font: inherit;
+  }
+
+  #filter-result {
+    margin: 0;
+  }
+
+  .brand-list {
+    list-style: none;
+    margin: 20px 0 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px;
+  }
+
+  .brand-item {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+
+  .bi-head {
+    display: flex;
+    gap: 14px;
+    align-items: flex-start;
+  }
+
+  .bi-name {
+    margin: 0;
+    font-size: 1.2rem;
+    display: flex;
+    gap: 8px;
+    align-items: baseline;
+    flex-wrap: wrap;
+  }
+
+  .bi-name a {
+    color: var(--text);
+  }
+
+  .bi-en {
+    font-size: 0.75rem;
+    color: var(--muted);
+    font-weight: 500;
+  }
+
+  .bi-tagline {
+    margin: 4px 0 0;
+    font-size: 0.875rem;
+    color: var(--muted);
+  }
+
+  .bi-rank {
+    margin-left: auto;
+    font-weight: 700;
+    color: var(--primary);
+    background: var(--primary-50);
+    border-radius: 999px;
+    padding: 2px 10px;
+    font-size: 0.8125rem;
+  }
+
+  .bi-facts {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px 16px;
+    margin: 0;
+    font-size: 0.875rem;
+  }
+
+  .bi-facts dt {
+    font-size: 0.75rem;
+    color: var(--muted);
+  }
+
+  .bi-facts dd {
+    margin: 0;
+    color: var(--text);
+  }
+
+  .bi-foot {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px 12px;
+    margin-top: auto;
+  }
+
+  .bi-cta {
+    margin-left: auto;
+  }
+
+  @media (max-width: 1023px) {
+    .brand-list {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
+
+<script>
+  const form = document.getElementById('brand-filter') as HTMLFormElement | null;
+  const list = document.getElementById('brand-list');
+  const empty = document.getElementById('brand-empty');
+  const result = document.getElementById('filter-result');
+  const items = Array.from(document.querySelectorAll<HTMLElement>('.brand-item'));
+
+  const apply = () => {
+    if (!form) return;
+    const data = new FormData(form);
+    const regions = data.getAll('region') as string[];
+    const price = data.get('price') as string;
+    const feats = data.getAll('feature') as string[];
+    const sort = data.get('sort') as string;
+    let visible = 0;
+    items.forEach((el) => {
+      const r = (el.dataset.regions ?? '').split('|');
+      const f = (el.dataset.features ?? '').split('|');
+      const entry = el.dataset.entry ? Number(el.dataset.entry) : null;
+      let ok = regions.every((x) => r.includes(x));
+      if (ok && price) ok = entry !== null && entry <= Number(price);
+      if (ok && feats.length) ok = feats.every((x) => f.includes(x));
+      el.hidden = !ok;
+      if (ok) visible += 1;
+    });
+    const keyOf = (el: HTMLElement) => {
+      if (sort === 'price') return el.dataset.entry ? Number(el.dataset.entry) : Number.POSITIVE_INFINITY;
+      if (sort === 'pergb') return el.dataset.pergb ? Number(el.dataset.pergb) : Number.POSITIVE_INFINITY;
+      if (sort === 'regions') return -Number(el.dataset.regioncount ?? 0);
+      return Number(el.dataset.rank ?? 0);
+    };
+    items
+      .slice()
+      .sort((a, b) => keyOf(a) - keyOf(b))
+      .forEach((el) => list?.appendChild(el));
+    if (empty) empty.hidden = visible > 0;
+    if (result) result.textContent = visible === items.length ? `显示全部 ${items.length} 个品牌` : `符合条件：${visible} / ${items.length} 个品牌`;
+  };
+
+  form?.addEventListener('change', apply);
+  form?.addEventListener('reset', () => window.setTimeout(apply, 0));
+</script>

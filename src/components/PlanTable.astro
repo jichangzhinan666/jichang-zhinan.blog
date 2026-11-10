@@ -1,0 +1,162 @@
+---
+import Icon from './Icon.astro';
+import {
+  CATEGORY_LABEL,
+  PERIOD_LABEL,
+  PERIOD_ORDER,
+  formatPerGB,
+  formatPrice,
+  formatTraffic,
+  getPlanTiers,
+  monthlyEquivalent,
+  round3,
+} from '@/lib/data';
+import type { PlanTier, PricePeriod } from '@/lib/types';
+
+interface Props {
+  brandId: string;
+  /** 只渲染指定类别 */
+  categories?: PlanTier['category'][];
+  showSource?: boolean;
+}
+
+const { brandId, categories, showSource = true } = Astro.props;
+const tiers = getPlanTiers(brandId);
+const cats = (categories ?? ['periodic', 'annual-lite', 'one-time', 'dedicated']).filter((c) =>
+  tiers.some((t) => t.category === c),
+);
+
+function columnsFor(list: PlanTier[]): PricePeriod[] {
+  return PERIOD_ORDER.filter((p) => list.some((t) => t.prices[p] !== undefined));
+}
+
+function perGB(t: PlanTier): string {
+  if (!t.trafficGB) return '—';
+  if (t.category === 'one-time') {
+    const p = t.prices['one-time'];
+    return p !== undefined ? formatPerGB(round3(p / t.trafficGB)) : '—';
+  }
+  const monthly = t.prices.monthly ?? (t.prices.yearly !== undefined ? monthlyEquivalent(t.prices.yearly, 'yearly') : null);
+  if (monthly === null || monthly === undefined) return '—';
+  return formatPerGB(round3(monthly / t.trafficGB));
+}
+
+function deviceLabel(d: PlanTier['deviceLimit']): string {
+  if (d === 'unlimited') return '不限';
+  if (typeof d === 'number') return `限 ${d} 台`;
+  return '未说明';
+}
+
+function couponLabel(c: boolean | null): string {
+  if (c === true) return '适用';
+  if (c === false) return '不适用';
+  return '未说明';
+}
+
+const sources = [...new Set(tiers.map((t) => `${t.source.sourceFile}${t.source.sourceLocation ? ` · ${t.source.sourceLocation.split('；')[0]}` : ''}`))];
+const verified = [...new Set(tiers.map((t) => t.verifiedAt).filter(Boolean))];
+---
+
+{
+  tiers.length === 0 ? (
+    <p class="empty">暂无已核实套餐资料</p>
+  ) : (
+    <div class="plan-tables">
+      {cats.map((cat) => {
+        const list = tiers.filter((t) => t.category === cat);
+        const cols = columnsFor(list);
+        return (
+          <section class="plan-section" aria-labelledby={`plan-${brandId}-${cat}`}>
+            <h3 id={`plan-${brandId}-${cat}`} class="plan-title">
+              {CATEGORY_LABEL[cat]}
+              <span class="muted small">（{list.length} 档）</span>
+            </h3>
+            <div class="table-wrap">
+              <table class="data">
+                <thead>
+                  <tr>
+                    <th>套餐</th>
+                    <th>{cat === 'one-time' ? '总流量' : '流量'}</th>
+                    {cols.map((p) => (
+                      <th class="num">{PERIOD_LABEL[p]}</th>
+                    ))}
+                    <th class="num">每 GB</th>
+                    <th>设备</th>
+                    <th>优惠码</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {list.map((t) => (
+                    <tr>
+                      <td>
+                        <strong>{t.planName}</strong>
+                        {t.features.length > 0 && <div class="plan-features">{t.features.join(' · ')}</div>}
+                        {t.note && <div class="plan-note">{t.note}</div>}
+                      </td>
+                      <td>
+                        <span class="nowrap">{formatTraffic(t.trafficGB)}</span>
+                        <div class="plan-note">{t.trafficNote}</div>
+                      </td>
+                      {cols.map((p) => (
+                        <td class="num">{t.prices[p] !== undefined ? formatPrice(t.prices[p]!) : '—'}</td>
+                      ))}
+                      <td class="num">{perGB(t)}</td>
+                      <td class="nowrap">{deviceLabel(t.deviceLimit)}</td>
+                      <td class="nowrap">{couponLabel(t.couponEligible)}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </section>
+        );
+      })}
+      {showSource && (
+        <p class="plan-source small muted">
+          <Icon name="file" size={14} />
+          <span>
+            每 GB 单价按名义价格计算（周期套餐取月付价，年付小包按年付 ÷ 12），不含优惠码。资料核实日期：{verified.join('、')}；来源：{sources.join('；')}。价格以品牌结算页为准。
+          </span>
+        </p>
+      )}
+    </div>
+  )
+}
+
+<style>
+  .plan-tables {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .plan-title {
+    margin: 0 0 8px;
+    font-size: 1.05rem;
+  }
+
+  .plan-features {
+    font-size: 0.78rem;
+    color: var(--muted);
+    margin-top: 2px;
+  }
+
+  .plan-note {
+    font-size: 0.75rem;
+    color: var(--muted);
+    margin-top: 2px;
+    max-width: 32ch;
+  }
+
+  .plan-source {
+    display: flex;
+    gap: 6px;
+    align-items: flex-start;
+    margin: 0;
+  }
+
+  .plan-source .icon {
+    flex: none;
+    margin-top: 3px;
+  }
+</style>

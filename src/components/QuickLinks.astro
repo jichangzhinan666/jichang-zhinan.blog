@@ -1,0 +1,145 @@
+---
+import Icon from './Icon.astro';
+import { QUICK_LINKS } from '@/lib/site';
+---
+
+<nav class="quick-links card" aria-label="快捷入口">
+  <ul>
+    {
+      QUICK_LINKS.map((q) => (
+        <li>
+          <a href={q.href}>
+            <span class="ql-icon">
+              <Icon name={q.icon} size={22} />
+            </span>
+            <span class="ql-text">
+              <strong>{q.label}</strong>
+              <small>{q.sub}</small>
+            </span>
+          </a>
+        </li>
+      ))
+    }
+  </ul>
+</nav>
+
+<style>
+  .quick-links {
+    margin-top: 20px;
+    padding: 12px 16px;
+  }
+
+  .quick-links ul {
+    display: grid;
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .quick-links li + li {
+    border-left: 1px solid var(--border);
+  }
+
+  .quick-links a {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 16px;
+    color: var(--text);
+    text-decoration: none;
+    border-radius: var(--radius);
+    transition: background 0.15s ease;
+  }
+
+  .quick-links a:hover {
+    background: var(--primary-50);
+    text-decoration: none;
+  }
+
+  .ql-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+    background: var(--primary-50);
+    color: var(--primary);
+    flex: none;
+  }
+
+  .quick-links li:nth-child(1) .ql-icon {
+    color: #d97706;
+    background: #fff4e0;
+  }
+
+  .quick-links li:nth-child(2) .ql-icon {
+    color: #155eef;
+  }
+
+  .quick-links li:nth-child(3) .ql-icon {
+    color: #0e9f8e;
+    background: #e6f7f4;
+  }
+
+  .quick-links li:nth-child(4) .ql-icon {
+    color: #dc2626;
+    background: #feecec;
+  }
+
+  .quick-links li:nth-child(5) .ql-icon {
+    color: #2563eb;
+  }
+
+  .quick-links li:nth-child(6) .ql-icon {
+    color: #059669;
+    background: #e3f7ee;
+  }
+
+  :global(:root[data-theme="dark"]) .quick-links li .ql-icon {
+    background: var(--primary-50);
+  }
+
+  .ql-text {
+    display: flex;
+    flex-direction: column;
+    line-height: 1.3;
+  }
+
+  .ql-text strong {
+    font-size: 0.95rem;
+  }
+
+  .ql-text small {
+    font-size: 0.75rem;
+    color: var(--muted);
+  }
+
+  @media (max-width: 1199px) {
+    .quick-links ul {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 4px;
+    }
+
+    .quick-links li + li {
+      border-left: 0;
+    }
+  }
+
+  @media (max-width: 639px) {
+    .quick-links ul {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .quick-links a {
+      padding: 10px 8px;
+      gap: 10px;
+    }
+
+    .ql-icon {
+      width: 40px;
+      height: 40px;
+    }
+  }
+</style>

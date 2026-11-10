@@ -1,0 +1,386 @@
+---
+import Icon from './Icon.astro';
+import { getFeaturedArticles, getPublishedArticles, articleUrl, categoryLabel } from '@/lib/articles';
+import { getSpeedReports, getBrand, formatTestedAt } from '@/lib/data';
+
+const featured = await getFeaturedArticles();
+const slides = featured.slice(0, 4);
+const guides = await getPublishedArticles('guides');
+const chooseGuide = guides.find((g) => g.id.endsWith('2027-jichang-xuangou-zhinan')) ?? guides[0];
+const ownerReports = getSpeedReports().filter((r) => r.verificationStatus === 'owner-measured');
+const latestReport = ownerReports[0];
+const latestBrand = latestReport ? getBrand(latestReport.brandId) : undefined;
+---
+
+<div class="feature-col">
+  {
+    slides.length > 0 ? (
+      <section class="feature-carousel card" aria-roledescription="轮播" aria-label="精选教程">
+        <div class="carousel-track" id="feature-track">
+          {slides.map((a, i) => (
+            <article
+              class:list={['slide', { active: i === 0 }]}
+              role="group"
+              aria-roledescription="幻灯片"
+              aria-label={`第 ${i + 1} 张，共 ${slides.length} 张`}
+              data-index={i}
+              aria-hidden={i === 0 ? 'false' : 'true'}
+            >
+              <a class="slide-link" href={articleUrl(a)} tabindex={i === 0 ? 0 : -1}>
+                <span class={`slide-bg cat-${a.data.category}`} aria-hidden="true">
+                  <span class="slide-badge">{a.data.category === 'tutorials' ? '新手教程' : categoryLabel(a.data.category)}</span>
+                  <span class="slide-art">
+                    <span class="slide-window">
+                      <span class="slide-dot" />
+                      <span class="slide-dot" />
+                      <span class="slide-dot" />
+                    </span>
+                    <Icon name={a.data.category === 'tutorials' ? 'book' : a.data.category === 'guides' ? 'tag' : 'layers'} size={56} />
+                  </span>
+                </span>
+                <span class="slide-text">
+                  <strong>{a.data.title}</strong>
+                  <small>{a.data.description}</small>
+                </span>
+              </a>
+            </article>
+          ))}
+        </div>
+        {slides.length > 1 && (
+          <div class="carousel-controls">
+            <button type="button" class="carousel-btn" data-dir="-1" aria-label="上一张">
+              <Icon name="chevron" size={18} class="rot-90" />
+            </button>
+            <div class="carousel-dots" role="tablist" aria-label="选择幻灯片">
+              {slides.map((_, i) => (
+                <button
+                  type="button"
+                  role="tab"
+                  class:list={['dot', { active: i === 0 }]}
+                  aria-selected={i === 0 ? 'true' : 'false'}
+                  aria-label={`第 ${i + 1} 张`}
+                  data-index={i}
+                />
+              ))}
+            </div>
+            <button type="button" class="carousel-btn" data-dir="1" aria-label="下一张">
+              <Icon name="chevron" size={18} class="rot-270" />
+            </button>
+          </div>
+        )}
+      </section>
+    ) : (
+      <section class="card">
+        <p class="empty">精选内容整理中</p>
+      </section>
+    )
+  }
+
+  <div class="feature-small">
+    {
+      chooseGuide && (
+        <a class="small-card card card-hover" href={articleUrl(chooseGuide)}>
+          <span class="small-cover cat-guides" aria-hidden="true">
+            <span class="small-badge">选购指南</span>
+            <Icon name="tag" size={30} />
+          </span>
+          <strong>{chooseGuide.data.title}</strong>
+          <small>{chooseGuide.data.description}</small>
+        </a>
+      )
+    }
+    <a class="small-card card card-hover" href="/speed-tests/">
+      <span class="small-cover cat-speed" aria-hidden="true">
+        <span class="small-badge">实测评测</span>
+        <Icon name="speed" size={30} />
+      </span>
+      <strong>节点测速报告总览</strong>
+      <small>
+        {
+          latestReport && latestBrand
+            ? `最新：${latestBrand.displayName} · ${latestReport.ownerReport?.testedNode ?? ''}，${formatTestedAt(latestReport)}。共 ${ownerReports.length} 份站长实测报告，均注明工具、出口与时间。`
+            : '暂无可验证测速记录。'
+        }
+      </small>
+    </a>
+  </div>
+</div>
+
+<style>
+  .feature-col {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .feature-carousel {
+    padding: 0;
+    overflow: hidden;
+  }
+
+  .carousel-track {
+    position: relative;
+  }
+
+  .slide {
+    display: none;
+  }
+
+  .slide.active {
+    display: block;
+  }
+
+  .slide-link {
+    display: block;
+    color: var(--text);
+    text-decoration: none;
+  }
+
+  .slide-bg {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    aspect-ratio: 16 / 8.2;
+    background:
+      radial-gradient(200px 120px at 80% 20%, rgba(255, 255, 255, 0.25), transparent 70%),
+      linear-gradient(135deg, #1d4ed8, #0c2a68);
+    color: #fff;
+  }
+
+  .slide-bg.cat-guides {
+    background:
+      radial-gradient(200px 120px at 80% 20%, rgba(255, 255, 255, 0.25), transparent 70%),
+      linear-gradient(135deg, #0ea5a4, #0f3b63);
+  }
+
+  .slide-bg.cat-wiki {
+    background:
+      radial-gradient(200px 120px at 80% 20%, rgba(255, 255, 255, 0.25), transparent 70%),
+      linear-gradient(135deg, #7c5cff, #1e1b4b);
+  }
+
+  .slide-badge,
+  .small-badge {
+    position: absolute;
+    top: 14px;
+    left: 14px;
+    padding: 3px 10px;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.18);
+    border: 1px solid rgba(255, 255, 255, 0.35);
+    font-size: 0.75rem;
+    font-weight: 600;
+  }
+
+  .slide-art {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    padding: 18px 28px;
+    border-radius: 14px;
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    backdrop-filter: blur(4px);
+  }
+
+  .slide-window {
+    display: flex;
+    gap: 6px;
+    align-self: flex-start;
+  }
+
+  .slide-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.6);
+  }
+
+  .slide-text {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    padding: 16px 18px 18px;
+  }
+
+  .slide-text strong {
+    font-size: 1.2rem;
+    line-height: 1.35;
+  }
+
+  .slide-text small {
+    font-size: 0.875rem;
+    color: var(--muted);
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .carousel-controls {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    padding: 0 12px 12px;
+  }
+
+  .carousel-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    border: 1px solid var(--border);
+    background: var(--surface);
+    color: var(--text-2);
+    cursor: pointer;
+  }
+
+  .carousel-btn:hover {
+    background: var(--primary-50);
+    color: var(--primary);
+  }
+
+  .rot-90 {
+    transform: rotate(90deg);
+  }
+
+  .rot-270 {
+    transform: rotate(-90deg);
+  }
+
+  .carousel-dots {
+    display: flex;
+    gap: 8px;
+  }
+
+  .dot {
+    width: 10px;
+    height: 10px;
+    padding: 0;
+    border-radius: 50%;
+    border: 0;
+    background: var(--primary-200);
+    cursor: pointer;
+  }
+
+  .dot.active {
+    background: var(--primary);
+    width: 22px;
+    border-radius: 6px;
+  }
+
+  .feature-small {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px;
+  }
+
+  .small-card {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    padding: 0 0 14px;
+    overflow: hidden;
+    color: var(--text);
+    text-decoration: none;
+  }
+
+  .small-card:hover {
+    text-decoration: none;
+  }
+
+  .small-card strong {
+    padding: 10px 14px 0;
+    font-size: 1rem;
+    line-height: 1.4;
+  }
+
+  .small-card small {
+    padding: 0 14px;
+    font-size: 0.8125rem;
+    color: var(--muted);
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .small-cover {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    aspect-ratio: 16 / 7;
+    color: #fff;
+    background: linear-gradient(135deg, #0ea5a4, #0f3b63);
+  }
+
+  .small-cover.cat-speed {
+    background:
+      radial-gradient(160px 90px at 80% 20%, rgba(255, 255, 255, 0.25), transparent 70%),
+      linear-gradient(135deg, #2563eb, #0c2a68);
+  }
+
+  @media (max-width: 639px) {
+    .feature-small {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
+
+<script>
+  const track = document.getElementById('feature-track');
+  if (track) {
+    const slides = Array.from(track.querySelectorAll<HTMLElement>('.slide'));
+    const dots = Array.from(document.querySelectorAll<HTMLButtonElement>('.carousel-dots .dot'));
+    const btns = Array.from(document.querySelectorAll<HTMLButtonElement>('.carousel-btn'));
+    let current = 0;
+    let timer: number | undefined;
+    const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    const show = (idx: number) => {
+      current = (idx + slides.length) % slides.length;
+      slides.forEach((s, i) => {
+        const active = i === current;
+        s.classList.toggle('active', active);
+        s.setAttribute('aria-hidden', active ? 'false' : 'true');
+        s.querySelector('a')?.setAttribute('tabindex', active ? '0' : '-1');
+      });
+      dots.forEach((d, i) => {
+        d.classList.toggle('active', i === current);
+        d.setAttribute('aria-selected', i === current ? 'true' : 'false');
+      });
+    };
+
+    const stop = () => window.clearInterval(timer);
+    const start = () => {
+      if (reduced || slides.length < 2) return;
+      stop();
+      timer = window.setInterval(() => show(current + 1), 7000);
+    };
+
+    btns.forEach((b) =>
+      b.addEventListener('click', () => {
+        show(current + Number(b.dataset.dir));
+        start();
+      }),
+    );
+    dots.forEach((d) =>
+      d.addEventListener('click', () => {
+        show(Number(d.dataset.index));
+        start();
+      }),
+    );
+    const root = track.closest('.feature-carousel');
+    root?.addEventListener('mouseenter', stop);
+    root?.addEventListener('mouseleave', start);
+    root?.addEventListener('focusin', stop);
+    root?.addEventListener('focusout', start);
+    start();
+  }
+</script>

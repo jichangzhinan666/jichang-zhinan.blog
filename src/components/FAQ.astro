@@ -1,0 +1,90 @@
+---
+import Icon from './Icon.astro';
+
+interface Props {
+  items: { q: string; a: string }[];
+  title?: string;
+  id?: string;
+}
+
+const { items, title = '常见问题', id = 'faq' } = Astro.props;
+---
+
+<section class="faq card" aria-labelledby={`${id}-title`} id={id}>
+  <div class="section-head">
+    <h2 class="section-title" id={`${id}-title`}>
+      <Icon name="info" size={20} />
+      {title}
+    </h2>
+  </div>
+  <div class="faq-list">
+    {
+      items.map((it, i) => (
+        <details class="faq-item" name={id}>
+          <summary>
+            <span class="faq-q">{it.q}</span>
+            <Icon name="chevron" size={18} class="faq-chevron" />
+          </summary>
+          <div class="faq-a" id={`${id}-a-${i}`}>
+            <p>{it.a}</p>
+          </div>
+        </details>
+      ))
+    }
+  </div>
+</section>
+
+<style>
+  .faq-list {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .faq-item {
+    border-bottom: 1px solid var(--border);
+  }
+
+  .faq-item:last-child {
+    border-bottom: 0;
+  }
+
+  .faq-item summary {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 14px 4px;
+    cursor: pointer;
+    list-style: none;
+    font-weight: 600;
+    color: var(--text);
+  }
+
+  .faq-item summary::-webkit-details-marker {
+    display: none;
+  }
+
+  .faq-item summary:hover {
+    color: var(--primary);
+  }
+
+  .faq-chevron {
+    flex: none;
+    color: var(--muted);
+    transition: transform 0.2s ease;
+  }
+
+  .faq-item[open] .faq-chevron {
+    transform: rotate(180deg);
+  }
+
+  .faq-a {
+    padding: 0 4px 16px;
+    color: var(--text-2);
+    font-size: 0.95rem;
+  }
+
+  .faq-a p {
+    margin: 0;
+  }
+</style>

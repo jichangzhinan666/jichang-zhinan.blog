@@ -1,0 +1,213 @@
+---
+import Icon from './Icon.astro';
+import { articleUrl, categoryLabel, readingMinutes, type Article } from '@/lib/articles';
+
+interface Props {
+  article: Article;
+  layout?: 'row' | 'tile';
+  showCategory?: boolean;
+}
+
+const { article, layout = 'row', showCategory = true } = Astro.props;
+const url = articleUrl(article);
+const cat = article.data.category;
+const iconByCategory: Record<string, string> = {
+  tutorials: 'book',
+  guides: 'tag',
+  wiki: 'layers',
+  news: 'bolt',
+};
+const minutes = readingMinutes(article.body);
+---
+
+<article class:list={['article-card', layout]} data-category={cat}>
+  <a class="ac-cover" href={url} tabindex="-1" aria-hidden="true">
+    <span class={`ac-cover-bg cat-${cat}`}>
+      <Icon name={iconByCategory[cat] ?? 'file'} size={34} />
+    </span>
+  </a>
+  <div class="ac-body">
+    <div class="ac-top">
+      {showCategory && <a class="ac-cat" href={`/${cat}/`}>{categoryLabel(cat)}</a>}
+      {article.data.featured && <span class="badge badge-medium">精选</span>}
+    </div>
+    <h3 class="ac-title">
+      <a href={url}>{article.data.title}</a>
+    </h3>
+    <p class="ac-desc">{article.data.description}</p>
+    <div class="ac-meta">
+      <span>
+        <Icon name="calendar" size={14} />
+        <time datetime={article.data.publishedAt}>{article.data.publishedAt}</time>
+      </span>
+      <span>
+        <Icon name="user" size={14} />
+        {article.data.author}
+      </span>
+      <span>
+        <Icon name="clock" size={14} />
+        约 {minutes} 分钟
+      </span>
+      <a class="ac-more" href={url}>
+        阅读全文
+        <Icon name="arrow-right" size={14} />
+      </a>
+    </div>
+  </div>
+</article>
+
+<style>
+  .article-card {
+    display: grid;
+    gap: 16px;
+    padding: 16px 0;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .article-card.row {
+    grid-template-columns: 200px minmax(0, 1fr);
+    align-items: start;
+  }
+
+  .article-card.tile {
+    grid-template-columns: 1fr;
+    padding: 0;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    background: var(--surface);
+    overflow: hidden;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+
+  .article-card.tile:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-lg);
+  }
+
+  .article-card.tile .ac-body {
+    padding: 0 16px 16px;
+  }
+
+  .article-card:last-child {
+    border-bottom-width: 0;
+  }
+
+  .article-card.tile:last-child {
+    border-bottom-width: 1px;
+  }
+
+  .ac-cover {
+    display: block;
+    border-radius: var(--radius);
+    overflow: hidden;
+  }
+
+  .article-card.tile .ac-cover {
+    border-radius: 0;
+  }
+
+  .ac-cover-bg {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    aspect-ratio: 16 / 9;
+    color: #fff;
+    background:
+      radial-gradient(120px 80px at 80% 20%, rgba(255, 255, 255, 0.25), transparent 70%),
+      linear-gradient(135deg, #1d4ed8, #0c2a68);
+  }
+
+  .cat-tutorials {
+    background:
+      radial-gradient(120px 80px at 80% 20%, rgba(255, 255, 255, 0.25), transparent 70%),
+      linear-gradient(135deg, #2563eb, #0c2a68);
+  }
+
+  .cat-guides {
+    background:
+      radial-gradient(120px 80px at 80% 20%, rgba(255, 255, 255, 0.25), transparent 70%),
+      linear-gradient(135deg, #0ea5a4, #0f3b63);
+  }
+
+  .cat-wiki {
+    background:
+      radial-gradient(120px 80px at 80% 20%, rgba(255, 255, 255, 0.25), transparent 70%),
+      linear-gradient(135deg, #7c5cff, #1e1b4b);
+  }
+
+  .cat-news {
+    background:
+      radial-gradient(120px 80px at 80% 20%, rgba(255, 255, 255, 0.25), transparent 70%),
+      linear-gradient(135deg, #059669, #064e3b);
+  }
+
+  .ac-top {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 10px 0 6px;
+  }
+
+  .ac-cat {
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: var(--primary);
+  }
+
+  .ac-title {
+    margin: 0 0 6px;
+    font-size: 1.1rem;
+    line-height: 1.4;
+  }
+
+  .ac-title a {
+    color: var(--text);
+  }
+
+  .ac-title a:hover {
+    color: var(--primary);
+  }
+
+  .ac-desc {
+    margin: 0 0 10px;
+    font-size: 0.9rem;
+    color: var(--muted);
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .ac-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px 16px;
+    align-items: center;
+    font-size: 0.8125rem;
+    color: var(--muted);
+  }
+
+  .ac-meta > span {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+  }
+
+  .ac-more {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-weight: 600;
+    margin-left: auto;
+  }
+
+  @media (max-width: 639px) {
+    .article-card.row {
+      grid-template-columns: 1fr;
+    }
+
+    .article-card.row .ac-top {
+      margin-top: 0;
+    }
+  }
+</style>

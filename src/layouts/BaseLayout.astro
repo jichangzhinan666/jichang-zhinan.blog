@@ -1,0 +1,115 @@
+---
+import '@/styles/global.css';
+import Header from '@/components/Header.astro';
+import Footer from '@/components/Footer.astro';
+import { SITE, absoluteUrl } from '@/lib/site';
+import { buildTitle, graph, organizationLd, websiteLd } from '@/lib/seo';
+
+interface Props {
+  /** 页面标题（不含站名后缀） */
+  title: string;
+  description: string;
+  /** 是否在 title 后追加“｜机场指南” */
+  titleSuffix?: boolean;
+  /** 规范 URL 路径（默认当前路径，自动补尾部斜杠） */
+  canonicalPath?: string;
+  ogImage?: string;
+  ogType?: 'website' | 'article';
+  noindex?: boolean;
+  /** 404 等无规范 URL 的页面不输出 canonical / og:url */
+  omitCanonical?: boolean;
+  /** 页面级 JSON-LD 节点（对象数组），会与 WebSite/Organization 合并为 @graph */
+  jsonLd?: Record<string, unknown>[];
+  publishedTime?: string;
+  modifiedTime?: string;
+  bodyClass?: string;
+}
+
+const {
+  title,
+  description,
+  titleSuffix = true,
+  canonicalPath,
+  ogImage,
+  ogType = 'website',
+  noindex = false,
+  omitCanonical = false,
+  jsonLd = [],
+  publishedTime,
+  modifiedTime,
+  bodyClass = '',
+} = Astro.props;
+
+let path = canonicalPath ?? Astro.url.pathname;
+if (!path.startsWith('/')) path = `/${path}`;
+if (!path.endsWith('/') && !/\.[a-z0-9]+$/i.test(path)) path = `${path}/`;
+const canonical = absoluteUrl(path);
+const fullTitle = buildTitle(title, titleSuffix);
+const image = absoluteUrl(ogImage ?? SITE.defaultOgImage);
+const ld = graph(organizationLd(), websiteLd(), ...jsonLd);
+const robots = noindex ? 'noindex, follow' : 'index, follow, max-image-preview:large, max-snippet:-1';
+---
+
+<!doctype html>
+<html lang="zh-CN" dir="ltr">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{fullTitle}</title>
+    <meta name="description" content={description} />
+    {!omitCanonical && <link rel="canonical" href={canonical} />}
+    <meta name="robots" content={robots} />
+    <meta name="author" content={SITE.author.name} />
+    <meta name="theme-color" content="#0c2a68" media="(prefers-color-scheme: dark)" />
+    <meta name="theme-color" content="#155eef" media="(prefers-color-scheme: light)" />
+    <meta name="color-scheme" content="light dark" />
+    <meta name="format-detection" content="telephone=no" />
+    {SITE.bingVerification && <meta name="msvalidate.01" content={SITE.bingVerification} />}
+    {SITE.googleVerification && <meta name="google-site-verification" content={SITE.googleVerification} />}
+
+    <meta property="og:site_name" content={SITE.name} />
+    <meta property="og:locale" content="zh_CN" />
+    <meta property="og:type" content={ogType} />
+    <meta property="og:title" content={fullTitle} />
+    <meta property="og:description" content={description} />
+    {!omitCanonical && <meta property="og:url" content={canonical} />}
+    <meta property="og:image" content={image} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content={`${SITE.name} —— ${SITE.tagline}`} />
+    {publishedTime && <meta property="article:published_time" content={publishedTime} />}
+    {modifiedTime && <meta property="article:modified_time" content={modifiedTime} />}
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={fullTitle} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={image} />
+
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="icon" href="/favicon-32.png" type="image/png" sizes="32x32" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" sizes="180x180" />
+    <link rel="alternate" type="application/rss+xml" title={`${SITE.name} RSS`} href="/rss.xml" />
+    <link rel="sitemap" type="application/xml" href="/sitemap.xml" />
+
+    <script is:inline>
+      (function () {
+        try {
+          var stored = localStorage.getItem('jz-theme');
+          var theme = stored === 'dark' || stored === 'light' ? stored : (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+          document.documentElement.setAttribute('data-theme', theme);
+        } catch (e) {
+          document.documentElement.setAttribute('data-theme', 'light');
+        }
+      })();
+    </script>
+
+    <script type="application/ld+json" set:html={ld} />
+  </head>
+  <body class={bodyClass}>
+    <a class="skip-link" href="#main">跳到主要内容</a>
+    <Header />
+    <main id="main" tabindex="-1">
+      <slot />
+    </main>
+    <Footer />
+  </body>
+</html>

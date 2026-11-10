@@ -1,0 +1,192 @@
+---
+import Icon from './Icon.astro';
+import BrandMark from './BrandMark.astro';
+import { formatTestedAt, getBrand } from '@/lib/data';
+import type { SpeedTestReport } from '@/lib/types';
+
+interface Props {
+  report: SpeedTestReport;
+}
+
+const { report } = Astro.props;
+const brand = getBrand(report.brandId)!;
+const statusLabel: Record<SpeedTestReport['verificationStatus'], { label: string; tone: string }> = {
+  'owner-measured': { label: '站长实测', tone: 'strong' },
+  'user-supplied-record': { label: '资料文字记录', tone: 'medium' },
+  'user-supplied-screenshot': { label: '用户提供截图', tone: 'weak' },
+  'attribution-pending': { label: '归属待确认', tone: 'danger' },
+  unverified: { label: '未核实', tone: 'none' },
+};
+const st = statusLabel[report.verificationStatus];
+const speed = report.ownerReport?.speed;
+const firstRegion = report.regionResults[0];
+---
+
+<article class="report-card card card-hover">
+  <header class="rc-head">
+    <BrandMark brand={brand} size={40} />
+    <div class="rc-title">
+      <h3>
+        <a href={`/speed-tests/${report.slug}/`}>{report.title}</a>
+      </h3>
+      <p class="rc-meta">
+        <span class={`badge badge-${st.tone}`}>{st.label}</span>
+        <span>
+          <Icon name="calendar" size={13} />
+          {formatTestedAt(report)}
+        </span>
+        <span>
+          <Icon name="tool" size={13} />
+          {report.tool.split('（')[0].split('+')[0].trim()}
+        </span>
+      </p>
+    </div>
+  </header>
+  {
+    speed ? (
+      <dl class="rc-metrics">
+        <div>
+          <dt>下载</dt>
+          <dd>{speed.downloadMbps} <small>Mbps</small></dd>
+        </div>
+        <div>
+          <dt>上传</dt>
+          <dd>{speed.uploadMbps} <small>Mbps</small></dd>
+        </div>
+        <div>
+          <dt>Ping</dt>
+          <dd>{speed.pingMs} <small>ms</small></dd>
+        </div>
+        <div>
+          <dt>抖动</dt>
+          <dd>{speed.jitterMs} <small>ms</small></dd>
+        </div>
+      </dl>
+    ) : firstRegion && firstRegion.downloadMbps !== null ? (
+      <dl class="rc-metrics">
+        <div>
+          <dt>{firstRegion.region} 下载</dt>
+          <dd>{firstRegion.downloadMbps} <small>Mbps</small></dd>
+        </div>
+        <div>
+          <dt>上传</dt>
+          <dd>{firstRegion.uploadMbps ?? '—'} <small>Mbps</small></dd>
+        </div>
+        <div>
+          <dt>延迟</dt>
+          <dd>{typeof firstRegion.latencyMs === 'number' ? firstRegion.latencyMs : '—'} <small>ms</small></dd>
+        </div>
+        <div>
+          <dt>抖动</dt>
+          <dd>{firstRegion.jitterMs ?? '—'} <small>ms</small></dd>
+        </div>
+      </dl>
+    ) : null
+  }
+  <p class="rc-summary">{report.summary}</p>
+  <a class="rc-more" href={`/speed-tests/${report.slug}/`}>
+    查看完整报告
+    <Icon name="arrow-right" size={14} />
+  </a>
+</article>
+
+<style>
+  .report-card {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .rc-head {
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+  }
+
+  .rc-title h3 {
+    margin: 0 0 6px;
+    font-size: 1.05rem;
+    line-height: 1.4;
+  }
+
+  .rc-title h3 a {
+    color: var(--text);
+  }
+
+  .rc-title h3 a:hover {
+    color: var(--primary);
+  }
+
+  .rc-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px 12px;
+    align-items: center;
+    margin: 0;
+    font-size: 0.8125rem;
+    color: var(--muted);
+  }
+
+  .rc-meta > span {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+  }
+
+  .rc-metrics {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 8px;
+    margin: 0;
+  }
+
+  .rc-metrics div {
+    padding: 8px 10px;
+    border-radius: var(--radius-sm);
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+  }
+
+  .rc-metrics dt {
+    font-size: 0.72rem;
+    color: var(--muted);
+  }
+
+  .rc-metrics dd {
+    margin: 0;
+    font-weight: 700;
+    font-size: 1.05rem;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .rc-metrics small {
+    font-size: 0.7rem;
+    font-weight: 500;
+    color: var(--muted);
+  }
+
+  .rc-summary {
+    margin: 0;
+    font-size: 0.9rem;
+    color: var(--text-2);
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .rc-more {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-weight: 600;
+    font-size: 0.9rem;
+    margin-top: auto;
+  }
+
+  @media (max-width: 480px) {
+    .rc-metrics {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+</style>

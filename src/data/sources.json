@@ -1,0 +1,200 @@
+[
+  {
+    "id": "src-lingdongyun-txt",
+    "file": "source-materials/brands/灵动云.txt",
+    "sourceType": "user-supplied-official",
+    "collectedAt": "2026-11-09",
+    "description": "灵动云品牌资料（文本）：基本信息、线路节点、套餐价格、流量规则、客户端政策、流媒体/AI、优惠码、客服、购买流程、2026-10-28 晚高峰实测文字记录",
+    "credibility": "品牌/推广方整理的资料，价格与优惠以结算页为准；实测部分为文字记录，无截图。",
+    "relatedBrandIds": ["lingdongyun"]
+  },
+  {
+    "id": "src-flyv-txt",
+    "file": "source-materials/brands/FLYV.txt",
+    "sourceType": "user-supplied-official",
+    "collectedAt": "2026-11-09",
+    "description": "飞V（FlyV）品牌资料（文本）：基本信息、线路节点、套餐价格、流量规则、客户端政策、流媒体/AI、优惠码、客服、购买流程",
+    "credibility": "品牌/推广方整理的资料，价格与优惠以结算页为准；文本无测速资料。",
+    "relatedBrandIds": ["flyv"]
+  },
+  {
+    "id": "src-dalaoyun-txt",
+    "file": "source-materials/brands/大佬云.txt",
+    "sourceType": "user-supplied-official",
+    "collectedAt": "2026-11-10",
+    "description": "大佬云品牌资料（文本）：基本信息、线路节点、套餐价格、流量规则、客户端政策、流媒体/AI、优惠码、客服、购买流程；晚高峰实测标注为“待观察实测中”",
+    "credibility": "品牌/推广方整理的资料，价格与优惠以结算页为准；无测速资料。",
+    "relatedBrandIds": ["dalaoyun"]
+  },
+  {
+    "id": "src-flycat-txt",
+    "file": "source-materials/brands/飞猫云.txt",
+    "sourceType": "user-supplied-official",
+    "collectedAt": "2026-11-09",
+    "description": "飞猫云品牌资料（文本）：基本信息、线路节点、套餐价格、流量规则、客户端政策、流媒体/AI、优惠码、购买流程",
+    "credibility": "品牌/推广方整理的资料，价格与优惠以结算页为准。",
+    "relatedBrandIds": ["flycat"]
+  },
+  {
+    "id": "src-langwang-txt",
+    "file": "source-materials/brands/浪网.txt",
+    "sourceType": "user-supplied-official",
+    "collectedAt": "2026-11-09",
+    "description": "浪网品牌资料（文本）：基本信息、节点、套餐价格、流量规则、客户端政策、流媒体/AI、优惠码、客服、购买流程；晚高峰实测注明“附上测速图”",
+    "credibility": "品牌/推广方整理的资料，价格与优惠以结算页为准。",
+    "relatedBrandIds": ["langwang"]
+  },
+  {
+    "id": "src-twilight-txt",
+    "file": "source-materials/brands/暮光加速.txt",
+    "sourceType": "user-supplied-official",
+    "collectedAt": "2026-11-09",
+    "description": "暮光加速品牌资料（文本）：基本信息、线路节点、套餐价格、流量规则、客户端政策、流媒体/AI、优惠码、客服、购买流程；晚高峰实测标注为“待观察实测中”",
+    "credibility": "品牌/推广方整理的资料，价格与优惠以结算页为准；无测速资料。",
+    "relatedBrandIds": ["twilight"]
+  },
+  {
+    "id": "src-breezenet-txt",
+    "file": "source-materials/brands/微风网络.txt",
+    "sourceType": "user-supplied-official",
+    "collectedAt": "2026-11-09",
+    "description": "微风网络（Breezenet）品牌资料（文本）：基本信息、线路节点、套餐价格、流量规则、客户端政策、流媒体/AI、优惠码、客服、购买流程；晚高峰实测标注为“待观察实测中”",
+    "credibility": "品牌/推广方整理的资料，价格与优惠以结算页为准。",
+    "relatedBrandIds": ["breezenet"]
+  },
+  {
+    "id": "src-invisible-txt",
+    "file": "source-materials/brands/隐形人.txt",
+    "sourceType": "user-supplied-official",
+    "collectedAt": "2026-11-09",
+    "description": "隐形人（INVISIBLE NETWORK）品牌资料（文本）：基本信息、线路节点、套餐价格、流量规则、客户端政策、流媒体/AI、优惠码、客服、购买流程",
+    "credibility": "品牌/推广方整理的资料，价格与优惠以结算页为准；文本无测速资料；优惠码折扣未注明。",
+    "relatedBrandIds": ["invisible"]
+  },
+  {
+    "id": "src-template-txt",
+    "file": "source-materials/templates/资料填写.txt",
+    "sourceType": "user-supplied-official",
+    "collectedAt": "2026-11-09",
+    "description": "空白品牌资料填写模板（十个章节），用于后续新增品牌",
+    "credibility": "模板，无数据。",
+    "relatedBrandIds": []
+  },
+  {
+    "id": "src-invisible-report-png",
+    "file": "source-materials/evidence/reports/隐形人_香港节点_实测报告.png",
+    "sourceType": "independently-measured",
+    "collectedAt": "2026-11-10",
+    "description": "站长实测报告图：隐形人 · 香港03 节点（白银纪元套餐，客户端 V3.0.0），测试时间 2026-11-10 11:43（北京时间），IPCheck.ing Cloudflare 测速 + 23 项连通性 + 香港 20 节点客户端延迟 + YouTube 统计",
+    "credibility": "站长根据实测截图整理的报告图，自述“数据未经修改”；原始截图未随资料附上；未标注本地接入网络。",
+    "relatedBrandIds": ["invisible"]
+  },
+  {
+    "id": "src-flyv-report-png",
+    "file": "source-materials/evidence/reports/FlyV_新加坡节点_实测报告.png",
+    "sourceType": "independently-measured",
+    "collectedAt": "2026-11-10",
+    "description": "站长实测报告图：飞V · 新加坡节点，测试时间 2026-11-10 12:09（北京时间），IPCheck.ing Cloudflare 测速（SIN 服务器）+ 23 项连通性延迟 + 出口 IP 检测（AS9664）",
+    "credibility": "站长根据实测截图整理的报告图，自述“数据未经修改”；原始截图未随资料附上；未标注本地接入网络与所用套餐。",
+    "relatedBrandIds": ["flyv"]
+  },
+  {
+    "id": "src-langwang-report-png",
+    "file": "source-materials/evidence/reports/浪网_香港节点_实测报告.png",
+    "sourceType": "independently-measured",
+    "collectedAt": "2026-11-10",
+    "description": "站长实测报告图：浪网 · 香港节点，测试时间 2026-11-10 13:31（北京时间），IPCheck.ing Cloudflare 测速（HKG 服务器）+ 23 项连通性延迟 + 出口 IP 检测（AS32167）",
+    "credibility": "站长根据实测截图整理的报告图，自述“数据未经修改”；原始截图未随资料附上；未标注本地接入网络与所用套餐。",
+    "relatedBrandIds": ["langwang"]
+  },
+  {
+    "id": "src-lingdongyun-report-light-png",
+    "file": "source-materials/evidence/reports/灵动云_实测报告_浅色版.png",
+    "sourceType": "independently-measured",
+    "collectedAt": "2026-11-10",
+    "description": "站长实测报告图（浅色版）：灵动云 · 日本5 节点（穿云套餐，客户端 V3.0.0），测试时间 2026-11-10 10:54（北京时间），IPCheck.ing 测速 + 23 项连通性 + 各地区 55 个节点客户端延迟 + YouTube 统计",
+    "credibility": "站长根据实测截图整理的报告图，自述“数据未经修改”；原始截图未随资料附上；未标注本地接入网络。",
+    "relatedBrandIds": ["lingdongyun"]
+  },
+  {
+    "id": "src-lingdongyun-report-dark-png",
+    "file": "source-materials/evidence/reports/灵动云_实测报告_深色版.png",
+    "sourceType": "independently-measured",
+    "collectedAt": "2026-11-10",
+    "description": "站长实测报告图（深色版）：与浅色版数据相同",
+    "credibility": "同浅色版。",
+    "relatedBrandIds": ["lingdongyun"]
+  },
+  {
+    "id": "src-langwang-speed-jpg",
+    "file": "source-materials/evidence/浪网测速图.jpg",
+    "sourceType": "user-supplied-screenshot",
+    "collectedAt": "2026-11-09",
+    "description": "浪网订阅速度测试截图（MiaoKo 自定义测试 | speed - 订阅速度），50 个节点；底部标注：喵速 4.7.0、珠海联通 9Gbps 32 线程、测试时间 2026-07-19 16:18:50 (CST)",
+    "credibility": "用户提供截图，带测试时间与网络环境标注；数值由人工转录，可能有读数误差。",
+    "relatedBrandIds": ["langwang"]
+  },
+  {
+    "id": "src-breezenet-speed-webp",
+    "file": "source-materials/evidence/微风测速图.webp",
+    "sourceType": "user-supplied-screenshot",
+    "collectedAt": "2026-11-09",
+    "description": "微风网络订阅速度测试截图（MiaoKo 自定义测试 | speed - 订阅速度），50 个节点；截图未标注测试时间与网络环境",
+    "credibility": "用户提供截图，无测试时间标注；数值由人工转录，可能有读数误差。",
+    "relatedBrandIds": ["breezenet"]
+  },
+  {
+    "id": "src-breezenet-streaming-webp",
+    "file": "source-materials/evidence/微风节点图.webp",
+    "sourceType": "user-supplied-screenshot",
+    "collectedAt": "2026-11-09",
+    "description": "微风网络流媒体解锁测试截图（MiaoKo 自定义测试 | ynd - 御三家流媒体），50 个节点的 YouTube / Netflix / Disney+ 解锁状态；截图未标注测试时间",
+    "credibility": "用户提供截图，无测试时间标注。",
+    "relatedBrandIds": ["breezenet"]
+  },
+  {
+    "id": "src-flycat-topology-webp",
+    "file": "source-materials/evidence/飞猫测速图.webp",
+    "sourceType": "user-supplied-screenshot",
+    "collectedAt": "2026-11-09",
+    "description": "飞猫云拓扑测速截图（SpeedCentre+ 测试 - 拓扑测速），入口 1 个、出口 49 个节点及其 ASN/组织；截图未标注测试时间",
+    "credibility": "用户提供截图，无测试时间标注。",
+    "relatedBrandIds": ["flycat"]
+  },
+  {
+    "id": "src-flycat-speed-2-webp",
+    "file": "source-materials/evidence/飞猫测速图 (2).webp",
+    "sourceType": "user-supplied-screenshot",
+    "collectedAt": "2026-11-09",
+    "description": "订阅速度测试截图（MiaoKo 自定义测试 | speed - 订阅速度），57 个节点（含德国直连、土耳其、菲律宾、越南），显示剩余流量 690.97 GB、套餐到期 2028-11-17；订阅标识与其他两张飞猫截图不同",
+    "credibility": "用户以“飞猫测速图 (2)”命名，但订阅标识（*.cc-1744）与另两张飞猫截图（*.*.com-1159 / *.*.com-8733）不一致，节点命名方式也不同，归属待用户确认；未标注测试时间。",
+    "relatedBrandIds": ["flycat"]
+  },
+  {
+    "id": "src-flycat-speed-3-webp",
+    "file": "source-materials/evidence/飞猫测速图 (3).webp",
+    "sourceType": "user-supplied-screenshot",
+    "collectedAt": "2026-11-09",
+    "description": "飞猫云订阅速度测试截图（SpeedCentre+ 测试 - 测速），49 个节点（台湾 6、新加坡 10、日本 10、澳大利亚 1、美国 10、英国 1、韩国 1、香港 10），AnyTLS 协议；截图未标注测试时间",
+    "credibility": "用户提供截图，无测试时间标注；节点结构与拓扑截图一致；数值由人工转录，可能有读数误差。",
+    "relatedBrandIds": ["flycat"]
+  },
+  {
+    "id": "src-flycat-matrix-4-webp",
+    "file": "source-materials/evidence/飞猫测速图 (4).webp",
+    "sourceType": "user-supplied-screenshot",
+    "collectedAt": "2026-11-09",
+    "description": "飞猫云多项目解锁矩阵截图，分辨率过低（480×162），无法可靠读取单元格内容",
+    "credibility": "仅作为存在性证据保存，不提取任何数值。",
+    "relatedBrandIds": ["flycat"]
+  },
+  {
+    "id": "src-flycat-pricing-5-webp",
+    "file": "source-materials/evidence/飞猫测速图 (5).webp",
+    "sourceType": "user-supplied-screenshot",
+    "collectedAt": "2026-11-09",
+    "description": "飞猫云套餐价格表截图：学生版、星耀版、星环版、银河版、宇宙版、不限时套餐、定制套餐的月付/季付/半年付/年付/两年付/三年付/一次性/重置包价格",
+    "credibility": "低分辨率截图（480×162），月付至年付数字与文本资料一致；两年付/三年付仅在与资料中折扣规则吻合时采用。",
+    "relatedBrandIds": ["flycat"]
+  }
+]

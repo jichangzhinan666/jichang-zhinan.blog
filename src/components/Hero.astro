@@ -1,0 +1,378 @@
+---
+import Icon from './Icon.astro';
+import { SITE, STATIC_PAGES } from '@/lib/site';
+import { getRegionCoverage, getBrands } from '@/lib/data';
+
+const coverage = getRegionCoverage();
+const brandCount = getBrands().length;
+const pick = (region: string) => coverage.find((c) => c.region === region);
+const chips = [
+  { region: '日本', pos: 'chip-jp' },
+  { region: '香港', pos: 'chip-hk' },
+  { region: '新加坡', pos: 'chip-sg' },
+  { region: '美国', pos: 'chip-us' },
+]
+  .map((c) => ({ ...c, data: pick(c.region) }))
+  .filter((c) => c.data);
+const updated = STATIC_PAGES['/']?.lastmod;
+---
+
+<section class="hero" aria-labelledby="hero-title">
+  <div class="hero-content">
+    <span class="pill pill-dark hero-pill">
+      <Icon name="sparkle" size={14} />
+      {SITE.isPreview ? '2027 前瞻版' : '2027 年度版'} · 更新于 {updated}
+    </span>
+    <h1 id="hero-title">{SITE.heroTitle}</h1>
+    <p class="hero-sub">{SITE.heroSubtitle}</p>
+    <p class="hero-intro">{SITE.heroIntro}</p>
+    <div class="hero-actions">
+      <a class="btn btn-primary" href="/rankings/2027/">
+        <Icon name="plane" size={18} />
+        查看 2027 机场推荐榜单
+        <Icon name="arrow-right" size={16} />
+      </a>
+      <a class="btn btn-ghost" href="/guides/">
+        <Icon name="book" size={18} />
+        新手入门指南
+      </a>
+    </div>
+    <p class="hero-note">
+      已整理 {brandCount} 个品牌的套餐与节点资料；所有价格、测速均注明来源与日期，不显示虚构评分。
+    </p>
+  </div>
+
+  <div class="hero-visual" aria-hidden="true">
+    <svg class="globe" viewBox="0 0 520 520" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <radialGradient id="g-core" cx="38%" cy="32%" r="75%">
+          <stop offset="0%" stop-color="#5aa8ff" stop-opacity="0.95" />
+          <stop offset="45%" stop-color="#1d5fe8" stop-opacity="0.9" />
+          <stop offset="100%" stop-color="#0a1f55" stop-opacity="1" />
+        </radialGradient>
+        <radialGradient id="g-glow" cx="50%" cy="50%" r="50%">
+          <stop offset="60%" stop-color="#3b82f6" stop-opacity="0" />
+          <stop offset="100%" stop-color="#60a5fa" stop-opacity="0.45" />
+        </radialGradient>
+        <pattern id="dots" width="12" height="12" patternUnits="userSpaceOnUse">
+          <circle cx="6" cy="6" r="1.4" fill="#bfdbfe" fill-opacity="0.55" />
+        </pattern>
+        <clipPath id="clip-globe">
+          <circle cx="260" cy="260" r="170" />
+        </clipPath>
+        <linearGradient id="g-orbit" x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0%" stop-color="#93c5fd" stop-opacity="0" />
+          <stop offset="50%" stop-color="#93c5fd" stop-opacity="0.9" />
+          <stop offset="100%" stop-color="#93c5fd" stop-opacity="0" />
+        </linearGradient>
+      </defs>
+      <circle cx="260" cy="260" r="235" fill="url(#g-glow)" />
+      <circle cx="260" cy="260" r="170" fill="url(#g-core)" />
+      <g clip-path="url(#clip-globe)">
+        <rect x="90" y="90" width="340" height="340" fill="url(#dots)" />
+        <g fill="none" stroke="#bfdbfe" stroke-opacity="0.35" stroke-width="1">
+          <ellipse cx="260" cy="260" rx="170" ry="60" />
+          <ellipse cx="260" cy="260" rx="170" ry="120" />
+          <ellipse cx="260" cy="260" rx="60" ry="170" />
+          <ellipse cx="260" cy="260" rx="120" ry="170" />
+          <line x1="90" y1="260" x2="430" y2="260" />
+          <line x1="260" y1="90" x2="260" y2="430" />
+        </g>
+        <g fill="#dbeafe" fill-opacity="0.35">
+          <path d="M150 200c20-30 60-40 95-30 20 6 35 25 30 45-6 25-40 25-60 45-15 15-35 15-50 0-12-15-25-40-15-60z" />
+          <path d="M300 150c30-10 65 5 80 30 10 18 5 40-15 48-22 9-50 0-65-18-12-15-20-45 0-60z" />
+          <path d="M280 300c25 5 45 25 50 50 3 20-10 40-30 42-22 3-45-12-55-32-9-20 10-55 35-60z" />
+        </g>
+      </g>
+      <g fill="none" stroke="url(#g-orbit)" stroke-width="2" class="orbits">
+        <ellipse cx="260" cy="260" rx="230" ry="80" transform="rotate(-18 260 260)" />
+        <ellipse cx="260" cy="260" rx="215" ry="110" transform="rotate(28 260 260)" stroke-dasharray="6 10" />
+      </g>
+      <g class="plane-path">
+        <path id="flight" d="M70 330 C 150 220, 300 170, 470 150" fill="none" stroke="#93c5fd" stroke-opacity="0.6" stroke-width="2" stroke-dasharray="4 8" />
+        <g class="plane">
+          <path d="M-14 6 10-2 2-4 8-10 4-12-6-5-16-8z" fill="#ffffff" />
+        </g>
+      </g>
+      <g class="nodes" fill="#ffffff">
+        <circle cx="330" cy="205" r="4" />
+        <circle cx="200" cy="245" r="4" />
+        <circle cx="300" cy="320" r="4" />
+        <circle cx="365" cy="285" r="4" />
+      </g>
+    </svg>
+    {
+      chips.map((c) => (
+        <span class={`hero-chip ${c.pos}`}>
+          <strong>{c.region}节点</strong>
+          <small>
+            {c.data!.count}/{brandCount} 品牌覆盖
+          </small>
+        </span>
+      ))
+    }
+  </div>
+</section>
+
+<style>
+  .hero {
+    position: relative;
+    display: grid;
+    grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
+    align-items: center;
+    gap: 24px;
+    min-height: 300px;
+    margin-top: 24px;
+    padding: 40px 48px;
+    border-radius: var(--radius-xl);
+    background:
+      radial-gradient(900px 400px at 85% 10%, rgba(59, 130, 246, 0.45), transparent 60%),
+      radial-gradient(600px 300px at 10% 100%, rgba(14, 165, 233, 0.3), transparent 60%),
+      linear-gradient(135deg, var(--hero-from), var(--hero-to));
+    color: var(--hero-text);
+    overflow: hidden;
+    box-shadow: var(--shadow-lg);
+  }
+
+  .hero::after {
+    content: "";
+    position: absolute;
+    inset: auto -10% -40% -10%;
+    height: 50%;
+    background: radial-gradient(ellipse at center, rgba(96, 165, 250, 0.35), transparent 70%);
+    pointer-events: none;
+  }
+
+  .hero-content {
+    position: relative;
+    z-index: 2;
+    max-width: 640px;
+  }
+
+  .hero-pill {
+    margin-bottom: 16px;
+  }
+
+  .hero h1 {
+    color: #fff;
+    font-size: clamp(2rem, 1.4rem + 2.6vw, 3.25rem);
+    margin-bottom: 10px;
+    letter-spacing: 0.02em;
+  }
+
+  .hero-sub {
+    font-size: clamp(1.05rem, 0.95rem + 0.6vw, 1.35rem);
+    font-weight: 600;
+    color: #e4edff;
+    margin-bottom: 12px;
+  }
+
+  .hero-intro {
+    color: var(--hero-muted);
+    font-size: 1rem;
+    max-width: 52ch;
+    margin-bottom: 22px;
+  }
+
+  .hero-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+
+  .hero-note {
+    margin: 18px 0 0;
+    font-size: 0.8125rem;
+    color: #a9bde6;
+  }
+
+  .hero-visual {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 280px;
+  }
+
+  .globe {
+    width: min(100%, 420px);
+    height: auto;
+    filter: drop-shadow(0 20px 40px rgba(37, 99, 235, 0.45));
+  }
+
+  .orbits {
+    transform-origin: 260px 260px;
+    animation: orbit-spin 60s linear infinite;
+  }
+
+  .plane {
+    offset-path: path("M70 330 C 150 220, 300 170, 470 150");
+    offset-rotate: auto;
+    animation: fly 14s ease-in-out infinite;
+  }
+
+  .nodes circle {
+    animation: pulse 3s ease-in-out infinite;
+  }
+
+  .nodes circle:nth-child(2) {
+    animation-delay: 0.8s;
+  }
+
+  .nodes circle:nth-child(3) {
+    animation-delay: 1.6s;
+  }
+
+  .nodes circle:nth-child(4) {
+    animation-delay: 2.2s;
+  }
+
+  .hero-chip {
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 8px 14px;
+    border-radius: 12px;
+    background: rgba(10, 30, 77, 0.78);
+    border: 1px solid rgba(147, 197, 253, 0.35);
+    color: #fff;
+    box-shadow: 0 8px 20px rgba(2, 10, 40, 0.4);
+    backdrop-filter: blur(6px);
+    line-height: 1.3;
+    white-space: nowrap;
+  }
+
+  .hero-chip strong {
+    font-size: 0.875rem;
+  }
+
+  .hero-chip small {
+    font-size: 0.72rem;
+    color: #c7d6f5;
+  }
+
+  .chip-jp {
+    left: 4%;
+    top: 18%;
+  }
+
+  .chip-hk {
+    right: 6%;
+    top: 10%;
+  }
+
+  .chip-sg {
+    left: 0;
+    bottom: 22%;
+  }
+
+  .chip-us {
+    right: 2%;
+    bottom: 26%;
+  }
+
+  @keyframes orbit-spin {
+    to {
+      transform: rotate(360deg);
+    }
+  }
+
+  @keyframes fly {
+    0% {
+      offset-distance: 0%;
+      opacity: 0;
+    }
+
+    8% {
+      opacity: 1;
+    }
+
+    92% {
+      opacity: 1;
+    }
+
+    100% {
+      offset-distance: 100%;
+      opacity: 0;
+    }
+  }
+
+  @keyframes pulse {
+    0%,
+    100% {
+      opacity: 0.5;
+      r: 4;
+    }
+
+    50% {
+      opacity: 1;
+      r: 6;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .orbits,
+    .plane,
+    .nodes circle {
+      animation: none;
+    }
+
+    .plane {
+      offset-distance: 60%;
+    }
+  }
+
+  @media (max-width: 1023px) {
+    .hero {
+      grid-template-columns: 1fr;
+      padding: 32px 28px;
+    }
+
+    .hero-visual {
+      min-height: 240px;
+    }
+
+    .globe {
+      width: min(100%, 320px);
+    }
+  }
+
+  @media (max-width: 639px) {
+    .hero {
+      padding: 24px 20px;
+      margin-top: 16px;
+    }
+
+    .hero-chip {
+      padding: 6px 10px;
+    }
+
+    .hero-chip strong {
+      font-size: 0.8rem;
+    }
+
+    .chip-jp {
+      left: 0;
+      top: 6%;
+    }
+
+    .chip-hk {
+      right: 0;
+      top: 2%;
+    }
+
+    .chip-sg {
+      bottom: 10%;
+    }
+
+    .chip-us {
+      bottom: 14%;
+    }
+
+    .hero-actions .btn {
+      flex: 1 1 100%;
+    }
+  }
+</style>

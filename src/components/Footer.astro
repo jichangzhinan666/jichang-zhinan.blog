@@ -1,0 +1,190 @@
+---
+import Icon from './Icon.astro';
+import { SITE, STATIC_PAGES } from '@/lib/site';
+
+const lastUpdated = Object.values(STATIC_PAGES)
+  .map((p) => p.lastmod)
+  .sort()
+  .at(-1);
+
+const columns = [
+  {
+    title: '关于本站',
+    links: [
+      { label: '关于机场指南', href: '/about/' },
+      { label: '测评、排序与测速方法', href: '/methodology/' },
+      { label: '编辑与纠错政策', href: '/editorial-policy/' },
+      { label: '推广关系披露', href: '/disclosure/' },
+    ],
+  },
+  {
+    title: '栏目',
+    links: [
+      { label: '2027 机场推荐榜单', href: '/rankings/2027/' },
+      { label: '品牌评测', href: '/reviews/' },
+      { label: '节点测速报告', href: '/speed-tests/' },
+      { label: '套餐对比', href: '/compare/' },
+      { label: '使用教程', href: '/tutorials/' },
+      { label: '选购指南', href: '/guides/' },
+      { label: '机场百科', href: '/wiki/' },
+    ],
+  },
+  {
+    title: '更新与反馈',
+    links: [
+      { label: '资讯与更新日志', href: '/news/' },
+      { label: '联系与纠错', href: '/contact/' },
+      { label: '隐私政策', href: '/privacy/' },
+      { label: '站内搜索', href: '/search/' },
+      { label: 'Sitemap', href: '/sitemap.xml' },
+      { label: 'RSS 订阅', href: '/rss.xml' },
+    ],
+  },
+];
+---
+
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <a class="footer-logo" href="/">
+          <span class="footer-logo-mark" aria-hidden="true"><Icon name="plane" size={20} /></span>
+          <span>{SITE.name}</span>
+        </a>
+        <p class="footer-desc">
+          信息整理型博客：品牌资料、套餐价格、节点测速与客户端教程均注明来源与核实时间，不虚构评分与实测结论。
+        </p>
+        <p class="footer-meta">
+          <Icon name="calendar" size={14} />
+          <span>站点上线 {SITE.launchedAt} · 内容最近更新 {lastUpdated}</span>
+        </p>
+      </div>
+      {
+        columns.map((col) => (
+          <nav class="footer-col" aria-label={col.title}>
+            <h2 class="footer-title">{col.title}</h2>
+            <ul>
+              {col.links.map((l) => (
+                <li>
+                  <a href={l.href}>{l.label}</a>
+                </li>
+              ))}
+            </ul>
+          </nav>
+        ))
+      }
+    </div>
+    <div class="footer-bottom">
+      <p>
+        © 2026 {SITE.name} · {SITE.domain}。本站不销售任何服务；页面中的品牌入口为推广链接，购买可能为本站带来佣金，排序与评语不受此影响，详见<a href="/disclosure/">推广关系披露</a>。
+      </p>
+      <p class="muted small">
+        网络加速服务的速度、稳定性与可用性因地区、时段与网络环境而异；本站数据仅代表记录时的状态，请以各品牌结算页与实际体验为准。
+      </p>
+    </div>
+  </div>
+</footer>
+
+<style>
+  .site-footer {
+    margin-top: 48px;
+    padding: 40px 0 28px;
+    background: var(--primary-dark);
+    color: #d8e3fa;
+  }
+
+  .footer-grid {
+    display: grid;
+    grid-template-columns: 1.4fr repeat(3, 1fr);
+    gap: 32px;
+  }
+
+  .footer-logo {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    color: #fff;
+    font-weight: 700;
+    font-size: 1.15rem;
+    text-decoration: none;
+  }
+
+  .footer-logo-mark {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 34px;
+    height: 34px;
+    border-radius: 10px;
+    background: linear-gradient(135deg, #3b82f6, #155eef);
+  }
+
+  .footer-desc {
+    margin-top: 12px;
+    font-size: 0.9rem;
+    color: #b7c7ea;
+    max-width: 38ch;
+  }
+
+  .footer-meta {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.8125rem;
+    color: #9fb3dd;
+  }
+
+  .footer-title {
+    font-size: 0.95rem;
+    color: #fff;
+    margin-bottom: 12px;
+  }
+
+  .footer-col ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .footer-col a {
+    color: #c7d6f5;
+    font-size: 0.9rem;
+  }
+
+  .footer-col a:hover {
+    color: #fff;
+  }
+
+  .footer-bottom {
+    margin-top: 32px;
+    padding-top: 20px;
+    border-top: 1px solid rgba(255, 255, 255, 0.12);
+    font-size: 0.875rem;
+    color: #b7c7ea;
+  }
+
+  .footer-bottom a {
+    color: #fff;
+    text-decoration: underline;
+  }
+
+  .footer-bottom .muted {
+    color: #8fa5d3;
+  }
+
+  @media (max-width: 1023px) {
+    .footer-grid {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+
+  @media (max-width: 639px) {
+    .footer-grid {
+      grid-template-columns: 1fr;
+      gap: 24px;
+    }
+  }
+</style>

@@ -1,0 +1,45 @@
+---
+/**
+ * 品牌首字标识：资料未提供官方 Logo，本站用品牌名首字 + 本站自定配色生成装饰性标识。
+ * 对读屏器声明为“首字标识（非官方 Logo）”，避免误导。
+ */
+import type { Brand } from '@/lib/types';
+
+interface Props {
+  brand: Pick<Brand, 'displayName' | 'brandColor' | 'englishName'>;
+  size?: number;
+  class?: string;
+}
+
+const { brand, size = 44, class: className = '' } = Astro.props;
+const letter = brand.displayName.trim().charAt(0);
+const fontSize = Math.round(size * 0.46);
+---
+
+<span
+  class={`brand-mark ${className}`.trim()}
+  role="img"
+  aria-label={`${brand.displayName} 首字标识（非官方 Logo）`}
+  style={`--mark-size:${size}px;--mark-color:${brand.brandColor};--mark-font:${fontSize}px`}
+>
+  <span aria-hidden="true">{letter}</span>
+</span>
+
+<style>
+  .brand-mark {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex: none;
+    width: var(--mark-size);
+    height: var(--mark-size);
+    border-radius: calc(var(--mark-size) * 0.26);
+    background: linear-gradient(145deg, color-mix(in srgb, var(--mark-color) 85%, #fff) 0%, var(--mark-color) 55%, color-mix(in srgb, var(--mark-color) 70%, #000) 100%);
+    color: #fff;
+    font-weight: 700;
+    font-size: var(--mark-font);
+    letter-spacing: 0;
+    box-shadow: 0 4px 12px color-mix(in srgb, var(--mark-color) 35%, transparent);
+    user-select: none;
+  }
+</style>

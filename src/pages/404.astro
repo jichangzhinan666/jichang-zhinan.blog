@@ -1,0 +1,73 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import Icon from '@/components/Icon.astro';
+import { QUICK_LINKS } from '@/lib/site';
+---
+
+<BaseLayout title="页面不存在（404）" description="你访问的页面不存在、地址有误或已被移动。可以返回机场指南首页、使用站内搜索，或直接进入 2027 榜单、品牌评测、测速报告与教程等主要栏目。" noindex omitCanonical>
+  <div class="container">
+    <section class="card nf">
+      <span class="nf-code" aria-hidden="true">404</span>
+      <h1>页面不存在</h1>
+      <p class="lead">你访问的地址可能输入有误、页面已移动，或从未存在过。本站 URL 均以斜杠结尾（例如 /rankings/2027/）。</p>
+      <form class="nf-search" action="/search/" method="get" role="search">
+        <input type="search" name="q" placeholder="搜索文章、机场、教程…" aria-label="搜索关键词" />
+        <button class="btn btn-primary" type="submit"><Icon name="search" size={16} />搜索</button>
+      </form>
+      <ul class="nf-links">
+        <li><a href="/">返回首页</a></li>
+        {QUICK_LINKS.map((q) => <li><a href={q.href}>{q.label}</a></li>)}
+        <li><a href="/compare/">套餐对比</a></li>
+        <li><a href="/sitemap.xml">Sitemap</a></li>
+      </ul>
+    </section>
+  </div>
+</BaseLayout>
+
+<style>
+  .nf {
+    margin: 48px auto;
+    max-width: 720px;
+    text-align: center;
+    padding: 40px 28px;
+  }
+
+  .nf-code {
+    display: inline-block;
+    font-size: 4rem;
+    font-weight: 800;
+    color: var(--primary-200);
+    line-height: 1;
+    margin-bottom: 8px;
+  }
+
+  .nf-search {
+    display: flex;
+    gap: 10px;
+    max-width: 480px;
+    margin: 20px auto;
+  }
+
+  .nf-search input {
+    flex: 1;
+    min-width: 0;
+    height: 44px;
+    padding: 0 12px;
+    border: 1px solid var(--border-strong);
+    border-radius: var(--radius);
+    background: var(--surface-2);
+    color: var(--text);
+    font: inherit;
+  }
+
+  .nf-links {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 8px 18px;
+    font-weight: 600;
+  }
+</style>

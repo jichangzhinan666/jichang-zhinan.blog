@@ -1,0 +1,718 @@
+---
+import { getCollection } from 'astro:content';
+import Icon from './Icon.astro';
+import { NAV, SITE, CATEGORY_META } from '@/lib/site';
+import type { NavChild } from '@/lib/site';
+
+const pathname = Astro.url.pathname;
+
+const articles = (await getCollection('articles', (e) => e.data.status === 'published')).sort(
+  (a, b) => a.data.order - b.data.order || a.data.publishedAt.localeCompare(b.data.publishedAt),
+);
+
+function dynamicChildren(category: 'tutorials' | 'guides' | 'wiki'): NavChild[] {
+  const meta = CATEGORY_META[category];
+  const items = articles
+    .filter((a) => a.data.category === category)
+    .slice(0, 5)
+    .map((a) => ({ label: a.data.title, href: `/${category}/${a.id.split('/').pop()}/` }));
+  return [{ label: `全部${meta.label}`, href: meta.href, description: meta.description }, ...items];
+}
+
+const nav = NAV.map((item) => ({
+  ...item,
+  children: item.dynamicCategory ? dynamicChildren(item.dynamicCategory) : item.children,
+}));
+
+function isActive(href: string): boolean {
+  if (href === '/') return pathname === '/';
+  if (href === '/rankings/') return pathname.startsWith('/rankings') || pathname.startsWith('/compare');
+  if (href === '/reviews/') return pathname.startsWith('/reviews') || pathname.startsWith('/speed-tests') || pathname.startsWith('/methodology');
+  return pathname.startsWith(href);
+}
+---
+
+<header class="site-header">
+  <div class="container header-inner">
+    <a class="brand" href="/" aria-label={`${SITE.name} 首页`}>
+      <span class="brand-logo" aria-hidden="true">
+        <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M21 3 3 10.5l7.5 2.5L13 20.5z" fill="rgba(255,255,255,.18)"></path>
+          <path d="m10.5 13 10.5-10"></path>
+        </svg>
+      </span>
+      <span class="brand-text">
+        <strong>{SITE.name}</strong>
+        <small>{SITE.domain}</small>
+      </span>
+    </a>
+    <span class="header-tagline" aria-hidden="true">{SITE.headerTagline}</span>
+
+    <nav class="main-nav" id="main-nav" aria-label="主导航">
+      <ul class="nav-list">
+        {
+          nav.map((item, i) => {
+            const active = isActive(item.href);
+            const hasChildren = !!item.children?.length;
+            const menuId = `nav-menu-${i}`;
+            return (
+              <li class:list={['nav-item', { 'has-children': hasChildren, active }]}>
+                <a class="nav-link" href={item.href} aria-current={active ? 'page' : undefined}>
+                  <Icon name={item.icon} size={18} />
+                  <span>{item.label}</span>
+                </a>
+                {hasChildren && (
+                  <>
+                    <button
+                      class="nav-toggle"
+                      type="button"
+                      aria-expanded="false"
+                      aria-controls={menuId}
+                      aria-label={`展开${item.label}子菜单`}
+                    >
+                      <Icon name="chevron" size={16} />
+                    </button>
+                    <div class="nav-dropdown" id={menuId}>
+                      <ul>
+                        {item.children!.map((c) => (
+                          <li>
+                            <a href={c.href}>
+                              <span class="dd-label">{c.label}</span>
+                              {c.description && <span class="dd-desc">{c.description}</span>}
+                            </a>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  </>
+                )}
+              </li>
+            );
+          })
+        }
+      </ul>
+    </nav>
+
+    <div class="header-actions">
+      <button class="icon-btn" type="button" id="search-open" aria-label="打开站内搜索" aria-haspopup="dialog" aria-controls="search-dialog">
+        <Icon name="search" size={20} />
+      </button>
+      <button class="icon-btn" type="button" id="theme-toggle" aria-label="切换深色 / 浅色模式" aria-pressed="false">
+        <span class="theme-icon theme-icon-moon"><Icon name="moon" size={20} /></span>
+        <span class="theme-icon theme-icon-sun"><Icon name="sun" size={20} /></span>
+      </button>
+      <button class="icon-btn nav-burger" type="button" id="nav-burger" aria-expanded="false" aria-controls="main-nav" aria-label="打开菜单">
+        <span class="burger-open"><Icon name="menu" size={22} /></span>
+        <span class="burger-close"><Icon name="close" size={22} /></span>
+      </button>
+    </div>
+  </div>
+
+  <dialog id="search-dialog" class="search-dialog" aria-label="站内搜索">
+    <form class="search-form" action="/search/" method="get" role="search">
+      <Icon name="search" size={20} class="search-form-icon" />
+      <input
+        id="search-dialog-input"
+        name="q"
+        type="search"
+        placeholder="搜索文章、机场品牌、教程、术语…"
+        autocomplete="off"
+        aria-label="搜索关键词"
+        aria-describedby="search-dialog-hint"
+        required
+        minlength="1"
+      />
+      <button type="submit" class="btn btn-primary btn-sm">搜索</button>
+      <button type="button" class="icon-btn search-close" aria-label="关闭搜索">
+        <Icon name="close" size={20} />
+      </button>
+    </form>
+    <p id="search-dialog-hint" class="search-hint">支持中文标题、品牌别名、标签与摘要；回车进入完整结果页。</p>
+    <div class="search-live" id="search-live" aria-live="polite" aria-atomic="true"></div>
+  </dialog>
+</header>
+
+<style>
+  .site-header {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: color-mix(in srgb, var(--surface) 92%, transparent);
+    backdrop-filter: saturate(160%) blur(10px);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .header-inner {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    min-height: var(--header-h);
+  }
+
+  .brand {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    text-decoration: none;
+    color: var(--text);
+    flex: none;
+  }
+
+  .brand:hover {
+    text-decoration: none;
+  }
+
+  .brand-logo {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border-radius: 12px;
+    background: linear-gradient(135deg, #3b82f6, var(--primary));
+    box-shadow: 0 4px 12px rgba(21, 94, 239, 0.35);
+  }
+
+  .brand-text {
+    display: flex;
+    flex-direction: column;
+    line-height: 1.15;
+  }
+
+  .brand-text strong {
+    font-size: 1.25rem;
+    letter-spacing: 0.02em;
+  }
+
+  .brand-text small {
+    font-size: 0.75rem;
+    color: var(--muted);
+  }
+
+  .header-tagline {
+    font-size: 0.8125rem;
+    color: var(--muted);
+    padding-left: 16px;
+    border-left: 1px solid var(--border);
+    white-space: nowrap;
+  }
+
+  .main-nav {
+    margin-left: auto;
+  }
+
+  .nav-list {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .nav-item {
+    position: relative;
+    display: flex;
+    align-items: center;
+  }
+
+  .nav-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 14px;
+    border-radius: 999px;
+    color: var(--text-2);
+    font-weight: 600;
+    font-size: 0.95rem;
+    text-decoration: none;
+    transition: background 0.15s ease, color 0.15s ease;
+  }
+
+  .nav-link:hover {
+    background: var(--primary-50);
+    color: var(--primary);
+    text-decoration: none;
+  }
+
+  .nav-item.active > .nav-link {
+    background: var(--primary);
+    color: #fff;
+    box-shadow: 0 4px 12px rgba(21, 94, 239, 0.3);
+  }
+
+  .nav-toggle {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+    margin-left: -6px;
+    border: 0;
+    border-radius: 50%;
+    background: transparent;
+    color: var(--muted);
+    cursor: pointer;
+    transition: transform 0.15s ease;
+  }
+
+  .nav-item[data-open] .nav-toggle,
+  .nav-toggle[aria-expanded="true"] {
+    transform: rotate(180deg);
+  }
+
+  .nav-dropdown {
+    display: none;
+    position: absolute;
+    top: calc(100% + 8px);
+    left: 0;
+    min-width: 280px;
+    padding: 8px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-lg);
+    z-index: 50;
+  }
+
+  .nav-dropdown::before {
+    content: "";
+    position: absolute;
+    top: -8px;
+    left: 0;
+    right: 0;
+    height: 8px;
+  }
+
+  .nav-dropdown ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .nav-dropdown a {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    padding: 10px 12px;
+    border-radius: var(--radius-sm);
+    color: var(--text);
+    text-decoration: none;
+  }
+
+  .nav-dropdown a:hover,
+  .nav-dropdown a:focus-visible {
+    background: var(--primary-50);
+    color: var(--primary);
+  }
+
+  .dd-label {
+    font-weight: 600;
+    font-size: 0.925rem;
+  }
+
+  .dd-desc {
+    font-size: 0.78rem;
+    color: var(--muted);
+  }
+
+  @media (hover: hover) and (min-width: 1024px) {
+    .nav-item.has-children:hover .nav-dropdown,
+    .nav-item.has-children:focus-within .nav-dropdown {
+      display: block;
+    }
+  }
+
+  .nav-item[data-open] .nav-dropdown {
+    display: block;
+  }
+
+  .header-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex: none;
+  }
+
+  .icon-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    border: 1px solid var(--border);
+    background: var(--surface);
+    color: var(--text-2);
+    cursor: pointer;
+    transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+  }
+
+  .icon-btn:hover {
+    background: var(--primary-50);
+    color: var(--primary);
+    border-color: var(--primary-100);
+  }
+
+  .theme-icon-sun,
+  .burger-close {
+    display: none;
+  }
+
+  :global(:root[data-theme="dark"]) .theme-icon-sun {
+    display: inline-flex;
+  }
+
+  :global(:root[data-theme="dark"]) .theme-icon-moon {
+    display: none;
+  }
+
+  .nav-burger {
+    display: none;
+  }
+
+  .nav-burger[aria-expanded="true"] .burger-open {
+    display: none;
+  }
+
+  .nav-burger[aria-expanded="true"] .burger-close {
+    display: inline-flex;
+  }
+
+  /* 搜索对话框 */
+  .search-dialog {
+    width: min(720px, calc(100vw - 32px));
+    margin: 10vh auto 0;
+    padding: 16px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-xl);
+    background: var(--surface);
+    color: var(--text);
+    box-shadow: var(--shadow-lg);
+  }
+
+  .search-dialog::backdrop {
+    background: rgba(12, 42, 104, 0.45);
+    backdrop-filter: blur(4px);
+  }
+
+  .search-form {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .search-form-icon {
+    color: var(--muted);
+    flex: none;
+  }
+
+  .search-form input {
+    flex: 1;
+    min-width: 0;
+    height: 44px;
+    padding: 0 12px;
+    border: 1px solid var(--border-strong);
+    border-radius: var(--radius);
+    background: var(--surface-2);
+    color: var(--text);
+    font: inherit;
+  }
+
+  .search-form input:focus {
+    outline: 3px solid var(--primary-200);
+    border-color: var(--primary);
+  }
+
+  .search-hint {
+    margin: 10px 0 0;
+    font-size: 0.8125rem;
+    color: var(--muted);
+  }
+
+  .search-live {
+    margin-top: 8px;
+  }
+
+  .search-live :global(ul) {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    max-height: 50vh;
+    overflow: auto;
+  }
+
+  .search-live :global(a) {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    padding: 10px 12px;
+    border-radius: var(--radius-sm);
+    color: var(--text);
+    text-decoration: none;
+  }
+
+  .search-live :global(a:hover),
+  .search-live :global(a:focus-visible) {
+    background: var(--primary-50);
+  }
+
+  .search-live :global(.sr-type) {
+    font-size: 0.75rem;
+    color: var(--primary);
+    font-weight: 600;
+  }
+
+  .search-live :global(.sr-title) {
+    font-weight: 600;
+  }
+
+  .search-live :global(.sr-desc) {
+    font-size: 0.8125rem;
+    color: var(--muted);
+  }
+
+  .search-live :global(.sr-empty) {
+    padding: 12px;
+    color: var(--muted);
+    font-size: 0.9rem;
+  }
+
+  @media (max-width: 1279px) {
+    .header-tagline {
+      display: none;
+    }
+  }
+
+  @media (max-width: 1023px) {
+    .nav-burger {
+      display: inline-flex;
+    }
+
+    .main-nav {
+      display: none;
+      position: absolute;
+      top: var(--header-h);
+      left: 0;
+      right: 0;
+      padding: 12px var(--gutter) 20px;
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      box-shadow: var(--shadow-lg);
+      max-height: calc(100vh - var(--header-h));
+      overflow: auto;
+    }
+
+    .main-nav.open {
+      display: block;
+    }
+
+    .nav-list {
+      flex-direction: column;
+      align-items: stretch;
+      gap: 2px;
+    }
+
+    .nav-item {
+      flex-wrap: wrap;
+    }
+
+    .nav-link {
+      flex: 1;
+      border-radius: var(--radius);
+      padding: 12px 14px;
+    }
+
+    .nav-toggle {
+      width: 44px;
+      height: 44px;
+      margin-left: 0;
+    }
+
+    .nav-dropdown {
+      position: static;
+      width: 100%;
+      min-width: 0;
+      box-shadow: none;
+      border: 0;
+      border-left: 2px solid var(--primary-100);
+      border-radius: 0;
+      margin: 0 0 8px 14px;
+      padding: 4px 0 4px 8px;
+    }
+  }
+</style>
+
+<script>
+  const nav = document.getElementById('main-nav');
+  const burger = document.getElementById('nav-burger');
+  burger?.addEventListener('click', () => {
+    const open = nav?.classList.toggle('open') ?? false;
+    burger.setAttribute('aria-expanded', String(open));
+    burger.setAttribute('aria-label', open ? '关闭菜单' : '打开菜单');
+  });
+
+  // 子菜单切换（触屏/键盘）
+  document.querySelectorAll<HTMLButtonElement>('.nav-toggle').forEach((btn) => {
+    btn.addEventListener('click', (e) => {
+      e.preventDefault();
+      const item = btn.closest('.nav-item');
+      if (!item) return;
+      const isOpen = item.hasAttribute('data-open');
+      document.querySelectorAll('.nav-item[data-open]').forEach((el) => {
+        el.removeAttribute('data-open');
+        el.querySelector('.nav-toggle')?.setAttribute('aria-expanded', 'false');
+      });
+      if (!isOpen) {
+        item.setAttribute('data-open', '');
+        btn.setAttribute('aria-expanded', 'true');
+      }
+    });
+  });
+
+  document.addEventListener('click', (e) => {
+    const target = e.target as HTMLElement;
+    if (!target.closest('.nav-item')) {
+      document.querySelectorAll('.nav-item[data-open]').forEach((el) => {
+        el.removeAttribute('data-open');
+        el.querySelector('.nav-toggle')?.setAttribute('aria-expanded', 'false');
+      });
+    }
+  });
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+      document.querySelectorAll('.nav-item[data-open]').forEach((el) => {
+        el.removeAttribute('data-open');
+        el.querySelector('.nav-toggle')?.setAttribute('aria-expanded', 'false');
+      });
+      if (nav?.classList.contains('open')) {
+        nav.classList.remove('open');
+        burger?.setAttribute('aria-expanded', 'false');
+        burger?.focus();
+      }
+    }
+  });
+
+  // 主题切换
+  const themeBtn = document.getElementById('theme-toggle');
+  const syncThemeBtn = () => {
+    const dark = document.documentElement.getAttribute('data-theme') === 'dark';
+    themeBtn?.setAttribute('aria-pressed', String(dark));
+  };
+  syncThemeBtn();
+  themeBtn?.addEventListener('click', () => {
+    const current = document.documentElement.getAttribute('data-theme');
+    const next = current === 'dark' ? 'light' : 'dark';
+    document.documentElement.setAttribute('data-theme', next);
+    try {
+      localStorage.setItem('jz-theme', next);
+    } catch {
+      /* 无法持久化时忽略 */
+    }
+    syncThemeBtn();
+  });
+
+  // 搜索对话框与即时结果
+  const dialog = document.getElementById('search-dialog') as HTMLDialogElement | null;
+  const openBtn = document.getElementById('search-open');
+  const input = document.getElementById('search-dialog-input') as HTMLInputElement | null;
+  const live = document.getElementById('search-live');
+
+  type IndexItem = {
+    title: string;
+    url: string;
+    type: string;
+    description: string;
+    keywords: string[];
+    body?: string;
+  };
+  let index: IndexItem[] | null = null;
+  let loading: Promise<IndexItem[]> | null = null;
+
+  const loadIndex = () => {
+    if (index) return Promise.resolve(index);
+    if (!loading) {
+      loading = fetch('/search-index.json')
+        .then((r) => r.json())
+        .then((data: IndexItem[]) => {
+          index = data;
+          return data;
+        })
+        .catch(() => []);
+    }
+    return loading;
+  };
+
+  const escapeHtml = (s: string) =>
+    s.replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c] as string);
+
+  const score = (item: IndexItem, q: string) => {
+    const terms = q
+      .toLowerCase()
+      .split(/\s+/)
+      .filter(Boolean);
+    let s = 0;
+    for (const t of terms) {
+      if (item.title.toLowerCase().includes(t)) s += 6;
+      if (item.keywords.some((k) => k.toLowerCase().includes(t))) s += 4;
+      if (item.description.toLowerCase().includes(t)) s += 2;
+      if (item.body && item.body.toLowerCase().includes(t)) s += 1;
+    }
+    return s;
+  };
+
+  const render = (items: IndexItem[], q: string) => {
+    if (!live) return;
+    if (!q.trim()) {
+      live.innerHTML = '';
+      return;
+    }
+    if (items.length === 0) {
+      live.innerHTML = `<p class="sr-empty">没有找到与“${escapeHtml(q)}”相关的内容。换个关键词试试，或浏览 <a href="/rankings/2027/">2027 榜单</a>、<a href="/tutorials/">教程</a>。</p>`;
+      return;
+    }
+    live.innerHTML = `<ul>${items
+      .map(
+        (it) =>
+          `<li><a href="${escapeHtml(it.url)}"><span class="sr-type">${escapeHtml(it.type)}</span><span class="sr-title">${escapeHtml(it.title)}</span><span class="sr-desc">${escapeHtml(it.description.slice(0, 80))}</span></a></li>`,
+      )
+      .join('')}</ul>`;
+  };
+
+  let timer: number | undefined;
+  input?.addEventListener('input', () => {
+    window.clearTimeout(timer);
+    timer = window.setTimeout(async () => {
+      const q = input.value.trim();
+      if (!q) return render([], q);
+      const data = await loadIndex();
+      const ranked = data
+        .map((it) => ({ it, s: score(it, q) }))
+        .filter((x) => x.s > 0)
+        .sort((a, b) => b.s - a.s)
+        .slice(0, 8)
+        .map((x) => x.it);
+      render(ranked, q);
+    }, 120);
+  });
+
+  openBtn?.addEventListener('click', () => {
+    if (!dialog) return;
+    if (typeof dialog.showModal === 'function') {
+      dialog.showModal();
+      input?.focus();
+      loadIndex();
+    } else {
+      window.location.href = '/search/';
+    }
+  });
+
+  dialog?.querySelector('.search-close')?.addEventListener('click', () => dialog.close());
+  dialog?.addEventListener('click', (e) => {
+    if (e.target === dialog) dialog.close();
+  });
+</script>

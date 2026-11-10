@@ -1,0 +1,19 @@
+---
+import Icon from './Icon.astro';
+import { evidenceBadge } from '@/lib/data';
+import type { Brand } from '@/lib/types';
+
+interface Props {
+  brand: Brand;
+  showIcon?: boolean;
+}
+
+const { brand, showIcon = true } = Astro.props;
+const badge = evidenceBadge(brand);
+const icon = badge.tone === 'strong' ? 'check' : badge.tone === 'none' ? 'info' : 'file';
+---
+
+<span class={`badge badge-${badge.tone}`} title="测速证据状态：依据资料中是否存在带时间戳的实测记录">
+  {showIcon && <Icon name={icon} size={12} />}
+  {badge.label}
+</span>

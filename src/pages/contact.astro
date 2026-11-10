@@ -1,0 +1,48 @@
+---
+import StaticPageLayout from '@/layouts/StaticPageLayout.astro';
+import { SITE } from '@/lib/site';
+
+const email = SITE.contactEmail;
+---
+
+<StaticPageLayout
+  path="/contact/"
+  title="联系与纠错"
+  seoTitle="联系与纠错：如何向机场指南反馈错误与建议"
+  description="联系机场指南：提交资料纠错、测速记录补充、品牌收录申请或内容建议的方式，以及提交纠错时需要附上的信息。"
+  lead="发现价格过时、数据错误或链接失效？告诉我们，核实后 7 天内更正。"
+>
+  <h2>一、联系方式</h2>
+  {
+    email ? (
+      <p>
+        邮箱：<a href={`mailto:${email}`}>{email}</a>（仅用于接收反馈，不会用于营销或订阅）。
+      </p>
+    ) : (
+      <div class="callout callout-warn">
+        <p><strong>联系邮箱尚未配置。</strong>站长设置邮箱后会在此处显示；在此之前本站不会展示任何未经确认的联系方式。配置方法见仓库 <code>.env.example</code> 中的 <code>PUBLIC_CONTACT_EMAIL</code>。</p>
+      </div>
+    )
+  }
+  <p>本站目前没有评论区、留言板或社交账号；如将来开通，会在本页与<a href="/news/">资讯页</a>公布。</p>
+
+  <h2>二、提交纠错时请附上</h2>
+  <ul>
+    <li>页面地址（例如 /reviews/lingdongyun/）与有问题的具体字段（例如“驭浪 年付价格”）。</li>
+    <li>你认为正确的内容，以及可核对的来源（结算页截图、官网公告截图等，请遮盖账号信息）。</li>
+    <li>截图中如含订阅链接、账号或付款信息，请先打码；本站不需要也不会保存这些内容。</li>
+  </ul>
+
+  <h2>三、我们会怎么处理</h2>
+  <ol>
+    <li>核对来源；能核实的在 7 天内更正页面并更新“资料核实日期”。</li>
+    <li>无法核实但有合理疑点的，在品牌页“待确认事项”中标注。</li>
+    <li>所有更正记录在<a href="/news/#changelog">更新日志</a>。流程详见<a href="/editorial-policy/">编辑与纠错政策</a>。</li>
+  </ol>
+
+  <h2>四、品牌收录与资料更新</h2>
+  <p>品牌方或推广方希望新增、更新资料，请按仓库中的模板 <code>source-materials/templates/资料填写.txt</code> 提供十个部分的信息，并注明资料日期。本站不接受付费排名，收录后资料呈现方式与其他品牌一致，详见<a href="/disclosure/">推广关系披露</a>。</p>
+
+  <h2>五、测速记录投稿</h2>
+  <p>欢迎提供带时间戳的测速截图或记录。请注明：测试时间（含时区）、本地运营商与城市、所用工具与版本、所连节点名称；截图请保留工具界面中的时间信息，并遮盖订阅标识。未标注时间的截图会被归为“未标注日期”等级。</p>
+</StaticPageLayout>

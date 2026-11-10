@@ -1,0 +1,97 @@
+---
+/**
+ * 服务端渲染的 SVG 条形图：由可信测速数组驱动，标注单位与日期。
+ * 无数据时显示“暂无可验证测速记录”。
+ */
+interface Bar {
+  label: string;
+  sublabel?: string;
+  value: number;
+  color?: string;
+}
+
+interface Props {
+  bars: Bar[];
+  unit: string;
+  title: string;
+  caption?: string;
+  maxValue?: number;
+}
+
+const { bars, unit, title, caption, maxValue } = Astro.props;
+const max = maxValue ?? Math.max(1, ...bars.map((b) => b.value));
+const rowH = 44;
+const labelW = 190;
+const width = 720;
+const chartW = width - labelW - 90;
+const height = Math.max(1, bars.length) * rowH + 12;
+const fmt = (n: number) => (Number.isInteger(n) ? n.toString() : n.toFixed(2).replace(/\.?0+$/, ''));
+---
+
+{
+  bars.length === 0 ? (
+    <p class="empty">暂无可验证测速记录</p>
+  ) : (
+    <figure class="speed-bars">
+      <svg viewBox={`0 0 ${width} ${height}`} role="img" aria-labelledby="sb-title" preserveAspectRatio="xMinYMin meet">
+        <title id="sb-title">{title}</title>
+        {bars.map((b, i) => {
+          const y = i * rowH + 8;
+          const w = Math.max(4, Math.round((b.value / max) * chartW));
+          return (
+            <g>
+              <text x="0" y={y + 16} class="sb-label">
+                {b.label}
+              </text>
+              {b.sublabel && (
+                <text x="0" y={y + 32} class="sb-sub">
+                  {b.sublabel}
+                </text>
+              )}
+              <rect x={labelW} y={y + 6} width={chartW} height={20} rx="10" class="sb-track" />
+              <rect x={labelW} y={y + 6} width={w} height={20} rx="10" fill={b.color ?? 'var(--primary)'} />
+              <text x={labelW + w + 10} y={y + 21} class="sb-value">
+                {fmt(b.value)} {unit}
+              </text>
+            </g>
+          );
+        })}
+      </svg>
+      {caption && <figcaption class="small muted">{caption}</figcaption>}
+    </figure>
+  )
+}
+
+<style>
+  .speed-bars svg {
+    width: 100%;
+    height: auto;
+    font-family: var(--font-sans);
+  }
+
+  .sb-label {
+    font-size: 14px;
+    font-weight: 600;
+    fill: var(--text);
+  }
+
+  .sb-sub {
+    font-size: 11px;
+    fill: var(--muted);
+  }
+
+  .sb-track {
+    fill: var(--surface-3);
+  }
+
+  .sb-value {
+    font-size: 13px;
+    font-weight: 600;
+    fill: var(--text-2);
+    font-variant-numeric: tabular-nums;
+  }
+
+  figcaption {
+    margin-top: 8px;
+  }
+</style>

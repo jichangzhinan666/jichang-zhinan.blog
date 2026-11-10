@@ -63,6 +63,15 @@
     "relatedBrandIds": ["twilight"]
   },
   {
+    "id": "src-lingdongyun-intro",
+    "file": "source-materials/brands/灵动云-品牌介绍.txt",
+    "sourceType": "unverified",
+    "collectedAt": "2026-11-10",
+    "description": "灵动云品牌介绍文案（标题、口号、两段介绍与结语），用于品牌页页首展示",
+    "credibility": "站长提供的宣传性文案，不作为价格、节点或测速的事实依据；相关数据以品牌资料与实测报告为准。",
+    "relatedBrandIds": ["lingdongyun"]
+  },
+  {
     "id": "src-invisible-client-note",
     "file": "source-materials/brands/隐形人-客户端补充.txt",
     "sourceType": "unverified",

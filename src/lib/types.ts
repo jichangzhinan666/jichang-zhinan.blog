@@ -83,6 +83,15 @@ export interface SpeedTestSummary {
   latestDatedTest: string | null;
 }
 
+export interface BrandIntro {
+  heading: string;
+  slogan: string | null;
+  paragraphs: string[];
+  tagline: string | null;
+  /** 文案来源说明（页面以小字展示） */
+  source: string | null;
+}
+
 export interface Brand {
   id: string;
   slug: string;
@@ -97,6 +106,8 @@ export interface Brand {
   vision: string | null;
   values: string | null;
   slogan: string | null;
+  /** 品牌页页首展示的品牌介绍文案（站长/品牌提供的宣传性描述）；没有则不渲染 */
+  intro?: BrandIntro | null;
   officialWebsite: string | null;
   /** 推广（联盟）链接：点击可能为本站带来佣金，页面需披露 */
   affiliateUrl: string | null;

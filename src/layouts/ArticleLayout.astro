@@ -5,6 +5,8 @@ import Breadcrumbs from '@/components/Breadcrumbs.astro';
 import FAQ from '@/components/FAQ.astro';
 import Icon from '@/components/Icon.astro';
 import BrandMark from '@/components/BrandMark.astro';
+import FavButton from '@/components/FavButton.astro';
+import ReadTracker from '@/components/ReadTracker.astro';
 import { CATEGORY_META, SITE } from '@/lib/site';
 import { articleUrl, getPublishedArticles, readingMinutes, wordCount, type Article } from '@/lib/articles';
 import { getBrand } from '@/lib/data';
@@ -76,6 +78,10 @@ if (data.faq.length) jsonLd.push(faqLd(data.faq));
             {data.updatedAt !== data.publishedAt && <span><Icon name="edit" size={14} />更新 <time datetime={data.updatedAt}>{data.updatedAt}</time></span>}
             <span><Icon name="clock" size={14} />约 {minutes} 分钟 · {words} 字</span>
           </div>
+          <div class="article-actions">
+            <FavButton url={url} title={data.title} type={meta.label} />
+          </div>
+          <ReadTracker type={meta.label} title={data.title} url={url} />
           {data.tags.length > 0 && <ul class="tag-row">{data.tags.map((t) => <li class="tag">{t}</li>)}</ul>}
         </header>
 
@@ -220,6 +226,10 @@ if (data.faq.length) jsonLd.push(faqLd(data.faq));
 
   .article-head h1 {
     margin-bottom: 10px;
+  }
+
+  .article-actions {
+    margin-top: 10px;
   }
 
   .article-head .lead {

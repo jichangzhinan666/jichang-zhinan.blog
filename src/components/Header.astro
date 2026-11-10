@@ -1,7 +1,7 @@
 ---
 import { getCollection } from 'astro:content';
 import Icon from './Icon.astro';
-import { NAV, SITE, CATEGORY_META } from '@/lib/site';
+import { NAV, SITE, CATEGORY_META, SOCIAL_LINKS } from '@/lib/site';
 import type { NavChild } from '@/lib/site';
 
 const pathname = Astro.url.pathname;
@@ -91,6 +91,24 @@ function isActive(href: string): boolean {
           })
         }
       </ul>
+      <div class="nav-social" aria-label="社交入口">
+        {
+          SOCIAL_LINKS.map((s) =>
+            s.href ? (
+              <a class="nav-social-link" href={s.href} target="_blank" rel="noopener noreferrer">
+                <Icon name={s.id} size={18} />
+                <span>{s.label}</span>
+                <Icon name="external" size={14} class="nav-social-ext" />
+              </a>
+            ) : (
+              <span class="nav-social-link is-pending" aria-disabled="true" title={`${s.label} 链接待补充`}>
+                <Icon name={s.id} size={18} />
+                <span>{s.label}（链接待补充）</span>
+              </span>
+            ),
+          )
+        }
+      </div>
     </nav>
 
     <div class="header-actions">
@@ -101,6 +119,37 @@ function isActive(href: string): boolean {
         <span class="theme-icon theme-icon-moon"><Icon name="moon" size={20} /></span>
         <span class="theme-icon theme-icon-sun"><Icon name="sun" size={20} /></span>
       </button>
+      {
+        SOCIAL_LINKS.map((s) =>
+          s.href ? (
+            <a class="icon-btn social-btn" href={s.href} target="_blank" rel="noopener noreferrer" aria-label={`${s.label}（新窗口打开）`} title={s.label}>
+              <Icon name={s.id} size={20} />
+            </a>
+          ) : (
+            <span class="icon-btn social-btn is-pending" aria-disabled="true" role="img" aria-label={`${s.label} 链接待补充`} title={`${s.label} 链接待补充`}>
+              <Icon name={s.id} size={20} />
+            </span>
+          ),
+        )
+      }
+      <div class="account">
+        <button class="icon-btn account-btn" type="button" id="account-btn" aria-haspopup="menu" aria-expanded="false" aria-controls="account-menu" aria-label="打开个人中心菜单" title="个人中心">
+          <Icon name="user" size={20} />
+        </button>
+        <div class="account-menu" id="account-menu" role="menu" aria-labelledby="account-btn" hidden>
+          <div class="am-head">
+            <span class="am-avatar" aria-hidden="true"><Icon name="user" size={18} /></span>
+            <span class="am-head-text">
+              <strong>游客模式</strong>
+              <small>数据仅保存在当前浏览器</small>
+            </span>
+          </div>
+          <a role="menuitem" tabindex="-1" href="/me/#favorites"><Icon name="star" size={16} />我的收藏<span class="am-count" data-count="favorites"></span></a>
+          <a role="menuitem" tabindex="-1" href="/me/#history"><Icon name="clock" size={16} />阅读记录<span class="am-count" data-count="history"></span></a>
+          <a role="menuitem" tabindex="-1" href="/me/"><Icon name="user" size={16} />个人中心</a>
+          <a role="menuitem" tabindex="-1" href="/me/#prefs"><Icon name="tool" size={16} />偏好设置</a>
+        </div>
+      </div>
       <button class="icon-btn nav-burger" type="button" id="nav-burger" aria-expanded="false" aria-controls="main-nav" aria-label="打开菜单">
         <span class="burger-open"><Icon name="menu" size={22} /></span>
         <span class="burger-close"><Icon name="close" size={22} /></span>
@@ -354,6 +403,132 @@ function isActive(href: string): boolean {
     border-color: var(--primary-100);
   }
 
+  .social-btn {
+    text-decoration: none;
+  }
+
+  .social-btn:hover {
+    text-decoration: none;
+  }
+
+  .social-btn.is-pending {
+    opacity: 0.45;
+    border-style: dashed;
+    cursor: not-allowed;
+  }
+
+  .social-btn.is-pending:hover {
+    background: var(--surface);
+    color: var(--text-2);
+    border-color: var(--border);
+  }
+
+  /* 窄屏时社交入口收进菜单 */
+  .nav-social {
+    display: none;
+  }
+
+  /* 个人中心头像与下拉菜单 */
+  .account {
+    position: relative;
+    display: inline-flex;
+  }
+
+  .account-btn[aria-expanded="true"] {
+    background: var(--primary-50);
+    color: var(--primary);
+    border-color: var(--primary-100);
+  }
+
+  .account-menu {
+    position: absolute;
+    top: calc(100% + 8px);
+    right: 0;
+    min-width: 240px;
+    padding: 8px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-lg);
+    z-index: 60;
+  }
+
+  .account-menu[hidden] {
+    display: none;
+  }
+
+  .am-head {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 10px 10px;
+    margin-bottom: 6px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .am-avatar {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    background: linear-gradient(145deg, #3b82f6, var(--primary));
+    color: #fff;
+    flex: none;
+  }
+
+  .am-head-text {
+    display: flex;
+    flex-direction: column;
+    line-height: 1.2;
+  }
+
+  .am-head-text small {
+    font-size: 0.72rem;
+    color: var(--muted);
+  }
+
+  .account-menu a[role="menuitem"] {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-height: 44px;
+    padding: 8px 12px;
+    border-radius: var(--radius-sm);
+    color: var(--text);
+    font-weight: 600;
+    font-size: 0.925rem;
+    text-decoration: none;
+  }
+
+  .account-menu a[role="menuitem"]:hover,
+  .account-menu a[role="menuitem"]:focus-visible {
+    background: var(--primary-50);
+    color: var(--primary);
+    text-decoration: none;
+  }
+
+  .account-menu a[role="menuitem"] :global(svg) {
+    color: var(--primary);
+    flex: none;
+  }
+
+  .am-count {
+    margin-left: auto;
+    min-width: 22px;
+    padding: 0 7px;
+    border-radius: 999px;
+    background: var(--primary-50);
+    color: var(--primary);
+    font-size: 0.72rem;
+    text-align: center;
+  }
+
+  .am-count:empty {
+    display: none;
+  }
+
   .theme-icon-sun,
   .burger-close {
     display: none;
@@ -544,6 +719,77 @@ function isActive(href: string): boolean {
       padding: 4px 0 4px 8px;
     }
   }
+
+  @media (max-width: 639px) {
+    .header-actions .social-btn {
+      display: none;
+    }
+
+    .nav-social {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 12px;
+      padding-top: 12px;
+      border-top: 1px solid var(--border);
+    }
+
+    .nav-social-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      min-height: 44px;
+      padding: 8px 14px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      background: var(--surface);
+      color: var(--text-2);
+      font-size: 0.9rem;
+      font-weight: 600;
+      text-decoration: none;
+    }
+
+    .nav-social-link:hover {
+      background: var(--primary-50);
+      color: var(--primary);
+      border-color: var(--primary-100);
+      text-decoration: none;
+    }
+
+    .nav-social-link.is-pending {
+      opacity: 0.55;
+      border-style: dashed;
+      cursor: not-allowed;
+    }
+
+    .nav-social-ext {
+      color: var(--muted);
+    }
+
+    /* 触控友好的个人中心菜单：贴着页头铺开 */
+    .account {
+      position: static;
+    }
+
+    .account-menu {
+      position: absolute;
+      top: var(--header-h);
+      left: var(--gutter);
+      right: var(--gutter);
+      min-width: 0;
+    }
+  }
+
+  @media (max-width: 479px) {
+    .header-actions {
+      gap: 6px;
+    }
+
+    .icon-btn {
+      width: 40px;
+      height: 40px;
+    }
+  }
 </style>
 
 <script>
@@ -596,6 +842,73 @@ function isActive(href: string): boolean {
       }
     }
   });
+
+  // 个人中心下拉菜单（点击外部 / Esc 关闭，方向键在菜单项间移动）
+  const accountBtn = document.getElementById('account-btn');
+  const accountMenu = document.getElementById('account-menu');
+  const menuItems = () => Array.from(accountMenu?.querySelectorAll<HTMLAnchorElement>('a[role="menuitem"]') ?? []);
+  const readCount = (key: string) => {
+    try {
+      const raw = localStorage.getItem(key);
+      const list = raw ? JSON.parse(raw) : [];
+      return Array.isArray(list) ? list.length : 0;
+    } catch {
+      return 0;
+    }
+  };
+  const syncCounts = () => {
+    accountMenu?.querySelectorAll<HTMLElement>('.am-count').forEach((el) => {
+      const n = readCount(el.dataset.count === 'favorites' ? 'jz-favorites' : 'jz-history');
+      el.textContent = n > 0 ? String(n) : '';
+    });
+  };
+  const setAccountOpen = (open: boolean, focusFirst = false) => {
+    if (!accountBtn || !accountMenu) return;
+    accountMenu.hidden = !open;
+    accountBtn.setAttribute('aria-expanded', String(open));
+    accountBtn.setAttribute('aria-label', open ? '关闭个人中心菜单' : '打开个人中心菜单');
+    if (open) {
+      syncCounts();
+      if (focusFirst) menuItems()[0]?.focus();
+    }
+  };
+  accountBtn?.addEventListener('click', () => setAccountOpen(accountMenu?.hidden ?? true));
+  accountBtn?.addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowDown') {
+      e.preventDefault();
+      setAccountOpen(true, true);
+    }
+  });
+  accountMenu?.addEventListener('keydown', (e) => {
+    const items = menuItems();
+    const i = items.indexOf(document.activeElement as HTMLAnchorElement);
+    if (e.key === 'ArrowDown') {
+      e.preventDefault();
+      items[(i + 1) % items.length]?.focus();
+    } else if (e.key === 'ArrowUp') {
+      e.preventDefault();
+      items[(i - 1 + items.length) % items.length]?.focus();
+    } else if (e.key === 'Home') {
+      e.preventDefault();
+      items[0]?.focus();
+    } else if (e.key === 'End') {
+      e.preventDefault();
+      items[items.length - 1]?.focus();
+    } else if (e.key === 'Tab') {
+      setAccountOpen(false);
+    }
+  });
+  document.addEventListener('click', (e) => {
+    const target = e.target as HTMLElement;
+    if (accountMenu && !accountMenu.hidden && !target.closest('.account')) setAccountOpen(false);
+  });
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && accountMenu && !accountMenu.hidden) {
+      setAccountOpen(false);
+      accountBtn?.focus();
+    }
+  });
+  window.addEventListener('jz:store-change', syncCounts);
 
   // 主题切换
   const themeBtn = document.getElementById('theme-toggle');

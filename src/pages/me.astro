@@ -1,0 +1,561 @@
+---
+/**
+ * 个人中心（第一阶段：游客模式）。
+ * 收藏、阅读记录与偏好只保存在当前浏览器的 localStorage；本页 noindex、不进 sitemap，不生成任何用户数据到静态文件。
+ */
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import Breadcrumbs from '@/components/Breadcrumbs.astro';
+import Icon from '@/components/Icon.astro';
+import { SITE, SOCIAL_LINKS } from '@/lib/site';
+import { getPublishedArticles, articleUrl, articleSlug } from '@/lib/articles';
+
+const title = '机场指南个人中心｜我的收藏与阅读记录';
+const description = '游客模式的个人中心：查看保存在当前浏览器中的收藏、最近阅读记录与显示偏好，快速访问 RSS 订阅、常用教程与作者介绍。数据只保存在本地，不上传。';
+
+const tutorials = await getPublishedArticles('tutorials');
+const quick = [
+  { slug: 'clash-verge-rev-jiaocheng', label: 'Clash Verge Rev（Windows / macOS）', icon: 'device' },
+  { slug: 'ios-shiyong-jiaocheng', label: 'iOS / iPadOS 使用教程', icon: 'device' },
+  { slug: 'android-shiyong-jiaocheng', label: 'Android 使用教程', icon: 'device' },
+  { slug: 'windows-kehuduan-changjian-wenti', label: 'Windows 与常见客户端问题', icon: 'tool' },
+]
+  .map((q) => ({ ...q, article: tutorials.find((a) => articleSlug(a) === q.slug) }))
+  .filter((q): q is typeof q & { article: NonNullable<typeof q.article> } => Boolean(q.article));
+
+const socials = SOCIAL_LINKS.filter((s) => s.href);
+const crumbs = [
+  { name: '首页', href: '/' },
+  { name: '个人中心', href: '/me/' },
+];
+---
+
+<BaseLayout title={title} titleSuffix={false} description={description} noindex canonicalPath="/me/">
+  <div class="container me">
+    <Breadcrumbs crumbs={crumbs} />
+
+    <header class="me-hero card" id="overview">
+      <div class="me-avatar" aria-hidden="true">
+        <Icon name="user" size={34} />
+      </div>
+      <div class="me-id">
+        <h1>{title}</h1>
+        <p class="me-mode">
+          <span class="badge badge-medium">游客模式</span>
+          <span class="small muted">无需注册；收藏、阅读记录与偏好只保存在当前浏览器，不会上传。</span>
+        </p>
+      </div>
+      <dl class="me-stats" aria-label="概览">
+        <div>
+          <dt>收藏</dt>
+          <dd id="stat-fav">0</dd>
+        </div>
+        <div>
+          <dt>阅读记录</dt>
+          <dd id="stat-his">0</dd>
+        </div>
+        <div>
+          <dt>主题</dt>
+          <dd id="stat-theme">跟随系统</dd>
+        </div>
+      </dl>
+    </header>
+
+    <div class="callout callout-info me-note" role="note">
+      <Icon name="info" size={20} />
+      <p>
+        数据仅保存在当前浏览器的 localStorage 中：清理浏览器数据、使用隐私窗口或更换设备后会丢失。本站没有账号系统，不会收集这些数据，也不提供账号同步；详见<a href="/privacy/">隐私说明</a>。
+      </p>
+    </div>
+
+    <nav class="me-jump small" aria-label="页内导航">
+      <a href="#favorites">我的收藏</a>
+      <a href="#history">阅读记录</a>
+      <a href="#subscribe">订阅更新</a>
+      <a href="#prefs">偏好设置</a>
+      <a href="#tutorials">常用教程</a>
+      <a href="#author">作者介绍</a>
+    </nav>
+
+    <div class="me-grid">
+      <section class="card section me-span" id="favorites" aria-labelledby="fav-title">
+        <div class="section-head">
+          <h2 class="section-title" id="fav-title"><Icon name="star" size={20} />我的收藏</h2>
+          <span class="small muted" id="fav-count" aria-live="polite"></span>
+        </div>
+        <ul class="me-list" id="fav-list"></ul>
+        <p class="empty" id="fav-empty">还没有收藏。打开任一品牌测评页、套餐对比页或文章，点击「收藏」按钮即可加入这里。</p>
+      </section>
+
+      <section class="card section me-span" id="history" aria-labelledby="his-title">
+        <div class="section-head">
+          <h2 class="section-title" id="his-title"><Icon name="clock" size={20} />阅读记录</h2>
+          <button type="button" class="btn btn-outline btn-sm" id="his-clear">清空记录</button>
+        </div>
+        <ul class="me-list" id="his-list"></ul>
+        <p class="empty" id="his-empty">暂无阅读记录。浏览文章、品牌页或套餐对比后会自动记录最近 30 条。</p>
+      </section>
+
+      <section class="card section" id="subscribe" aria-labelledby="sub-title">
+        <h2 class="section-title" id="sub-title"><Icon name="rss" size={20} />订阅更新</h2>
+        <p class="small">及时获取机场测评、节点测速报告、新手教程及最新文章。</p>
+        <div class="me-actions">
+          <a class="btn btn-primary" href="/rss.xml" type="application/rss+xml"><Icon name="rss" size={16} />通过 RSS 订阅</a>
+          <a class="btn btn-outline" href="/news/"><Icon name="bolt" size={16} />资讯与更新</a>
+          {
+            socials.map((s) => (
+              <a class="btn btn-outline" href={s.href!} target="_blank" rel="noopener noreferrer">
+                <Icon name={s.id} size={16} />
+                {s.label}
+                <Icon name="external" size={14} />
+              </a>
+            ))
+          }
+        </div>
+      </section>
+
+      <section class="card section" id="prefs" aria-labelledby="prefs-title">
+        <h2 class="section-title" id="prefs-title"><Icon name="tool" size={20} />偏好设置</h2>
+        <form class="prefs" id="prefs-form">
+          <fieldset>
+            <legend>主题</legend>
+            <div class="chips">
+              <label class="chip"><input type="radio" name="theme" value="system" /><span>跟随系统</span></label>
+              <label class="chip"><input type="radio" name="theme" value="light" /><span>浅色</span></label>
+              <label class="chip"><input type="radio" name="theme" value="dark" /><span>深色</span></label>
+            </div>
+          </fieldset>
+          <fieldset>
+            <legend>正文字号</legend>
+            <div class="chips">
+              <label class="chip"><input type="radio" name="font" value="normal" /><span>标准</span></label>
+              <label class="chip"><input type="radio" name="font" value="large" /><span>偏大</span></label>
+            </div>
+          </fieldset>
+          <p class="small muted">偏好立即生效并保存在本浏览器；页头的主题按钮会同步这里的选择。</p>
+          <button type="button" class="btn btn-outline btn-sm" id="clear-all">清除本浏览器中的全部个人数据</button>
+        </form>
+      </section>
+
+      <section class="card section" id="tutorials" aria-labelledby="tut-title">
+        <h2 class="section-title" id="tut-title"><Icon name="book" size={20} />常用教程</h2>
+        <ul class="me-quick">
+          {
+            quick.map((q) => (
+              <li>
+                <a href={articleUrl(q.article)}>
+                  <Icon name={q.icon} size={18} />
+                  <span>
+                    <strong>{q.label}</strong>
+                    <small>{q.article.data.title}</small>
+                  </span>
+                </a>
+              </li>
+            ))
+          }
+        </ul>
+        <p class="small"><a href="/tutorials/">查看全部教程 →</a></p>
+      </section>
+
+      <section class="card section" id="author" aria-labelledby="author-title">
+        <h2 class="section-title" id="author-title"><Icon name="user" size={20} />作者介绍</h2>
+        <p class="small">{SITE.author.name}维护本站的品牌资料、测速报告与教程：榜单为编辑推荐、不含评分，所有价格与测速数据注明来源与核实日期。</p>
+        <a class="btn btn-outline btn-sm" href="/about/">查看关于本站与作者 →</a>
+      </section>
+    </div>
+  </div>
+</BaseLayout>
+
+<style>
+  .me-hero {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    gap: 20px;
+    align-items: center;
+    margin-top: 16px;
+    padding: 24px;
+    background: linear-gradient(160deg, var(--primary-50) 0%, var(--surface) 60%);
+  }
+
+  .me-avatar {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 72px;
+    height: 72px;
+    border-radius: 50%;
+    background: linear-gradient(145deg, #3b82f6, var(--primary));
+    color: #fff;
+    box-shadow: 0 8px 20px rgba(21, 94, 239, 0.3);
+  }
+
+  .me-id h1 {
+    margin: 0 0 8px;
+    font-size: 1.5rem;
+  }
+
+  .me-mode {
+    margin: 0;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .me-stats {
+    display: flex;
+    gap: 10px;
+    margin: 0;
+  }
+
+  .me-stats > div {
+    min-width: 88px;
+    padding: 10px 14px;
+    border-radius: var(--radius);
+    border: 1px solid var(--border);
+    background: var(--surface);
+    text-align: center;
+  }
+
+  .me-stats dt {
+    font-size: 0.72rem;
+    color: var(--muted);
+  }
+
+  .me-stats dd {
+    margin: 2px 0 0;
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: var(--primary);
+  }
+
+  .me-note p {
+    margin: 0;
+  }
+
+  .me-jump {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin: 4px 0 16px;
+  }
+
+  .me-jump a {
+    padding: 6px 12px;
+    border-radius: 999px;
+    border: 1px solid var(--border);
+    background: var(--surface);
+    color: var(--text-2);
+    text-decoration: none;
+  }
+
+  .me-jump a:hover {
+    border-color: var(--primary);
+    color: var(--primary);
+  }
+
+  .me-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px;
+  }
+
+  .me-grid .section {
+    margin: 0;
+    scroll-margin-top: calc(var(--header-h) + 16px);
+  }
+
+  .me-span {
+    grid-column: 1 / -1;
+  }
+
+  .me-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  /* 列表项由脚本动态生成，需用全局选择器 */
+  .me-list :global(li) {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 4px 12px;
+    align-items: center;
+    padding: 10px 12px;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--border);
+    background: var(--surface-2);
+  }
+
+  .me-list :global(li > a) {
+    font-weight: 600;
+    overflow-wrap: anywhere;
+  }
+
+  .me-list :global(.me-meta) {
+    grid-column: 1;
+  }
+
+  .me-list :global(.btn) {
+    grid-row: 1 / span 2;
+    grid-column: 2;
+  }
+
+  .me-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .prefs {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+
+  .prefs fieldset {
+    border: 0;
+    padding: 0;
+    margin: 0;
+  }
+
+  .prefs legend {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--text-2);
+    margin-bottom: 8px;
+  }
+
+  .chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .chip {
+    position: relative;
+    display: inline-flex;
+  }
+
+  .chip input {
+    position: absolute;
+    opacity: 0;
+    width: 1px;
+    height: 1px;
+  }
+
+  .chip span {
+    display: inline-flex;
+    align-items: center;
+    min-height: 36px;
+    padding: 6px 14px;
+    border-radius: 999px;
+    border: 1px solid var(--border);
+    background: var(--surface);
+    color: var(--text-2);
+    font-size: 0.875rem;
+    cursor: pointer;
+  }
+
+  .chip input:checked + span {
+    background: var(--primary);
+    border-color: var(--primary);
+    color: #fff;
+  }
+
+  .chip input:focus-visible + span {
+    outline: 3px solid var(--primary-200);
+  }
+
+  .me-quick {
+    list-style: none;
+    margin: 0 0 10px;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .me-quick a {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 12px;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--border);
+    background: var(--surface-2);
+    color: var(--text);
+    text-decoration: none;
+    transition: border-color 0.15s ease, background 0.15s ease;
+  }
+
+  .me-quick a:hover {
+    border-color: var(--primary-200);
+    background: var(--primary-50);
+  }
+
+  .me-quick a :global(svg) {
+    color: var(--primary);
+    flex: none;
+  }
+
+  .me-quick span {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+  }
+
+  .me-quick small {
+    color: var(--muted);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  @media (max-width: 1023px) {
+    .me-hero {
+      grid-template-columns: auto minmax(0, 1fr);
+    }
+
+    .me-stats {
+      grid-column: 1 / -1;
+      flex-wrap: wrap;
+    }
+  }
+
+  @media (max-width: 767px) {
+    .me-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .me-id h1 {
+      font-size: 1.25rem;
+    }
+
+    .me-list :global(li) {
+      grid-template-columns: 1fr;
+    }
+
+    .me-list :global(.btn) {
+      grid-row: auto;
+      grid-column: 1;
+      justify-self: start;
+    }
+
+    .me-actions .btn {
+      flex: 1 1 160px;
+      justify-content: center;
+    }
+  }
+</style>
+
+<script>
+  import {
+    getFavorites,
+    removeFavorite,
+    getHistory,
+    clearHistory,
+    getPrefs,
+    setPrefs,
+    applyTheme,
+    applyFont,
+    currentTheme,
+    clearAll,
+    formatRelative,
+    STORE_EVENT,
+    type SavedItem,
+    type ThemePref,
+    type FontPref,
+  } from '@/lib/user-store';
+
+  const $ = (id: string) => document.getElementById(id);
+
+  function renderList(listEl: HTMLElement | null, emptyEl: HTMLElement | null, items: SavedItem[], onRemove?: (url: string) => void) {
+    if (!listEl) return;
+    listEl.innerHTML = '';
+    items.forEach((it) => {
+      const li = document.createElement('li');
+      const a = document.createElement('a');
+      a.href = it.url;
+      a.textContent = it.title;
+      const meta = document.createElement('span');
+      meta.className = 'me-meta small muted';
+      meta.textContent = `${it.type} · ${formatRelative(it.ts)}`;
+      li.append(a, meta);
+      if (onRemove) {
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'btn btn-outline btn-sm';
+        btn.textContent = '移除';
+        btn.setAttribute('aria-label', `移除收藏：${it.title}`);
+        btn.addEventListener('click', () => onRemove(it.url));
+        li.append(btn);
+      }
+      listEl.append(li);
+    });
+    if (emptyEl) emptyEl.hidden = items.length > 0;
+  }
+
+  function check(name: string, value: string) {
+    const input = document.querySelector<HTMLInputElement>(`input[name="${name}"][value="${value}"]`);
+    if (input) input.checked = true;
+  }
+
+  function render() {
+    const favs = getFavorites();
+    const his = getHistory();
+    renderList($('fav-list'), $('fav-empty'), favs, (url) => {
+      removeFavorite(url);
+      render();
+    });
+    renderList($('his-list'), $('his-empty'), his);
+    const statFav = $('stat-fav');
+    const statHis = $('stat-his');
+    const favCount = $('fav-count');
+    if (statFav) statFav.textContent = String(favs.length);
+    if (statHis) statHis.textContent = String(his.length);
+    if (favCount) favCount.textContent = favs.length ? `共 ${favs.length} 条` : '';
+
+    const theme = currentTheme();
+    const statTheme = $('stat-theme');
+    if (statTheme) statTheme.textContent = theme === 'system' ? '跟随系统' : theme === 'dark' ? '深色' : '浅色';
+    check('theme', theme);
+    check('font', getPrefs().font === 'large' ? 'large' : 'normal');
+  }
+
+  $('his-clear')?.addEventListener('click', () => {
+    clearHistory();
+    render();
+  });
+
+  $('clear-all')?.addEventListener('click', () => {
+    if (window.confirm('将清除本浏览器中保存的收藏、阅读记录与偏好，确定吗？')) {
+      clearAll();
+      applyTheme('system');
+      applyFont('normal');
+      render();
+    }
+  });
+
+  $('prefs-form')?.addEventListener('change', (e) => {
+    const t = e.target as HTMLInputElement;
+    if (t.name === 'theme') {
+      const theme = t.value as ThemePref;
+      applyTheme(theme);
+      setPrefs({ theme });
+    }
+    if (t.name === 'font') {
+      const font = t.value as FontPref;
+      applyFont(font);
+      setPrefs({ font });
+    }
+    render();
+  });
+
+  window.addEventListener(STORE_EVENT, render);
+  // 页头主题按钮改动 data-theme 时同步概览
+  new MutationObserver(render).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
+  render();
+</script>

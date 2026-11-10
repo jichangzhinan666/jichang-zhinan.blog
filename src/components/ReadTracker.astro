@@ -1,0 +1,28 @@
+---
+/**
+ * 阅读记录（游客模式）：页面打开时把它记入浏览器本地的“最近阅读”，最多 30 条，不上传。
+ * 用法：<ReadTracker type="使用教程" title="…" url="/tutorials/xxx/" />
+ */
+interface Props {
+  type: string;
+  title: string;
+  url?: string;
+}
+
+const { type, title, url } = Astro.props;
+---
+
+<span hidden data-track-type={type} data-track-title={title} data-track-url={url}></span>
+
+<script>
+  import { pushHistory } from '@/lib/user-store';
+
+  const el = document.querySelector<HTMLElement>('[data-track-type]');
+  if (el) {
+    pushHistory({
+      url: el.dataset.trackUrl || location.pathname,
+      title: el.dataset.trackTitle || document.title,
+      type: el.dataset.trackType || '页面',
+    });
+  }
+</script>

@@ -472,6 +472,11 @@ ol {
   white-space: nowrap;
 }
 
+/* 个人中心“正文字号偏大”偏好（保存在浏览器本地） */
+:root[data-font="large"] {
+  font-size: 112.5%;
+}
+
 /* 提示框 */
 .callout {
   display: flex;

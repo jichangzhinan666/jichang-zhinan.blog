@@ -8,6 +8,8 @@ import PlanTable from '@/components/PlanTable.astro';
 import ReportCard from '@/components/ReportCard.astro';
 import FAQ from '@/components/FAQ.astro';
 import Icon from '@/components/Icon.astro';
+import FavButton from '@/components/FavButton.astro';
+import ReadTracker from '@/components/ReadTracker.astro';
 import {
   computeRanking,
   getBrands,
@@ -125,6 +127,10 @@ const jsonLd = [
             <span class="badge badge-none">资料核实 {brand.lastVerifiedAt}</span>
             <span class={`badge ${tested ? 'badge-strong' : 'badge-weak'}`}>{tested ? '已有测试记录' : '未测试'}</span>
           </div>
+          <div class="bh-actions">
+            <FavButton url={`/reviews/${brand.slug}/`} title={`${brand.displayName} 品牌资料与测评`} type="品牌测评" />
+          </div>
+          <ReadTracker type="品牌测评" title={`${brand.displayName} 品牌资料与测评`} url={`/reviews/${brand.slug}/`} />
         </div>
       </div>
       <div class="bh-side">
@@ -431,6 +437,10 @@ const jsonLd = [
 </BaseLayout>
 
 <style>
+  .bh-actions {
+    margin-top: 10px;
+  }
+
   .brand-hero {
     display: grid;
     grid-template-columns: minmax(0, 1.5fr) minmax(280px, 0.8fr);

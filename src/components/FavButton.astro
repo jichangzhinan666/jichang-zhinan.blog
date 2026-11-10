@@ -1,0 +1,70 @@
+---
+/**
+ * 收藏按钮（游客模式）：把当前页加入浏览器本地的个人中心收藏，不上传。
+ * 用法：<FavButton url="/reviews/xxx/" title="…" type="品牌测评" />
+ */
+import Icon from './Icon.astro';
+
+interface Props {
+  url: string;
+  title: string;
+  type: string;
+  class?: string;
+}
+
+const { url, title, type, class: className = '' } = Astro.props;
+---
+
+<button
+  type="button"
+  class={`btn btn-outline btn-sm fav-btn ${className}`.trim()}
+  data-fav-url={url}
+  data-fav-title={title}
+  data-fav-type={type}
+  aria-pressed="false"
+  title="收藏到本浏览器的个人中心（仅保存在本地）"
+>
+  <Icon name="star" size={16} />
+  <span class="fav-label">收藏</span>
+</button>
+
+<style>
+  .fav-btn {
+    gap: 6px;
+  }
+
+  .fav-btn[aria-pressed="true"] {
+    background: var(--primary);
+    border-color: var(--primary);
+    color: #fff;
+  }
+
+  .fav-btn[aria-pressed="true"] :global(svg) {
+    fill: currentColor;
+  }
+</style>
+
+<script>
+  import { isFavorite, toggleFavorite, STORE_EVENT } from '@/lib/user-store';
+
+  const sync = (btn: HTMLButtonElement) => {
+    const on = isFavorite(btn.dataset.favUrl || location.pathname);
+    btn.setAttribute('aria-pressed', String(on));
+    const label = btn.querySelector('.fav-label');
+    if (label) label.textContent = on ? '已收藏' : '收藏';
+  };
+
+  const buttons = Array.from(document.querySelectorAll<HTMLButtonElement>('.fav-btn'));
+  buttons.forEach((btn) => {
+    sync(btn);
+    btn.addEventListener('click', () => {
+      toggleFavorite({
+        url: btn.dataset.favUrl || location.pathname,
+        title: btn.dataset.favTitle || document.title,
+        type: btn.dataset.favType || '页面',
+      });
+      sync(btn);
+    });
+  });
+  window.addEventListener(STORE_EVENT, () => buttons.forEach(sync));
+</script>

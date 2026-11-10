@@ -2,6 +2,8 @@
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import Breadcrumbs from '@/components/Breadcrumbs.astro';
 import Icon from '@/components/Icon.astro';
+import FavButton from '@/components/FavButton.astro';
+import ReadTracker from '@/components/ReadTracker.astro';
 import { STATIC_PAGES } from '@/lib/site';
 import {
   getBrands,
@@ -60,6 +62,10 @@ const jsonLd = [webPageLd(title, '/compare/', description, lastmod), breadcrumbL
       <p class="lead">
         汇总 {stats.brands} 个机场品牌、{stats.tiers} 档套餐资料，全面对比机场月付价格、套餐流量、每 GB 单价及不同付款周期。支持按预算、流量与套餐类型筛选，帮助读者更直观地比较各品牌的套餐成本与适用场景。
       </p>
+      <div class="hero-actions">
+        <FavButton url="/compare/" title="2026 机场套餐价格对比" type="套餐对比" />
+      </div>
+      <ReadTracker type="套餐对比" title="2026 机场套餐价格对比" url="/compare/" />
     </header>
 
     <aside class="callout callout-info calc-note" aria-labelledby="calc-note-title">
@@ -299,6 +305,10 @@ const jsonLd = [webPageLd(title, '/compare/', description, lastmod), breadcrumbL
 </BaseLayout>
 
 <style>
+  .hero-actions {
+    margin-top: 12px;
+  }
+
   .calc-note {
     margin: 18px 0 12px;
     align-items: flex-start;

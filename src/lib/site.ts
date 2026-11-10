@@ -72,6 +72,15 @@ export const NAV: NavItem[] = [
   { label: '机场百科', href: '/wiki/', icon: 'layers', dynamicCategory: 'wiki' },
 ];
 
+/**
+ * 社交 / 外部入口（页头右侧图标）。
+ * href 为 null 的项会显示为带“链接待补充”提示的禁用图标，不生成无效链接；拿到地址后填入即可生效。
+ */
+export const SOCIAL_LINKS: { id: 'telegram' | 'github'; label: string; href: string | null }[] = [
+  { id: 'telegram', label: 'Telegram 群组', href: 'https://t.me/+i7oRptf4FstlMTVl' },
+  { id: 'github', label: 'GitHub', href: null },
+];
+
 /** 首页快捷入口（六个） */
 export const QUICK_LINKS = [
   { label: '机场推荐榜单', sub: '2026 年度版 · 编辑整理', href: '/rankings/2026/', icon: 'trophy' },
@@ -115,7 +124,8 @@ export const STATIC_PAGES: Record<string, { title: string; lastmod: string; chan
 };
 
 /** 不应被索引、也不进入 sitemap 的路径 */
-export const NOINDEX_PATHS = ['/search/', '/404/'];
+/** noindex 且不进 sitemap / 站内搜索索引的页面（站内搜索、404、个人中心） */
+export const NOINDEX_PATHS = ['/search/', '/404/', '/me/'];
 
 export function absoluteUrl(path: string): string {
   if (/^https?:\/\//.test(path)) return path;

@@ -68,7 +68,16 @@
     "sourceType": "unverified",
     "collectedAt": "2026-11-10",
     "description": "浪网品牌介绍文案（标题、口号、三段介绍与结语），用于品牌页页首展示",
-    "credibility": "站长提供的宣传性文案；文中“BGP 多线路智能调度”“独立 IP”“全节点 1 倍率”“多平台兼容”未见于原资料，不作为事实依据，相关数据以品牌资料为准。",
+    "credibility": "站长提供的宣传性文案；原文中有四处线路、倍率、平台与定制服务的说法未见于原资料，页面展示已按站长 2026-11-11 的更正处理，不作为事实依据，相关数据以品牌资料为准。",
+    "relatedBrandIds": ["langwang"]
+  },
+  {
+    "id": "src-langwang-intro-correction",
+    "file": "source-materials/brands/浪网-介绍文案更正.txt",
+    "sourceType": "unverified",
+    "collectedAt": "2026-11-11",
+    "description": "站长对浪网页首介绍文案的更正指示：线路、设备与定制服务的表述改用原品牌资料里的说法",
+    "credibility": "站长的更正指示；更正后的表述均来自原品牌资料，倍率与支持系统资料未注明。",
     "relatedBrandIds": ["langwang"]
   },
   {
@@ -77,7 +86,16 @@
     "sourceType": "unverified",
     "collectedAt": "2026-11-10",
     "description": "隐形人品牌介绍文案（标题、口号、三段介绍与结语），用于品牌页页首展示",
-    "credibility": "站长提供的宣传性文案；文中“IPLC”未见于原资料（资料为 IEPL 专线、BGP 智能优化），不作为事实依据，相关数据以品牌资料为准。",
+    "credibility": "站长提供的宣传性文案；原文中有一处线路说法未见于原资料（资料为 IEPL 专线、BGP 智能优化），页面展示已按站长 2026-11-11 的更正处理，不作为事实依据，相关数据以品牌资料为准。",
+    "relatedBrandIds": ["invisible"]
+  },
+  {
+    "id": "src-invisible-intro-correction",
+    "file": "source-materials/brands/隐形人-介绍文案更正.txt",
+    "sourceType": "unverified",
+    "collectedAt": "2026-11-11",
+    "description": "站长对隐形人页首介绍文案的更正指示：线路表述改用原品牌资料里的 IEPL 专线",
+    "credibility": "站长的更正指示；更正后的表述来自原品牌资料。",
     "relatedBrandIds": ["invisible"]
   },
   {
@@ -131,7 +149,16 @@
     "sourceType": "unverified",
     "collectedAt": "2026-11-10",
     "description": "暮光加速品牌介绍文案（标题、口号、三段介绍与结语），用于品牌页页首展示",
-    "credibility": "站长提供的宣传性文案；其中“IEPL”与“多客户端兼容”未见于原资料，不作为事实依据，相关数据以品牌资料为准。",
+    "credibility": "站长提供的宣传性文案；原文中有两处线路与客户端的说法未见于原资料，页面展示已按站长 2026-11-11 的更正处理，不作为事实依据，相关数据以品牌资料为准。",
+    "relatedBrandIds": ["twilight"]
+  },
+  {
+    "id": "src-twilight-intro-correction",
+    "file": "source-materials/brands/暮光加速-介绍文案更正.txt",
+    "sourceType": "unverified",
+    "collectedAt": "2026-11-11",
+    "description": "站长对暮光加速页首介绍文案的更正指示：线路与客户端的表述改用原品牌资料里的说法",
+    "credibility": "站长的更正指示；更正后的表述来自原品牌资料，第三方订阅兼容性仍待核实。",
     "relatedBrandIds": ["twilight"]
   },
   {

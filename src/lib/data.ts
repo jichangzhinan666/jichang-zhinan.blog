@@ -33,6 +33,25 @@ export function getBrand(slugOrId: string): Brand | undefined {
   return brands.find((b) => b.slug === slugOrId || b.id === slugOrId);
 }
 
+/**
+ * 品牌页内容的最近实质更新日期（YYYY-MM-DD），用于 Sitemap lastmod、JSON-LD dateModified 与页面上的“页面更新”。
+ *
+ * 由真实数据派生，不取构建时间：取“资料核实日期、该品牌各来源文件的登记日期、该品牌已发布测速报告的更新日期”
+ * 三者中最晚的一个。品牌页每次新增内容（介绍文案、状态说明、测速报告）都会登记一个来源或报告，
+ * 所以这个日期随真实改动前进，而“资料核实日期”（lastVerifiedAt）只表示套餐与节点资料何时核对过，二者含义不同。
+ */
+export function getBrandContentUpdatedAt(brand: Brand): string {
+  const dates = [
+    brand.lastVerifiedAt,
+    ...sources.filter((s) => s.relatedBrandIds.includes(brand.id)).map((s) => s.collectedAt),
+    ...speedTests.filter((r) => r.brandId === brand.id && r.status === 'published').map((r) => r.updatedAt),
+  ].filter((d): d is string => typeof d === 'string' && /^\d{4}-\d{2}-\d{2}/.test(d));
+  return dates.map((d) => d.slice(0, 10)).sort().at(-1) ?? SITE_LAUNCHED_AT;
+}
+
+/** 站点上线日期（与 site.ts 的 SITE.launchedAt 一致；此处单列以避免 data.ts 依赖 site.ts） */
+const SITE_LAUNCHED_AT = '2026-11-10';
+
 /** 所有品牌共同出现的地区（用于首页地球装饰的真实标签） */
 export function getRegionCoverage(): { region: string; count: number }[] {
   const published = getBrands();

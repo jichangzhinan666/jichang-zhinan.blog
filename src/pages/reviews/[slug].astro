@@ -14,6 +14,7 @@ import ReadTracker from '@/components/ReadTracker.astro';
 import {
   computeRanking,
   getBrands,
+  getBrandContentUpdatedAt,
   getEntryPlan,
   getReportsForBrand,
   getSourcesForBrand,
@@ -22,8 +23,10 @@ import {
   formatPerGB,
   EVIDENCE_LABEL,
 } from '@/lib/data';
+import { articleUrl, categoryLabel, getPublishedArticles } from '@/lib/articles';
 import { resolveEvidenceImage } from '@/lib/evidence';
 import { articleLd, breadcrumbLd, faqLd } from '@/lib/seo';
+import { SITE } from '@/lib/site';
 
 export async function getStaticPaths() {
   return getBrands().map((b) => ({ params: { slug: b.slug }, props: { brandId: b.id } }));
@@ -47,13 +50,29 @@ const tested = brand.speedTests.evidenceStatus !== 'none';
 // 页首价格卡里的线路摘要：去掉“地区：”前缀后去重
 const lineSummary = [...new Set(brand.lineTypes.map((l) => l.replace(/^[^：]+：/, '')))].join(' / ') || '资料未提供';
 const evidenceText = EVIDENCE_LABEL[brand.speedTests.evidenceStatus];
+// 页面内容最近一次实质更新（供 Sitemap、结构化数据与页面上的“页面更新”共用）
+const contentUpdatedAt = getBrandContentUpdatedAt(brand);
 
-const title = `${brand.displayName}机场怎么样？套餐价格、优惠码与实测证据（2026 版）`;
+// 提到该品牌的教程 / 指南 / 百科（来自文章 frontmatter 的 relatedBrands，只列已发布的真实文章；
+// 站点公告类资讯会提到全部品牌，参考价值低，不列入）
+const CATEGORY_ORDER = ['tutorials', 'guides', 'wiki'];
+const relatedArticles = (await getPublishedArticles())
+  .filter((a) => CATEGORY_ORDER.includes(a.data.category) && a.data.relatedBrands.includes(brand.id))
+  .sort((a, b) => CATEGORY_ORDER.indexOf(a.data.category) - CATEGORY_ORDER.indexOf(b.data.category) || a.data.order - b.data.order);
+
+// 标题末段如实反映测速情况：有站长实测才写“实测证据”，只有用户截图写“测速记录”，什么都没有写“测速状态”
+const speedPhrase = ownerReport ? '实测证据' : tested ? '测速记录' : '测速状态';
+const title = `${brand.displayName}机场怎么样？套餐价格、优惠码与${speedPhrase}（2026 版）`;
+const firstLine = (brand.lineTypes[0] ?? '').replace(/^[^：]+：/, '');
 const descParts = [
-  `${brand.displayName}${brand.englishName ? `（${brand.englishName}）` : ''}资料整理：${brand.nodeRegions.length} 个地区${brand.nodeCount ? ` ${brand.nodeCount} 个节点` : ''}，${brand.lineTypes[0] ?? ''}`,
+  `${brand.displayName}${brand.englishName ? `（${brand.englishName}）` : ''}资料整理：${brand.nodeRegions.length} 个地区${brand.nodeCount ? ` ${brand.nodeCount} 个节点` : ''}${firstLine ? `，${firstLine}` : ''}`,
   entry ? `入门 ${formatPrice(entry.price)}/月 ${formatTraffic(entry.trafficGB)}` : '',
-  brand.coupon ? `优惠码 ${brand.coupon.code}${brand.coupon.discount ? `（${brand.coupon.discount}）` : ''}` : '',
-  tested ? `${evidenceText}${brand.speedTests.latestDatedTest ? ` ${brand.speedTests.latestDatedTest}` : ''}` : '暂无测速证据',
+  brand.coupon ? `优惠码 ${brand.coupon.code}${brand.coupon.discount ? `，${brand.coupon.discount}` : ''}` : '',
+  ownerReport
+    ? `${evidenceText}${brand.speedTests.latestDatedTest ? ` ${brand.speedTests.latestDatedTest}` : ''}`
+    : tested
+      ? `本站暂无独立实测，另收录${evidenceText}`
+      : '本站暂无独立实测，节点表现待观察',
   `资料核实 ${brand.lastVerifiedAt}，价格以结算页为准。`,
 ].filter(Boolean);
 const description = descParts.join('；').replace('；资料核实', '。资料核实');
@@ -71,9 +90,12 @@ const faq = [
   },
   {
     q: `${brand.displayName}有实测数据吗？`,
-    a: tested
+    // 三种情况分开回答：有站长实测 / 只有他人提供的记录 / 什么都没有。只有第一种才说“有实测”
+    a: ownerReport
       ? `有。目前共 ${reports.length} 份记录，证据等级为“${evidenceText}”${brand.speedTests.latestDatedTest ? `，最近一次有日期的测试为 ${brand.speedTests.latestDatedTest}` : ''}。每份报告都注明工具、出口与局限，详见本页“测速与证据”。`
-      : `暂无。${brand.peakTestNote ?? '资料未提供测速记录。'}本站不会用其他品牌或他人的数据替代，补充实测后会更新。`,
+      : tested
+        ? `本站暂无独立实测。目前收录 ${reports.length} 份由他人提供的记录，证据等级为“${evidenceText}”${brand.speedTests.latestDatedTest ? `，最近一次有日期的记录为 ${brand.speedTests.latestDatedTest}` : ''}，未经本站复核，只能作为参考，详见本页“测速与证据”。完成实际节点测试后会补充。`
+        : `暂无。${brand.peakTestNote ?? '资料未提供测速记录。'}本站不会用其他品牌或他人的数据替代，补充实测后会更新。`,
   },
   {
     q: `${brand.displayName}多少钱？最低多少一个月？`,
@@ -91,11 +113,13 @@ const crumbs = [
 const jsonLd = [
   articleLd({
     type: 'Article',
-    headline: `${brand.displayName}机场资料与测评（2026 年度版）`,
+    // headline 与页面 <title> 保持一致（原先是一段页面上看不到的文字）
+    headline: title,
     description,
     url: `/reviews/${brand.slug}/`,
     datePublished: '2026-11-10',
-    dateModified: brand.lastVerifiedAt ?? '2026-11-10',
+    // 取页面内容的真实更新日期；原先用“资料核实日期”，会出现修改日期早于发布日期的情况
+    dateModified: contentUpdatedAt,
     keywords: brand.keywords,
     section: '品牌评测',
   }),
@@ -110,7 +134,7 @@ const jsonLd = [
   jsonLd={jsonLd}
   ogType="article"
   publishedTime="2026-11-10"
-  modifiedTime={brand.lastVerifiedAt ?? undefined}
+  modifiedTime={contentUpdatedAt}
 >
   <div class="container">
     <Breadcrumbs crumbs={crumbs} />
@@ -128,7 +152,8 @@ const jsonLd = [
             <EvidenceBadge brand={brand} />
             <span class="badge badge-medium">榜单第 {ranked.position} 位（编辑整理）</span>
             <span class="badge badge-none">资料核实 {brand.lastVerifiedAt}</span>
-            <span class={`badge ${tested ? 'badge-strong' : 'badge-weak'}`}>{tested ? '已有测试记录' : '未测试'}</span>
+            {/* 只有站长实测才用醒目的“已有测试记录”；只有他人提供的记录时如实写明，不用强调色 */}
+            <span class={`badge ${ownerReport ? 'badge-strong' : 'badge-weak'}`}>{ownerReport ? '已有测试记录' : tested ? '仅有第三方记录' : '未测试'}</span>
             <FavButton url={`/reviews/${brand.slug}/`} title={`${brand.displayName} 品牌资料与测评`} type="品牌测评" class="bh-fav" />
           </div>
           {
@@ -439,8 +464,27 @@ const jsonLd = [
               </div>
             )
           }
-          <p class="small muted">发现资料与官网不一致？请通过<a href="/contact/">联系与纠错</a>页面反馈，我们会在核实后更正并记录在<a href="/news/#changelog">更新日志</a>。</p>
+          <p class="small muted">
+            本页由<a href={SITE.author.url} rel="author">{SITE.author.name}</a>整理。本页资料与说明最近更新：<time datetime={contentUpdatedAt}>{contentUpdatedAt}</time>；套餐、节点等品牌资料的核实日期：{brand.lastVerifiedAt ?? '资料未提供'}。发现资料与官网不一致？请通过<a href="/contact/">联系与纠错</a>页面反馈，我们会在核实后更正并记录在<a href="/news/#changelog">更新日志</a>。
+          </p>
         </section>
+
+        {
+          relatedArticles.length > 0 && (
+            <section class="card" id="related" aria-labelledby="related-title">
+              <h2 id="related-title" class="section-title"><Icon name="book" size={20} />提到{brand.displayName}的教程与文章</h2>
+              <p class="small muted">以下文章在正文中以{brand.displayName}的套餐、客户端政策或测速记录为例，可结合本页资料一起看。</p>
+              <ul class="related-articles">
+                {relatedArticles.map((a) => (
+                  <li>
+                    <span class="ra-cat">{categoryLabel(a.data.category)}</span>
+                    <a href={articleUrl(a)}>{a.data.title}</a>
+                  </li>
+                ))}
+              </ul>
+            </section>
+          )
+        }
 
         <FAQ items={faq} title={`关于${brand.displayName}的常见问题`} id="brand-faq" />
 
@@ -472,6 +516,7 @@ const jsonLd = [
             <li><a href="#speed">测速与证据</a></li>
             <li><a href="#support">客服与防骗</a></li>
             <li><a href="#sources">资料来源</a></li>
+            {relatedArticles.length > 0 && <li><a href="#related">相关教程与文章</a></li>}
             <li><a href="#brand-faq">常见问题</a></li>
           </ol>
         </nav>
@@ -788,6 +833,57 @@ const jsonLd = [
     display: grid;
     grid-template-columns: minmax(0, 1fr);
     gap: 14px;
+  }
+
+  /* 提到该品牌的文章：栏目标签 + 标题，两列排列，窄屏单列 */
+  .related-articles {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px 20px;
+  }
+
+  .related-articles li {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    align-items: baseline;
+    gap: 8px;
+    padding: 8px 0;
+    border-bottom: 1px solid var(--border);
+    font-size: 0.925rem;
+  }
+
+  .ra-cat {
+    padding: 1px 8px;
+    border-radius: 999px;
+    background: var(--surface-3);
+    color: var(--muted-strong);
+    font-size: 0.72rem;
+    font-weight: 600;
+    white-space: nowrap;
+  }
+
+  .related-articles a {
+    color: var(--text);
+    font-weight: 600;
+  }
+
+  .related-articles a:hover {
+    color: var(--primary);
+  }
+
+  @media (max-width: 767px) {
+    .related-articles {
+      grid-template-columns: minmax(0, 1fr);
+    }
+  }
+
+  @media (pointer: coarse) {
+    .related-articles a {
+      padding-block: 5px;
+    }
   }
 
   /* 侧栏只保留目录与榜单位置两张短卡片，吸顶时在 768px 高的屏幕里也能完整显示 */

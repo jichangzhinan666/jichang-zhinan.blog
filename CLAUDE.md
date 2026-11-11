@@ -15,9 +15,12 @@ npm run validate:data  # 校验 brands/plans/speed-tests/sources/evidence-map �
 npm run build          # prebuild(校验+资产) → astro build → postbuild(IndexNow key 文件 + SEO 审计)
 npm run preview        # 预览 dist
 npm run seo:audit      # 单独运行 SEO 审计（需先 build），输出 seo-audit-report.json
+npm run seo:deep       # SEO 深度审计（需先 build）：逐页元数据、结构化数据、内链图、重复度；写出 URL-INDEX-AUDIT.csv
+npm run seo:live       # 同上，并逐个请求线上域名的 URL（上线后使用；域名未解析时只报告“未上线”）
 npm run ui:audit       # 全站 UI 审计（需先 build）：本机 Chrome 在 7 个视口渲染全部页面，输出 ui-audit-report.json
-npm run ui:test        # 交互实测（需先 build）：真实鼠标 / 键盘操作 69 项用例，有失败时以非 0 退出
-npm run indexnow:dry   # IndexNow 干运行（从 dist/sitemap.xml 读取 URL，不发送）
+npm run ui:test        # 交互实测（需先 build）：真实鼠标 / 键盘操作 70 项用例，有失败时以非 0 退出
+npm run indexnow:dry   # IndexNow 干运行：对比 dist/sitemap.xml 与上次提交记录，列出将提交的 URL（不发送、不写文件）
+npm run indexnow       # IndexNow 真实提交，只推新增 / 更新 / 移除的 URL（需 INDEXNOW_KEY；须经站长批准）
 ```
 
 `ui:audit` / `ui:test` 依赖本机已安装的 Chrome 或 Edge（可用 `CHROME_PATH` 指定），不联网、不改文件；**没有挂到 `build` 上**（Cloudflare Pages 构建环境没有浏览器）。改动样式、组件或交互脚本后请手动跑这两条。常用参数：`--vp 375,1440`、`--pages /,/compare/`、`--theme dark`、`--shots <目录>`、`--only <分组关键词>`。
@@ -45,6 +48,9 @@ npm run indexnow:dry   # IndexNow 干运行（从 dist/sitemap.xml 读取 URL，
 | `src/pages/search-index.json.ts` | 站内搜索索引 |
 | `scripts/` | validate-data / generate-brand-assets / seo-audit / indexnow / write-indexnow-key；`ui-audit.mjs`（布局与可访问性扫描）、`ui-interactions.mjs`（交互实测）、`lib/cdp.mjs`（零依赖驱动本机 Chrome） |
 | `UI_AUDIT_REPORT.md` / `docs/ui-audit/` | 2026-11-11 全站 UI 审计报告与修复前后对比图 |
+| `SEO-AUDIT-REPORT.md` 等六份文件 | 2026-11-11 Bing SEO 审计：总报告、`URL-INDEX-AUDIT.csv`（由 `npm run seo:deep` 生成）、`KEYWORD-MAPPING.csv`、`CONTENT-QUALITY-REPORT.md`、`BING-SUBMISSION-REPORT.md`、`SEO-FINAL-CHECKLIST.md` |
+| `scripts/seo-deep-audit.mjs` | SEO 深度审计脚本（与构建时的 `seo-audit.mjs` 互补） |
+| `.indexnow/` | IndexNow 提交记录（`state.json`、`log.jsonl`）；首次真实提交后才会出现 |
 | `public/robots.txt` `_headers` `_redirects` | 爬虫、响应头与重定向规则（Cloudflare Pages） |
 
 ## 3. 内容硬性约束（不得违反）
@@ -65,7 +71,12 @@ npm run indexnow:dry   # IndexNow 干运行（从 dist/sitemap.xml 读取 URL，
 - 每页唯一 `<title>`（≤ 70 字符）与 description（50–230 字符），一个 H1，自引用 canonical，OG/Twitter 标签在 `BaseLayout`。
 - `/search/` 与 404 为 noindex，不进 sitemap。
 - robots.txt 引用 `/sitemap.xml`（自定义端点，不是 `sitemap-index.xml`）。不得屏蔽 `/_astro/`。
-- IndexNow：`INDEXNOW_KEY` 只放环境变量；`scripts/write-indexnow-key.mjs` 在构建后写 `dist/<KEY>.txt`；推送只用 `scripts/indexnow.mjs` 手动执行，默认干运行。
+- IndexNow：`INDEXNOW_KEY` 只放环境变量；`scripts/write-indexnow-key.mjs` 在构建后写 `dist/<KEY>.txt`；推送只用 `scripts/indexnow.mjs` 手动执行。默认只提交发生变化的 URL：每个 URL 上次提交时的 lastmod 记在 `.indexnow/state.json`，每次真实提交的时间、数量、响应码与失败原因追加到 `.indexnow/log.jsonl`（两者都入库，作为提交记录）。全量提交需显式加 `--from-sitemap --all`，只在首次上线或更换 key 时使用。
+- 品牌页的 Sitemap lastmod、JSON-LD `dateModified` 与页面上的“本页资料与说明最近更新”都来自 `getBrandContentUpdatedAt()`：取资料核实日期、该品牌来源文件登记日期、已发布测速报告更新日期中最晚的一个。给品牌页加内容时登记来源（`sources.json` 的 `collectedAt`）即可，不要手改日期；`lastVerifiedAt` 只表示套餐与节点资料何时核对过。
+- 没有站长实测的品牌：标题末段写“测速状态”（无任何记录）或“测速记录”（只有他人提供的记录），FAQ 回答“本站暂无独立实测”，页首徽章写“未测试”或“仅有第三方记录”（“已有测试记录”只给有站长实测的品牌）；`brands.json` 的 `speedObservation` 提供“节点表现待观察”说明。拿到站长实测后删除 `speedObservation`（校验脚本会报错提醒）。
+- 带 `Article` / `TechArticle` 结构化数据的页面（文章、品牌页、测速报告、年度榜单）必须在正文里有可见署名并链接到 `/author/`；他人提供的测速记录写“整理”，不写“测试”。`npm run seo:deep` 会检查（`ld-author-invisible`）。
+- `_headers` 对 `https://:project.pages.dev/*` 设了 `X-Robots-Tag: noindex`，避免 Cloudflare Pages 的默认域名与正式域名重复收录；不要删。
+- 上线前后的检查清单与 Bing 站长工具的手动步骤见 `SEO-FINAL-CHECKLIST.md`、`BING-SUBMISSION-REPORT.md`；关键词与页面的对应关系见 `KEYWORD-MAPPING.csv`，新增页面前先查表，避免两个页面抢同一个词。
 - Bing/Google 验证标签通过 `PUBLIC_BING_SITE_VERIFICATION` / `PUBLIC_GOOGLE_SITE_VERIFICATION` 注入，未拿到真实值前留空。
 
 ## 5. 部署（Cloudflare Pages）

@@ -12,8 +12,10 @@
 /images/*
   Cache-Control: public, max-age=604800
 
+# 站内搜索用的数据文件，不是给搜索引擎收录的页面
 /search-index.json
   Cache-Control: public, max-age=3600
+  X-Robots-Tag: noindex
 
 /sitemap.xml
   Cache-Control: public, max-age=3600
@@ -25,3 +27,9 @@
 
 /robots.txt
   Cache-Control: public, max-age=3600
+
+# Cloudflare Pages 会在 <项目名>.pages.dev 上提供同一份内容。
+# 正式域名是 jichang-zhinan.blog，pages.dev 这个地址不应被收录，否则会与正式域名形成重复内容。
+# （预览部署的地址 Cloudflare 默认已带 noindex，这里补上生产部署的 pages.dev 地址。）
+https://:project.pages.dev/*
+  X-Robots-Tag: noindex

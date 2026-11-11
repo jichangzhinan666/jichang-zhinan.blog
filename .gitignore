@@ -19,6 +19,9 @@ npm-debug.log*
 # 每次构建生成的审计结果（内容见 IMPLEMENTATION_REPORT.md）
 seo-audit-report.json
 
+# SEO 深度审计的完整数据（npm run seo:deep；结论见 SEO-AUDIT-REPORT.md，逐页结果见 URL-INDEX-AUDIT.csv）
+seo-deep-audit.json
+
 # UI 审计与交互实测的输出（npm run ui:audit / ui:test；结论见 UI_AUDIT_REPORT.md）
 ui-audit-report.json
 ui-interactions-report.json

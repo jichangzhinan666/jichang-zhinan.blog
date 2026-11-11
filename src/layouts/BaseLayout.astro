@@ -59,6 +59,8 @@ const robots = noindex ? 'noindex, follow' : 'index, follow, max-image-preview:l
     <meta name="description" content={description} />
     {!omitCanonical && <link rel="canonical" href={canonical} />}
     <meta name="robots" content={robots} />
+    {/* Bing 用 content-language 判断页面面向的语言与地区（与 <html lang> 一致） */}
+    <meta http-equiv="content-language" content={SITE.locale} />
     <meta name="author" content={SITE.author.name} />
     <meta name="theme-color" content="#0c2a68" media="(prefers-color-scheme: dark)" />
     <meta name="theme-color" content="#155eef" media="(prefers-color-scheme: light)" />

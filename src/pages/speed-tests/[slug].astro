@@ -8,6 +8,7 @@ import TitleText from '@/components/TitleText.astro';
 import { getSpeedReports, getSpeedReport, getBrand, formatTestedAt, getReportsForBrand } from '@/lib/data';
 import { resolveEvidenceImage } from '@/lib/evidence';
 import { articleLd, breadcrumbLd } from '@/lib/seo';
+import { SITE } from '@/lib/site';
 import type { Range, RegionResult } from '@/lib/types';
 
 export async function getStaticPaths() {
@@ -92,6 +93,9 @@ const regionLabelCol = (rr: RegionResult) => rr.latencyLabel ?? '延迟';
         <strong>测试环境说明</strong>
         <p class="small" style="margin:4px 0 0">{report.testOrigin}</p>
         <p class="small" style="margin:4px 0 0"><strong>方法：</strong>{report.method}</p>
+        <p class="small" style="margin:4px 0 0">
+          {own ? <><strong>测试与整理：</strong><a href={SITE.author.url} rel="author">{SITE.author.name}</a>（站长）</> : <><strong>整理：</strong><a href={SITE.author.url} rel="author">{SITE.author.name}</a>。本记录由他人提供，不是本站实测，本站未独立复核。</>}
+        </p>
       </div>
     </div>
 

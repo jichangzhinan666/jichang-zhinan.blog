@@ -87,6 +87,8 @@ npm run indexnow       # IndexNow 真实提交，只推新增 / 更新 / 移除�
 ## 5. 部署（Cloudflare Pages）
 
 - 构建命令：`npm run build`；输出目录：`dist`；Node 版本：22（环境变量 `NODE_VERSION=22`）。
+- **线上状态（2026-11-11 起）**：网站已通过 Cloudflare Pages 上线。Pages 项目 `jichang-zhinan-blog` 以 Git 集成连接 GitHub 仓库的 `main` 分支——**推送到 `main` 会自动构建并更新线上网站，推送就等于部署**。临时地址 `jichang-zhinan-blog.pages.dev` 带 `noindex`。Cloudflare 后台由站长自己操作。改动后用 `npm run seo:live` 复核线上。
+- **构建机是 Linux**：在 Windows 上增减依赖后，检查 `package-lock.json` 里各原生模块（Astro 编译器、rolldown、lightningcss、sharp、satteri）是否都有 `linux-x64-gnu` 版本——npm 在 Windows 上生成锁文件时可能漏掉，本机构建照常通过，Cloudflare 上会失败。校验与审计脚本里的“今天”按北京时间计算，不要改回 UTC。
 - 环境变量：`INDEXNOW_KEY`（可选）、`PUBLIC_CONTACT_EMAIL`（可选）、`PUBLIC_BING_SITE_VERIFICATION`、`PUBLIC_GOOGLE_SITE_VERIFICATION`（拿到后再填）。
 - 404：Cloudflare Pages 自动使用 `dist/404.html` 并返回 404 状态码。
 - `_headers` 提供安全头与缓存策略；`_redirects` 提供 `/rankings/latest/` 别名与未来的 301 对照。

@@ -514,6 +514,18 @@ async function head(url, ua) {
       notFound: await head(`${SITE}/__seo-audit-not-found__/`),
       bingbotHome: await head(`${SITE}/`, BINGBOT),
     };
+    // 站点级核对：首选域名、协议跳转、robots / sitemap、404 状态、Bingbot 标识是否被一刀切拦截
+    const b = liveResult.base;
+    const isRedirectTo = (r, target) => [301, 308].includes(r.status) && (r.location ?? '').replace(/\/$/, '') === target.replace(/\/$/, '');
+    if (b.https.error || b.https.status !== 200) issue('P0', 'live-home', SITE, `首页线上返回 ${b.https.error ?? b.https.status}`);
+    if (!isRedirectTo(b.http, SITE)) issue('P1', 'live-http-redirect', `http://${HOST}/`, `HTTP 没有以 301 跳到 ${SITE}/（返回 ${b.http.error ?? b.http.status}${b.http.location ? ` → ${b.http.location}` : ''}）`);
+    if (b.wwwHttps.error) issue('P2', 'live-www-missing', `https://www.${HOST}/`, `www 无法访问（${b.wwwHttps.error}），应跳转到 ${SITE}/`);
+    else if (b.wwwHttps.status === 200) issue('P2', 'live-www-duplicate', `https://www.${HOST}/`, `www 直接返回 200，与主域名是两套可访问的地址；应以 301 跳到 ${SITE}/（页面的 canonical 已指向主域名，可减轻但不能代替跳转）`);
+    else if (!isRedirectTo(b.wwwHttps, SITE)) issue('P2', 'live-www-redirect', `https://www.${HOST}/`, `www 没有以 301 跳到 ${SITE}/（返回 ${b.wwwHttps.status}${b.wwwHttps.location ? ` → ${b.wwwHttps.location}` : ''}）`);
+    if (b.robots.error || b.robots.status !== 200) issue('P0', 'live-robots', '/robots.txt', `线上 robots.txt 返回 ${b.robots.error ?? b.robots.status}`);
+    if (b.sitemap.error || b.sitemap.status !== 200) issue('P0', 'live-sitemap', '/sitemap.xml', `线上 sitemap.xml 返回 ${b.sitemap.error ?? b.sitemap.status}`);
+    if (!b.notFound.error && b.notFound.status !== 404) issue('P1', 'live-soft-404', '/__seo-audit-not-found__/', `不存在的地址返回 ${b.notFound.status}，应为 404`);
+    if (b.bingbotHome.error || b.bingbotHome.status !== 200 || b.bingbotHome.cfMitigated) issue('P1', 'live-bingbot-ua', SITE, `带 Bingbot 标识的请求返回 ${b.bingbotHome.error ?? b.bingbotHome.status}${b.bingbotHome.cfMitigated ? `（cf-mitigated: ${b.bingbotHome.cfMitigated}）` : ''}；真实 Bingbot 是否被拦截要在 Bing 站长工具的“URL 检查”里确认`);
     for (const p of pages) {
       if (p.urlPath === '/404.html') continue;
       const r = await head(`${SITE}${p.urlPath}`);

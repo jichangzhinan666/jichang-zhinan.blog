@@ -221,7 +221,7 @@ const regionLabelCol = (rr: RegionResult) => rr.latencyLabel ?? '延迟';
         <section class="card section" aria-labelledby="conn-title">
           <h2 class="section-title" id="conn-title"><Icon name="check" size={20} />流媒体与 AI 连通性（IPCheck.ing{own.testedNode ? ` · ${own.testedNode.split('（')[0]}` : ''}）</h2>
           <p class="small muted">
-            {own.connectivityTotal ? `${own.connectivityTotal} 项全部显示可用` : ''}{own.connectivityAvgMs ? `，平均连通延迟 ${own.connectivityAvgMs} ms` : ''}。“可用”为工具的连通性判定，不等于该服务的账号/地区限制全部解除。
+            {own.connectivityTotal ? `${own.connectivityTotal} 项全部显示可用` : ''}{own.connectivityAvgMs ? `，平均连通延迟 ${own.connectivityAvgMs} ms` : ''}。“可用”为工具的连通性判定，不等于该服务的账号/地区限制全部解除。四个节点的 AI 工具记录放在一起怎么看，见<a href="/guides/chatgpt-jichang-zenme-xuan/">ChatGPT 机场怎么选</a>。
           </p>
           <div class="conn-groups">
             {categories.map((cat) => {

@@ -86,4 +86,4 @@ iOS 没有桌面端的“系统代理”与“TUN 模式”之分，客户端启
 
 - 只在 App Store 内安装客户端，不要安装来历不明的企业签名 App。
 - 订阅链接只粘贴到客户端里，不要提交到网页工具。
-- 本文为通用教程，不构成对任何品牌的评价；各品牌政策以[品牌资料库](/reviews/)为准。想了解测速方法请看[节点测速方法](/tutorials/jiedian-cesu-fangfa-nekospeed-speedtest/)。
+- 本文为通用教程，不构成对任何品牌的评价；各品牌政策以[品牌资料库](/reviews/)为准。想了解测速方法请看[节点测速方法](/tutorials/jiedian-cesu-fangfa-ipcheck-speedtest/)。

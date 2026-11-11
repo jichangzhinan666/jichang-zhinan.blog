@@ -1,12 +1,12 @@
 ---
-title: "2026 机场选购指南：按用途、流量、预算、地区和使用方式五步选对机场"
+title: "机场怎么选？按用途、流量、预算、地区和使用方式五步选对（2026 版）"
 description: "一份可以照着做的机场选购流程：先定用途，再估流量，算每 GB 单价，看地区与线路，最后确认使用方式与退款政策。所有例子取自本站收录的 8 个品牌的真实套餐与政策，不含评分。"
 category: guides
-primaryKeyword: "2026 机场选购指南"
+primaryKeyword: "机场怎么选"
 tags: ["选购指南", "机场推荐", "每 GB 单价", "官方客户端", "2026"]
 author: "机场阿南"
 publishedAt: "2026-11-10"
-updatedAt: "2026-11-10"
+updatedAt: "2026-11-11"
 status: published
 featured: true
 order: 2
@@ -67,7 +67,7 @@ faq:
 
 1. 从品牌页的“前往官网 / 推广入口”进入，核对地址栏域名，不从网盘、二手群购买。
 2. 先买月付或最小档。
-3. 连续 3–7 天在 20:00–23:00 用同一个节点做同样的事（看视频、开会、用 AI），记录卡顿次数；想量化就按[测速方法教程](/tutorials/jiedian-cesu-fangfa-nekospeed-speedtest/)做记录。
+3. 连续 3–7 天在 20:00–23:00 用同一个节点做同样的事（看视频、开会、用 AI），记录卡顿次数；想量化就按[测速方法教程](/tutorials/jiedian-cesu-fangfa-ipcheck-speedtest/)做记录。
 4. 对照品牌页“测速与证据”：有没有带时间戳的实测？本站只给证据等级，不给分数，规则见[方法说明](/methodology/)。
 5. 满意再考虑季付以上，先看[付费周期比较](/guides/yuefu-jifu-nianfu-zenme-bijiao/)。
 

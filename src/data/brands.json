@@ -689,10 +689,10 @@
       "slogan": "让连接如微风般轻盈，让世界触手可及。",
       "paragraphs": [
         "微风网络（BreezeNet）是一款主打高性价比 IPLC 专线与大流量套餐的全球网络加速服务，以多地区节点、灵活的订阅方案、多设备兼容及便捷的使用体验为主要特色，满足用户日常浏览、AI 工具、海外流媒体、在线学习与跨境办公等多元化网络需求。",
-        "微风网络提供覆盖不同使用频率的流量方案，从 ¥137/年的轻量套餐，到每月 1.2TB 的高流量方案，并提供一次性不限时流量包，让不同预算的用户都能灵活选择。"
+        "微风网络提供覆盖不同使用频率的流量方案，从 ¥99/年的轻量套餐，到每月 1.2TB 的高流量方案，并提供一次性不限时流量包，让不同预算的用户都能灵活选择。"
       ],
       "tagline": "微风网络——让每一次连接，都像微风一样轻松自在。",
-      "source": "品牌介绍文案由站长于 2026-11-10 提供，属宣传性描述；文中“¥137/年”与本站登记的清风套餐 ¥99/年（核实 2026-11-09）不一致，价格以下方套餐表与结算页为准"
+      "source": "品牌介绍文案由站长于 2026-11-10 提供，属宣传性描述；其中年付轻量套餐的价格已于 2026-11-11 按套餐表更正为清风套餐的 ¥99/年，价格以下方套餐表与结算页为准"
     },
     "officialWebsite": null,
     "affiliateUrl": "https://downloadshare.breezenetttt.sbs/#/?code=eS6rgePR",
@@ -777,7 +777,8 @@
     ],
     "sourceRecords": [
       { "sourceType": "user-supplied-official", "sourceFile": "source-materials/brands/微风网络.txt", "sourceLocation": "全文（一至十节）", "verifiedAt": "2026-11-09" },
-      { "sourceType": "unverified", "sourceFile": "source-materials/brands/微风网络-品牌介绍.txt", "sourceLocation": "品牌介绍文案（页首展示）", "verifiedAt": "2026-11-10", "note": "站长提供的品牌介绍文案，属宣传性描述；文中“¥137/年”与登记的清风套餐 ¥99/年不一致，不作为价格依据" },
+      { "sourceType": "unverified", "sourceFile": "source-materials/brands/微风网络-品牌介绍.txt", "sourceLocation": "品牌介绍文案（页首展示）", "verifiedAt": "2026-11-10", "note": "站长提供的品牌介绍文案，属宣传性描述；原文“¥137/年”与登记的清风套餐 ¥99/年不一致，不作为价格依据" },
+      { "sourceType": "unverified", "sourceFile": "source-materials/brands/微风网络-介绍文案价格更正.txt", "sourceLocation": "站长 2026-11-11 的更正指示", "verifiedAt": "2026-11-11", "note": "站长确认以套餐表为准：页首介绍文案中的年付轻量套餐价格由“¥137/年”改为“¥99/年”" },
       { "sourceType": "unverified", "sourceFile": "source-materials/brands/微风网络-测速状态说明.txt", "sourceLocation": "测速状态说明（“测速与证据”区块）", "verifiedAt": "2026-11-11", "note": "站长提供的状态说明，不含测速数值；本站暂无独立实测，用户提供的未标注日期截图作为第三方记录保留" }
     ],
     "lastVerifiedAt": "2026-11-09",

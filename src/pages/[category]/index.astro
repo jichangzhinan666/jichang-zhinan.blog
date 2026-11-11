@@ -31,7 +31,7 @@ const TUTORIAL_GROUPS = [
   { id: 'macos', label: 'macOS', icon: 'device', blurb: 'Clash Verge Rev 的 macOS 安装包、导入订阅与 TUN 模式说明（与 Windows 共用一篇教程）。', slugs: ['clash-verge-rev-jiaocheng'] },
   { id: 'android', label: 'Android', icon: 'device', blurb: 'Clash Meta for Android、FlClash 的导入步骤、VPN 权限、分应用代理与国产系统后台保活。', slugs: ['android-shiyong-jiaocheng', 'windows-kehuduan-changjian-wenti'] },
   { id: 'ios', label: 'iOS / iPadOS', icon: 'device', blurb: '非大陆地区 Apple ID、Shadowrocket 等客户端导入、VPN 配置权限与只提供官方客户端的品牌怎么用。', slugs: ['ios-shiyong-jiaocheng', 'windows-kehuduan-changjian-wenti'] },
-  { id: 'subscription', label: '订阅与节点管理', icon: 'list', blurb: '订阅链接导入与更新、节点切换、规则模式，以及客户端延迟测试与节点测速的记录方法。', slugs: ['clash-verge-rev-jiaocheng', 'jiedian-cesu-fangfa-nekospeed-speedtest'] },
+  { id: 'subscription', label: '订阅与节点管理', icon: 'list', blurb: '订阅链接导入与更新、节点切换、规则模式，以及客户端延迟测试与节点测速的记录方法。', slugs: ['clash-verge-rev-jiaocheng', 'jiedian-cesu-fangfa-ipcheck-speedtest'] },
   { id: 'troubleshooting', label: '故障排查', icon: 'tool', blurb: '连不上、订阅失败、部分应用不走代理、系统时间误差、DNS 泄露检测与 Clash 系 DNS 设置。', slugs: ['windows-kehuduan-changjian-wenti', 'dns-xielou-jiance-paicha'] },
 ] as const;
 /** 全站已发布文章按 slug 索引：分类与专题只链接真实存在的文章 */
@@ -207,7 +207,7 @@ const WIKI_SECTIONS = [
     blurb: '延迟、抖动、丢包、满载延迟与晚高峰各测什么，Mbps 与 MB/s 怎么换算，“解锁”为什么会随时变化。',
     terms: ['延迟 / Ping', '抖动', '丢包率', '满载延迟', '晚高峰', 'TLS RTT 与 HTTPS 延迟', 'Mbps 与 MB/s', '解锁'],
     reads: [{ slug: 'jiedian-di-yanchi-que-sudu-man', focus: '延迟低却速度慢的八个原因与排查顺序' }],
-    tutorials: [{ slug: 'jiedian-cesu-fangfa-nekospeed-speedtest', focus: '三类测速工具的记录规范与单位换算' }],
+    tutorials: [{ slug: 'jiedian-cesu-fangfa-ipcheck-speedtest', focus: '三类测速工具的记录规范与单位换算' }],
   },
 ] as const;
 const termIndex = new Map(glossary.map((g, i) => [g.term, i + 1] as const));

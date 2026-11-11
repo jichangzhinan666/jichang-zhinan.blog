@@ -61,7 +61,7 @@ faq:
 | … |  |  |  |  |  |
 | 第 7 天 |  |  |  |  |  |
 
-记录规范（工具、单位、截图要求）见[节点测速方法：NekoSpeed 与 Speedtest 的记录规范](/tutorials/jiedian-cesu-fangfa-nekospeed-speedtest/)。7 天里如果出现 2 次以上“视频卡顿到需要降清晰度”或“会议掉线”，就不要续费长周期。
+记录规范（工具、单位、截图要求）见[节点测速方法：Speedtest / IPCheck.ing 与 MiaoKo 的记录规范](/tutorials/jiedian-cesu-fangfa-ipcheck-speedtest/)。7 天里如果出现 2 次以上“视频卡顿到需要降清晰度”或“会议掉线”，就不要续费长周期。
 
 ## 本站怎么标注稳定性证据
 
@@ -74,4 +74,4 @@ faq:
 3. 下载快不代表能开会，看上传与抖动。
 4. 任何服务商的“专线”“不限速”都需要用自己的记录验证。
 
-相关阅读：[2026 机场选购指南](/guides/2026-jichang-xuangou-zhinan/)、[机场节点低延迟却速度慢的原因](/wiki/jiedian-di-yanchi-que-sudu-man/)、[节点测速报告总览](/speed-tests/)。
+相关阅读：[机场怎么选：五步选购流程](/guides/2026-jichang-xuangou-zhinan/)、[机场节点低延迟却速度慢的原因](/wiki/jiedian-di-yanchi-que-sudu-man/)、[节点测速报告总览](/speed-tests/)。

@@ -77,7 +77,7 @@ Clash 系客户端需要一条**订阅链接**（Subscription URL）来获取节
 
 1. 打开一个海外网站确认能访问，再打开一个国内网站确认走直连（规则模式下国内网站速度应与平时一致）。
 2. 左侧“连接”（Connections）页面能看到每条连接走的是哪个节点、命中了哪条规则，排查“为什么这个网站打不开”时最有用。
-3. 想量化速度，请按[节点测速方法](/tutorials/jiedian-cesu-fangfa-nekospeed-speedtest/)记录，并在 20:00–23:00 复测。
+3. 想量化速度，请按[节点测速方法](/tutorials/jiedian-cesu-fangfa-ipcheck-speedtest/)记录，并在 20:00–23:00 复测。
 
 ## 常见问题速查
 

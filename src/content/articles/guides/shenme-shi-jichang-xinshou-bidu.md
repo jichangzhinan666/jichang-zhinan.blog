@@ -84,6 +84,6 @@ faq:
 
 ## 下一步读什么
 
-- 想系统地选：[2026 机场选购指南](/guides/2026-jichang-xuangou-zhinan/)
+- 想系统地选：[机场怎么选：五步选购流程](/guides/2026-jichang-xuangou-zhinan/)
 - 想直接看品牌：[2026 机场推荐榜单](/rankings/2026/)（编辑整理榜，不含评分）
 - 想动手配置：[Clash Verge Rev 安装和订阅导入教程](/tutorials/clash-verge-rev-jiaocheng/)

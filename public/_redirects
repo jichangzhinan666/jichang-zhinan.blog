@@ -6,3 +6,7 @@
 
 # Add 301 mappings here when old URLs change, e.g.
 # /old-path/ /new-path/ 301
+
+# 2026-11-11: speed-test tutorial slug renamed before launch (the old slug named a tool the article never covered)
+/tutorials/jiedian-cesu-fangfa-nekospeed-speedtest/ /tutorials/jiedian-cesu-fangfa-ipcheck-speedtest/ 301
+/tutorials/jiedian-cesu-fangfa-nekospeed-speedtest /tutorials/jiedian-cesu-fangfa-ipcheck-speedtest/ 301

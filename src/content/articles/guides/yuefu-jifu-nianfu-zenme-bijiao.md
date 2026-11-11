@@ -75,7 +75,7 @@ faq:
 
 ## 操作建议
 
-1. 月付试用一个月，期间按[测速方法](/tutorials/jiedian-cesu-fangfa-nekospeed-speedtest/)记录晚高峰表现。
+1. 月付试用一个月，期间按[测速方法](/tutorials/jiedian-cesu-fangfa-ipcheck-speedtest/)记录晚高峰表现。
 2. 满意则季付；季付结束仍满意再考虑年付。
 3. 把一次性优惠码留给你确定要买的最长周期。
 4. 两年付、三年付只在上述四个条件全部满足、且你愿意承担全部预付风险时考虑。

@@ -88,7 +88,8 @@ export const NAV: NavItem[] = [
  */
 export const SOCIAL_LINKS: { id: 'telegram' | 'github'; label: string; href: string | null }[] = [
   { id: 'telegram', label: 'Telegram 群组', href: 'https://t.me/+i7oRptf4FstlMTVl' },
-  { id: 'github', label: 'GitHub', href: null },
+  // 站点的公开仓库（站长 2026-11-11 提供）
+  { id: 'github', label: 'GitHub', href: 'https://github.com/jichangzhinan666/jichang-zhinan.blog' },
 ];
 
 /**

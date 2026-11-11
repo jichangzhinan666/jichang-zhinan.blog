@@ -25,7 +25,17 @@ const crumbs = [
   { name: '首页', href: '/' },
   { name: '作者介绍', href: '/author/' },
 ];
-const sameAs = [...CONTACT_CHANNELS.filter((c) => c.kind === 'profile' && c.href).map((c) => c.href!), ...SOCIAL_LINKS.filter((s) => s.href).map((s) => s.href!)];
+// sameAs 指“同一主体的主页”：页头的 GitHub 图标链接到仓库，这里取对应的账号主页，不写某个仓库的地址
+const profileUrl = (href: string) => {
+  try {
+    const u = new URL(href);
+    const owner = u.pathname.split('/').filter(Boolean)[0];
+    return u.hostname === 'github.com' && owner ? `${u.origin}/${owner}` : href;
+  } catch {
+    return href;
+  }
+};
+const sameAs = [...CONTACT_CHANNELS.filter((c) => c.kind === 'profile' && c.href).map((c) => c.href!), ...SOCIAL_LINKS.filter((s) => s.href).map((s) => profileUrl(s.href!))];
 const personLd = {
   '@type': 'Person',
   '@id': absoluteUrl('/author/#person'),

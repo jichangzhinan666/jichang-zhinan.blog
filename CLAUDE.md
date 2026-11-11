@@ -12,6 +12,7 @@ npm install            # 安装依赖
 npm run dev            # 开发服务器
 npm run check          # astro check（类型与模板检查）
 npm run validate:data  # 校验 brands/plans/speed-tests/sources/evidence-map 与文章 frontmatter
+npm run readme         # 按数据重新生成 README.md 里的“机场推荐榜单”一节（构建前也会自动执行）
 npm run build          # prebuild(校验+资产) → astro build → postbuild(IndexNow key 文件 + SEO 审计)
 npm run preview        # 预览 dist
 npm run seo:audit      # 单独运行 SEO 审计（需先 build），输出 seo-audit-report.json
@@ -65,6 +66,7 @@ npm run indexnow       # IndexNow 真实提交，只推新增 / 更新 / 移除�
 7. **不新增误导性按钮**：工具必须真实可用或明确标“规划中”。不提供需要上传订阅链接的工具（IP 查询、订阅转换、配置生成），理由见 `/privacy/#tools`。订阅更新用 RSS，不得假装邮件订阅成功。
 8. **图片**：无版权不明的外部图片；证据图经 `scripts/generate-brand-assets.mjs` 转为 ≤1600px webp 后用 `<Image>` 引用，`alt` 写明是报告图/截图；装饰图用 CSS/SVG。
 9. **数据改动流程**：改 JSON → `npm run validate:data` → 需要时更新 `changelog.json` 与对应页面 lastmod → `npm run build`。
+10. **README.md 是 GitHub 仓库的首页**，上面有一份公开的“机场推荐榜单”。两个 `ranking` 标记之间的内容由 `scripts/generate-readme.mjs` 从 `src/data/*.json` 生成，口径与网站榜单页一致，不要手改；改了品牌、套餐或测速数据后构建一次，README 会跟着更新，记得一并提交。README 同样不显示评分，写明名次是编辑推荐；链接只指向站内页面，不直接放推广链接（推广链接与披露说明都在站内页面上）。
 
 ## 4. SEO 约定
 

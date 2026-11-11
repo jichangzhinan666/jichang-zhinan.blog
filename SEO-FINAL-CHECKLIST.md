@@ -2,6 +2,7 @@
 
 - 验收日期：2026-11-11
 - 对象：本地正式构建（53 个页面，其中 50 个可索引）与线上站点。网站已于 2026-11-11 傍晚上线，线上各项是当天 19:00 前后（北京时间）的实测结果
+- 上线之后的变化：当天晚些时候新增了 1 篇教程《海外 Apple ID 指南》，本地构建变为 54 个页面、51 个可索引，构建、审计与界面回归均已重跑通过。它推送上线之前，下文的线上数字（50 个地址）不变
 - 配套文件：[SEO-AUDIT-REPORT.md](SEO-AUDIT-REPORT.md)、[BING-SUBMISSION-REPORT.md](BING-SUBMISSION-REPORT.md)、[CONTENT-QUALITY-REPORT.md](CONTENT-QUALITY-REPORT.md)
 
 状态说明：

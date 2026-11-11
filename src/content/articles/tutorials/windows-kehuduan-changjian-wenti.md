@@ -6,7 +6,7 @@ primaryKeyword: "机场客户端常见问题"
 tags: ["常见问题", "排错", "Windows", "iOS", "Android", "系统代理", "TUN"]
 author: "机场阿南"
 publishedAt: "2026-11-10"
-updatedAt: "2026-11-10"
+updatedAt: "2026-11-11"
 status: published
 featured: false
 order: 20
@@ -59,7 +59,7 @@ faq:
 
 | 现象 | 原因 | 处理 |
 | --- | --- | --- |
-| App Store 搜不到客户端 | Apple ID 地区为中国大陆 | 使用非大陆地区 Apple ID |
+| App Store 搜不到客户端 | Apple ID 地区为中国大陆 | 使用非大陆地区 Apple ID，见[海外 Apple ID 指南](/tutorials/haiwai-apple-id-zhinan/) |
 | 无法添加 VPN 配置 | 设备管理描述文件限制；系统异常 | 检查“VPN 与设备管理”；重启后重试 |
 | 订阅导入后没有节点 | 链接不完整；需先经代理拉取；格式不兼容 | 重新复制；先连其他可用网络；向客服确认格式 |
 | 切换 Wi‑Fi / 蜂窝后断连 | 网络切换导致隧道重建 | 正常现象；若长时间不恢复则重新开启 |

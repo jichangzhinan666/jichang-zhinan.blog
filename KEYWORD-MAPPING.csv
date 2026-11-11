@@ -52,7 +52,10 @@ YouTube 节点,E 用户场景,了解播放表现,/speed-tests/lingdongyun-2026-1
 IEPL 和 IPLC 的区别,现有页面,理解线路类型,/wiki/iepl-iplc-bgp-zhilian-quebie/,主,标题“IEPL / IPLC / BGP 中转 / 直连线路区别：原理、体验差异与怎么验证服务商的说法”,未查询（待验证）,同时承接“IPLC 机场”“IEPL 机场”的解释型需求,保持,已有页面
 节点延迟低但速度慢,现有页面,排查原因,/wiki/jiedian-di-yanchi-que-sudu-man/,主,标题“机场节点低延迟却速度慢的原因：…”,未查询（待验证）,无,保持,已有页面
 Android 机场教程,现有页面,学在安卓上使用,/tutorials/android-shiyong-jiaocheng/,主,标题“Android 使用教程：常见客户端、订阅导入、VPN 权限、分应用代理与国产系统后台保活”,未查询（待验证）,无,保持,已有页面
-iOS 机场教程,现有页面,学在 iPhone / iPad 上使用,/tutorials/ios-shiyong-jiaocheng/,主,标题“iOS（iPhone / iPad）使用教程：Apple ID 地区、常见客户端、订阅导入与官方客户端的区别”,未查询（待验证）,无,保持,已有页面
+iOS 机场教程,现有页面,学在 iPhone / iPad 上使用,/tutorials/ios-shiyong-jiaocheng/,主,标题“iOS（iPhone / iPad）使用教程：Apple ID 地区、常见客户端、订阅导入与官方客户端的区别”,未查询（待验证）,与新增的海外 Apple ID 指南分工：这篇讲客户端与订阅导入；账户的注册与切换交给那一篇,保持,已有页面
+海外 Apple ID,D 技术教程,学注册和使用其他地区的 Apple 账户,/tutorials/haiwai-apple-id-zhinan/,主,标题“海外 Apple ID 指南：注册美区账户与共享账号的风险”（2026-11-11 新增）；步骤按 Apple 官方支持文档整理，本站未逐步实测,未查询（待验证）,无,保持；Apple 文档更新后核对步骤与界面文字,已有页面
+美区 Apple ID 注册,D 技术教程,学注册美国区账户,/tutorials/haiwai-apple-id-zhinan/,辅,标题含“注册美区账户”；正文“方法一”给出网页与 App Store 两种注册方式,未查询（待验证）,无,不单独建页,已有页面
+共享 Apple ID,D 技术教程,找可以直接登录的公开账号,/tutorials/haiwai-apple-id-zhinan/,辅（只讲风险）,正文“共享账号：为什么不建议用”一节；本站不提供也不转载共享账号,未查询（待验证）,搜索意图是拿到账号；本站只说明风险，满足不了这个意图,不提供、不转载共享账号,已有页面（部分匹配）
 灵动云测速,现有页面,看某品牌的测速,/speed-tests/lingdongyun-2026-11-10-japan5/,主,站长实测报告（日本5 节点，2026-11-10）；另有 /speed-tests/lingdongyun-2026-10-28-evening-peak/ 文字记录,未查询（待验证）,同一品牌两份记录，标题已用节点与日期区分,保持,已有页面
 飞V 测速,现有页面,看某品牌的测速,/speed-tests/flyv-2026-11-10-singapore/,主,站长实测报告（新加坡节点，2026-11-10）,未查询（待验证）,无,保持,已有页面
 隐形人测速,现有页面,看某品牌的测速,/speed-tests/invisible-2026-11-10-hongkong03/,主,站长实测报告（香港03 节点，2026-11-10）,未查询（待验证）,无,保持,已有页面

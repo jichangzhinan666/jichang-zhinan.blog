@@ -6,7 +6,7 @@ primaryKeyword: "iOS 机场教程"
 tags: ["iOS", "iPhone", "iPad", "Shadowrocket", "订阅导入", "Apple ID"]
 author: "机场阿南"
 publishedAt: "2026-11-10"
-updatedAt: "2026-11-10"
+updatedAt: "2026-11-11"
 status: published
 featured: false
 order: 4
@@ -28,7 +28,9 @@ iPhone、iPad 上使用机场比桌面端多两道门槛：客户端在中国大
 
 1. 注册或登录一个非大陆地区的 Apple ID（美国、香港、台湾等地区常见）。
 2. 付费应用需要该地区的支付方式，通常使用对应地区的 App Store 礼品卡充值。
-3. 建议在“设置 → App Store”中使用这个 Apple ID 仅用于下载，而不要切换 iCloud 账号，以免影响照片、备忘录等同步。
+3. 这个账户只在“设置 → 你的姓名 → 媒体与购买项目”里登录，用于下载；不要更换 iCloud 账户，以免影响照片、备忘录等同步。
+
+注册、更改地区和只在 App Store 换账户的具体步骤，见[海外 Apple ID 指南](/tutorials/haiwai-apple-id-zhinan/)。
 
 注意：切换地区、购买礼品卡都涉及你的账号与支付安全，请只通过 Apple 官方渠道操作，不要购买来历不明的“共享账号”。
 

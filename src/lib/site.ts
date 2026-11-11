@@ -139,7 +139,7 @@ export const STATIC_PAGES: Record<string, { title: string; lastmod: string; chan
   '/reviews/': { title: '2026 机场品牌测评大全', lastmod: '2026-11-10', changefreq: 'weekly' },
   '/speed-tests/': { title: '2026 机场节点测速报告', lastmod: '2026-11-10', changefreq: 'weekly' },
   '/compare/': { title: '2026 机场套餐价格对比', lastmod: '2026-11-10', changefreq: 'weekly' },
-  '/tutorials/': { title: '2026 机场使用教程大全', lastmod: '2026-11-10', changefreq: 'weekly' },
+  '/tutorials/': { title: '2026 机场使用教程大全', lastmod: '2026-11-11', changefreq: 'weekly' },
   '/guides/': { title: '2026 机场选购指南', lastmod: '2026-11-11', changefreq: 'weekly' },
   '/wiki/': { title: '2026 机场知识百科', lastmod: '2026-11-10', changefreq: 'monthly' },
   '/author/': { title: '作者介绍：机场阿南', lastmod: '2026-11-10', changefreq: 'monthly' },

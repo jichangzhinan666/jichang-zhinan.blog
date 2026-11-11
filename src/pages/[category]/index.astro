@@ -30,7 +30,7 @@ const TUTORIAL_GROUPS = [
   { id: 'windows', label: 'Windows', icon: 'device', blurb: 'Clash Verge Rev 安装、订阅导入、系统代理与 TUN，以及 Windows 常见问题。', slugs: ['clash-verge-rev-jiaocheng', 'windows-kehuduan-changjian-wenti'] },
   { id: 'macos', label: 'macOS', icon: 'device', blurb: 'Clash Verge Rev 的 macOS 安装包、导入订阅与 TUN 模式说明（与 Windows 共用一篇教程）。', slugs: ['clash-verge-rev-jiaocheng'] },
   { id: 'android', label: 'Android', icon: 'device', blurb: 'Clash Meta for Android、FlClash 的导入步骤、VPN 权限、分应用代理与国产系统后台保活。', slugs: ['android-shiyong-jiaocheng', 'windows-kehuduan-changjian-wenti'] },
-  { id: 'ios', label: 'iOS / iPadOS', icon: 'device', blurb: '非大陆地区 Apple ID、Shadowrocket 等客户端导入、VPN 配置权限与只提供官方客户端的品牌怎么用。', slugs: ['ios-shiyong-jiaocheng', 'windows-kehuduan-changjian-wenti'] },
+  { id: 'ios', label: 'iOS / iPadOS', icon: 'device', blurb: '非大陆地区 Apple ID 的注册与使用、Shadowrocket 等客户端导入、VPN 配置权限与只提供官方客户端的品牌怎么用。', slugs: ['ios-shiyong-jiaocheng', 'haiwai-apple-id-zhinan', 'windows-kehuduan-changjian-wenti'] },
   { id: 'subscription', label: '订阅与节点管理', icon: 'list', blurb: '订阅链接导入与更新、节点切换、规则模式，以及客户端延迟测试与节点测速的记录方法。', slugs: ['clash-verge-rev-jiaocheng', 'jiedian-cesu-fangfa-ipcheck-speedtest'] },
   { id: 'troubleshooting', label: '故障排查', icon: 'tool', blurb: '连不上、订阅失败、部分应用不走代理、系统时间误差、DNS 泄露检测与 Clash 系 DNS 设置。', slugs: ['windows-kehuduan-changjian-wenti', 'dns-xielou-jiance-paicha'] },
 ] as const;
@@ -126,6 +126,7 @@ const GUIDE_TOPICS = [
       { slug: '2026-jichang-xuangou-zhinan', focus: '重点看“第五步：确认使用方式、设备与退款”' },
       { slug: 'clash-verge-rev-jiaocheng', focus: '电脑端导入订阅的实际步骤' },
       { slug: 'ios-shiyong-jiaocheng', focus: 'iPhone / iPad 的客户端与 Apple ID 说明' },
+      { slug: 'haiwai-apple-id-zhinan', focus: '注册其他地区的 Apple 账户，只在 App Store 里换账户' },
     ],
     tool: { href: '/tutorials/', label: '按设备查看使用教程' },
   },

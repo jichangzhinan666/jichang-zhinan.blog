@@ -83,6 +83,25 @@ export interface SpeedTestSummary {
   latestDatedTest: string | null;
 }
 
+/**
+ * “节点表现待观察”状态说明：只用于**没有本站独立实测**的品牌，
+ * 在品牌页“测速与证据”区块展示。文案由站长提供，不得包含任何测速数值。
+ * 品牌一旦有了站长实测报告（evidenceStatus 为 owner-report），必须删除此字段（校验脚本会报错）。
+ */
+export interface SpeedObservation {
+  /** 模块标题，如“暮光加速｜节点表现待观察” */
+  heading: string;
+  paragraphs: string[];
+  /** 当前状态，如“待观察中” */
+  status: string;
+  /** 状态补充，如“暂无本站独立实测” */
+  statusDetail: string;
+  /** 后续安排 / 结语 */
+  closing: string | null;
+  /** 文案来源说明（页面以小字展示） */
+  source: string | null;
+}
+
 export interface BrandIntro {
   heading: string;
   slogan: string | null;
@@ -141,6 +160,8 @@ export interface Brand {
   /** 资料中“晚高峰实测”一节的原始状态描述 */
   peakTestNote: string | null;
   speedTests: SpeedTestSummary;
+  /** 没有本站独立实测的品牌在“测速与证据”区块展示的状态说明；有站长实测后删除 */
+  speedObservation?: SpeedObservation | null;
   /** 本站整理时发现的资料不一致/待确认事项（公开显示） */
   dataCaveats: string[];
   sourceRecords: SourceRecord[];

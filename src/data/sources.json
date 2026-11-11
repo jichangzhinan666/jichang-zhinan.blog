@@ -135,6 +135,42 @@
     "relatedBrandIds": ["lingdongyun"]
   },
   {
+    "id": "src-twilight-speed-status",
+    "file": "source-materials/brands/暮光加速-测速状态说明.txt",
+    "sourceType": "unverified",
+    "collectedAt": "2026-11-11",
+    "description": "暮光加速测速状态说明（标题、两段说明、当前状态与后续安排），用于品牌页“测速与证据”区块",
+    "credibility": "站长提供的状态说明，不含任何测速数值，不作为性能依据；与登记情况一致：原资料标注“待观察实测中”，本站暂无该品牌的测速记录。",
+    "relatedBrandIds": ["twilight"]
+  },
+  {
+    "id": "src-breezenet-speed-status",
+    "file": "source-materials/brands/微风网络-测速状态说明.txt",
+    "sourceType": "unverified",
+    "collectedAt": "2026-11-11",
+    "description": "微风网络测速状态说明（标题、两段说明、当前状态与后续安排），用于品牌页“测速与证据”区块",
+    "credibility": "站长提供的状态说明，不含任何测速数值，不作为性能依据；本站暂无独立实测，已收录的 MiaoKo 截图为用户提供、未标注测试时间的第三方记录。",
+    "relatedBrandIds": ["breezenet"]
+  },
+  {
+    "id": "src-flycat-speed-status",
+    "file": "source-materials/brands/飞猫云-测速状态说明.txt",
+    "sourceType": "unverified",
+    "collectedAt": "2026-11-11",
+    "description": "飞猫云测速状态说明（标题、两段说明、当前状态与后续安排），用于品牌页“测速与证据”区块",
+    "credibility": "站长提供的状态说明，不含任何测速数值，不作为性能依据；本站暂无独立实测，已收录的 SpeedCentre+ 截图为用户提供、未标注测试时间的第三方记录。",
+    "relatedBrandIds": ["flycat"]
+  },
+  {
+    "id": "src-dalaoyun-speed-status",
+    "file": "source-materials/brands/大佬云-测速状态说明.txt",
+    "sourceType": "unverified",
+    "collectedAt": "2026-11-11",
+    "description": "大佬云测速状态说明（标题、两段说明、当前状态与后续安排），用于品牌页“测速与证据”区块",
+    "credibility": "站长提供的状态说明，不含任何测速数值，不作为性能依据；与登记情况一致：原资料标注“待观察实测中”，本站暂无该品牌的测速记录。",
+    "relatedBrandIds": ["dalaoyun"]
+  },
+  {
     "id": "src-invisible-client-note",
     "file": "source-materials/brands/隐形人-客户端补充.txt",
     "sourceType": "unverified",

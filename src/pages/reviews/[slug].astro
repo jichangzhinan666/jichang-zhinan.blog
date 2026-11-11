@@ -6,6 +6,7 @@ import BrandMark from '@/components/BrandMark.astro';
 import EvidenceBadge from '@/components/EvidenceBadge.astro';
 import PlanTable from '@/components/PlanTable.astro';
 import ReportCard from '@/components/ReportCard.astro';
+import SpeedObservation from '@/components/SpeedObservation.astro';
 import FAQ from '@/components/FAQ.astro';
 import Icon from '@/components/Icon.astro';
 import FavButton from '@/components/FavButton.astro';
@@ -352,10 +353,13 @@ const jsonLd = [
 
         <section class="card" id="speed" aria-labelledby="speed-title">
           <h2 id="speed-title" class="section-title"><Icon name="speed" size={20} />测速与证据</h2>
+          {/* 没有本站独立实测的品牌：先给出“节点表现待观察”状态说明（站长提供文案）；已有的第三方记录保留在下方并单独标注 */}
+          {brand.speedObservation && <SpeedObservation brand={brand} reports={reports} />}
           {
             reports.length ? (
               <>
-                <p class="small muted">证据等级：{evidenceText}。每份记录都注明来源、工具、时间与局限；不同时间、节点与网络环境的结果不能直接对比。</p>
+                {brand.speedObservation && <h3 class="third-title">已收录的第三方记录（非本站实测）</h3>}
+                <p class="small muted">{brand.speedObservation && '以下记录由用户提供，未经本站独立复核，仅供参考，不代表本站的测评结论。'}证据等级：{evidenceText}。每份记录都注明来源、工具、时间与局限；不同时间、节点与网络环境的结果不能直接对比。</p>
                 {reportImage && ownerReport && (
                   <figure class="report-figure">
                     <a href={reportImage.src} target="_blank" rel="noopener">
@@ -378,7 +382,7 @@ const jsonLd = [
                   ))}
                 </div>
               </>
-            ) : (
+            ) : brand.speedObservation ? null : (
               <div class="empty">
                 <p><strong>暂无可验证测速记录</strong></p>
                 <p class="small">{brand.peakTestNote ?? '资料未提供测速数据。'}本站不会用虚构数据或其他品牌的数据填充。</p>

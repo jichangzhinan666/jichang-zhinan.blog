@@ -79,6 +79,16 @@ for (const b of brands) {
   if (b.speedTests?.evidenceStatus !== expected) err(`${tag}: evidenceStatus=${b.speedTests?.evidenceStatus} 与报告数据不一致（应为 ${expected}）`);
   const latest = brandReports.map((r) => r.testedAt).filter(Boolean).sort().at(-1)?.slice(0, 10) ?? null;
   if ((b.speedTests?.latestDatedTest ?? null) !== latest) err(`${tag}: latestDatedTest=${b.speedTests?.latestDatedTest} 与报告数据不一致（应为 ${latest}）`);
+  // “节点表现待观察”状态说明：只允许出现在没有站长实测的品牌上，且不得夹带测速数值
+  if (b.speedObservation) {
+    const o = b.speedObservation;
+    for (const f of ['heading', 'status', 'statusDetail']) if (!o[f] || typeof o[f] !== 'string') err(`${tag}: speedObservation.${f} 缺失`);
+    if (!Array.isArray(o.paragraphs) || o.paragraphs.length === 0 || o.paragraphs.some((p) => typeof p !== 'string' || !p.trim())) err(`${tag}: speedObservation.paragraphs 必须是非空字符串数组`);
+    if (hasOwner) err(`${tag}: 已有站长实测报告，不应再保留 speedObservation（“暂无本站独立实测”的说明）`);
+    const text = [o.heading, ...(o.paragraphs ?? []), o.status, o.statusDetail, o.closing ?? ''].join(' ');
+    if (/\d+(\.\d+)?\s*(Mbps|MB\/s|Kbps|ms|毫秒|%)/i.test(text)) err(`${tag}: speedObservation 文案中出现了测速数值，状态说明不得包含量化结果`);
+    if (!b.sourceRecords.some((s) => /测速状态说明/.test(s.sourceFile))) err(`${tag}: speedObservation 需要在 sourceRecords 中登记“测速状态说明”来源文件`);
+  }
   if (!Number.isInteger(b.editorialRank) || b.editorialRank < 1) err(`${tag}: editorialRank 必须为 ≥1 的整数`);
   const json = JSON.stringify(b);
   for (const d of DEMO_STRINGS) if (json.includes(d)) err(`${tag}: 含演示/占位字符串 "${d}"`);

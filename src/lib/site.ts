@@ -143,7 +143,7 @@ export const STATIC_PAGES: Record<string, { title: string; lastmod: string; chan
   '/guides/': { title: '2026 机场选购指南', lastmod: '2026-11-10', changefreq: 'weekly' },
   '/wiki/': { title: '2026 机场知识百科', lastmod: '2026-11-10', changefreq: 'monthly' },
   '/author/': { title: '作者介绍：机场阿南', lastmod: '2026-11-10', changefreq: 'monthly' },
-  '/news/': { title: '资讯与更新', lastmod: '2026-11-10', changefreq: 'weekly' },
+  '/news/': { title: '资讯与更新', lastmod: '2026-11-11', changefreq: 'weekly' },
   '/about/': { title: '关于机场指南', lastmod: '2026-11-10', changefreq: 'yearly' },
   '/methodology/': { title: '测评、排序与测速方法', lastmod: '2026-11-10', changefreq: 'yearly' },
   '/editorial-policy/': { title: '编辑与纠错政策', lastmod: '2026-11-10', changefreq: 'yearly' },

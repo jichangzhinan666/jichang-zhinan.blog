@@ -299,6 +299,17 @@
     ],
     "peakTestNote": "资料标注“待观察实测中”，暂无测速记录。",
     "speedTests": { "reportSlugs": [], "evidenceStatus": "none", "latestDatedTest": null },
+    "speedObservation": {
+      "heading": "大佬云｜节点表现待观察",
+      "paragraphs": [
+        "大佬云主要面向重视套餐性价比、灵活流量选择及多地区网络连接的用户。本站已收录相关公开套餐及服务资料，供读者进行基础比较。",
+        "由于目前缺少符合本站测试标准的完整节点记录，暂无法对实际速度、连接连续性、晚高峰表现及流媒体可用性进行独立确认。"
+      ],
+      "status": "待观察中",
+      "statusDetail": "暂无有效测速样本",
+      "closing": "本站将保留该品牌的公开资料介绍，并在取得可复核的测试数据后更新节点表现与测试结论。",
+      "source": "状态说明由站长于 2026-11-11 提供"
+    },
     "dataCaveats": [
       "资料称“入门价低于 34 家中位数”，该对比样本未随资料提供，本站未采用。",
       "优惠码 dly888 的适用套餐范围资料未说明。",
@@ -306,7 +317,8 @@
     ],
     "sourceRecords": [
       { "sourceType": "user-supplied-official", "sourceFile": "source-materials/brands/大佬云.txt", "sourceLocation": "全文（一至十节）", "verifiedAt": "2026-11-10" },
-      { "sourceType": "unverified", "sourceFile": "source-materials/brands/大佬云-品牌介绍.txt", "sourceLocation": "品牌介绍文案（页首展示）", "verifiedAt": "2026-11-10", "note": "站长提供的品牌介绍文案，属宣传性描述，不作为价格、节点或测速的事实依据；文中价格与流量与登记套餐一致" }
+      { "sourceType": "unverified", "sourceFile": "source-materials/brands/大佬云-品牌介绍.txt", "sourceLocation": "品牌介绍文案（页首展示）", "verifiedAt": "2026-11-10", "note": "站长提供的品牌介绍文案，属宣传性描述，不作为价格、节点或测速的事实依据；文中价格与流量与登记套餐一致" },
+      { "sourceType": "unverified", "sourceFile": "source-materials/brands/大佬云-测速状态说明.txt", "sourceLocation": "测速状态说明（“测速与证据”区块）", "verifiedAt": "2026-11-11", "note": "站长提供的状态说明，不含测速数值；与“暂无测速记录”的登记情况一致" }
     ],
     "lastVerifiedAt": "2026-11-10",
     "editorialStatus": "published",
@@ -400,6 +412,17 @@
       "evidenceStatus": "undated-screenshot",
       "latestDatedTest": null
     },
+    "speedObservation": {
+      "heading": "飞猫云｜节点表现待观察",
+      "paragraphs": [
+        "飞猫云以灵活套餐、专线网络和多地区节点作为主要服务特色，本站已对其品牌定位及公开套餐信息进行整理。",
+        "目前尚未完成覆盖不同时段与节点地区的独立测速，因此暂不展示未经验证的速度、延迟及稳定性评分。"
+      ],
+      "status": "待观察中",
+      "statusDetail": "测速数据待补充",
+      "closing": "本页面的品牌介绍不等同于实际性能认证，后续将根据可获得的真实测试记录更新测评内容。",
+      "source": "状态说明由站长于 2026-11-11 提供"
+    },
     "dataCaveats": [
       "资料称 63 个节点，但测速截图显示 49 个节点（含澳大利亚、英国各 1 个），地区与数量与文本不完全一致。",
       "一张名为“飞猫测速图 (2)”的截图订阅标识与其余截图不同，归属待确认，未在本页展示。",
@@ -409,7 +432,8 @@
     "sourceRecords": [
       { "sourceType": "user-supplied-official", "sourceFile": "source-materials/brands/飞猫云.txt", "sourceLocation": "全文（一至九节）", "verifiedAt": "2026-11-09" },
       { "sourceType": "user-supplied-screenshot", "sourceFile": "source-materials/evidence/飞猫测速图 (5).webp", "sourceLocation": "价格表截图（两年付/三年付）", "verifiedAt": "2026-11-09" },
-      { "sourceType": "unverified", "sourceFile": "source-materials/brands/飞猫云-品牌介绍.txt", "sourceLocation": "品牌介绍文案（页首展示）", "verifiedAt": "2026-11-10", "note": "站长提供的品牌介绍文案，属宣传性描述，不作为价格、节点或测速的事实依据；文中价格与流量与登记套餐一致" }
+      { "sourceType": "unverified", "sourceFile": "source-materials/brands/飞猫云-品牌介绍.txt", "sourceLocation": "品牌介绍文案（页首展示）", "verifiedAt": "2026-11-10", "note": "站长提供的品牌介绍文案，属宣传性描述，不作为价格、节点或测速的事实依据；文中价格与流量与登记套餐一致" },
+      { "sourceType": "unverified", "sourceFile": "source-materials/brands/飞猫云-测速状态说明.txt", "sourceLocation": "测速状态说明（“测速与证据”区块）", "verifiedAt": "2026-11-11", "note": "站长提供的状态说明，不含测速数值；本站暂无独立实测，用户提供的未标注日期截图作为第三方记录保留" }
     ],
     "lastVerifiedAt": "2026-11-09",
     "editorialStatus": "published",
@@ -621,6 +645,17 @@
     ],
     "peakTestNote": "资料标注“待观察实测中”，暂无测速记录。",
     "speedTests": { "reportSlugs": [], "evidenceStatus": "none", "latestDatedTest": null },
+    "speedObservation": {
+      "heading": "暮光加速｜节点表现待观察",
+      "paragraphs": [
+        "暮光加速已纳入本站品牌资料整理范围。根据现有公开信息，其主要特色包括专线网络、多线路优化及不同流量档位。",
+        "由于目前尚未具备完整、可复核的独立测试数据，本站暂不对其实际下载速度、延迟、丢包率及晚高峰稳定性作出量化评价。"
+      ],
+      "status": "待观察中",
+      "statusDetail": "暂无本站独立实测",
+      "closing": "后续如完成实际节点测试，将补充测试环境、运营商、节点地区及测速结果。",
+      "source": "状态说明由站长于 2026-11-11 提供"
+    },
     "dataCaveats": [
       "资料未给出各地区节点数。",
       "不限时流量包是否适用优惠码资料未说明。",
@@ -629,7 +664,8 @@
     "sourceRecords": [
       { "sourceType": "user-supplied-official", "sourceFile": "source-materials/brands/暮光加速.txt", "sourceLocation": "全文（一至十节）", "verifiedAt": "2026-11-09" },
       { "sourceType": "unverified", "sourceFile": "source-materials/brands/暮光加速-客户端补充.txt", "sourceLocation": "客户端按系统说明", "verifiedAt": "2026-11-10", "note": "站长依据公开教程整理，未独立验证" },
-      { "sourceType": "unverified", "sourceFile": "source-materials/brands/暮光加速-品牌介绍.txt", "sourceLocation": "品牌介绍文案（页首展示）", "verifiedAt": "2026-11-10", "note": "站长提供的品牌介绍文案，属宣传性描述；其中“IEPL”与“多客户端兼容”未见于原资料，不作为事实依据" }
+      { "sourceType": "unverified", "sourceFile": "source-materials/brands/暮光加速-品牌介绍.txt", "sourceLocation": "品牌介绍文案（页首展示）", "verifiedAt": "2026-11-10", "note": "站长提供的品牌介绍文案，属宣传性描述；其中“IEPL”与“多客户端兼容”未见于原资料，不作为事实依据" },
+      { "sourceType": "unverified", "sourceFile": "source-materials/brands/暮光加速-测速状态说明.txt", "sourceLocation": "测速状态说明（“测速与证据”区块）", "verifiedAt": "2026-11-11", "note": "站长提供的状态说明，不含测速数值；与“暂无测速记录”的登记情况一致" }
     ],
     "lastVerifiedAt": "2026-11-09",
     "editorialStatus": "published",
@@ -724,13 +760,25 @@
       "evidenceStatus": "undated-screenshot",
       "latestDatedTest": null
     },
+    "speedObservation": {
+      "heading": "微风网络｜节点表现待观察",
+      "paragraphs": [
+        "微风网络（BreezeNet）以专线网络、大流量套餐及多设备使用作为主要服务特色，适合关注流量成本与跨地区连接需求的用户了解比较。",
+        "目前本站尚未完成独立节点实测，因此其真实下载速率、连接延迟、丢包表现及运营商适配情况仍有待进一步核验。"
+      ],
+      "status": "待观察中",
+      "statusDetail": "独立测试尚未完成",
+      "closing": "本站不会使用模拟数据代替实际测速，所有性能评价将在获得真实测试结果后再行补充。",
+      "source": "状态说明由站长于 2026-11-11 提供"
+    },
     "dataCaveats": [
       "资料称“入门档每 GB 约 ¥0.13，在 34 家中并列第 1”，该对比样本未随资料提供，本站只采用可复算的每 GB 单价。",
       "文本节点数（53）与截图节点数（50）不一致。"
     ],
     "sourceRecords": [
       { "sourceType": "user-supplied-official", "sourceFile": "source-materials/brands/微风网络.txt", "sourceLocation": "全文（一至十节）", "verifiedAt": "2026-11-09" },
-      { "sourceType": "unverified", "sourceFile": "source-materials/brands/微风网络-品牌介绍.txt", "sourceLocation": "品牌介绍文案（页首展示）", "verifiedAt": "2026-11-10", "note": "站长提供的品牌介绍文案，属宣传性描述；文中“¥137/年”与登记的清风套餐 ¥99/年不一致，不作为价格依据" }
+      { "sourceType": "unverified", "sourceFile": "source-materials/brands/微风网络-品牌介绍.txt", "sourceLocation": "品牌介绍文案（页首展示）", "verifiedAt": "2026-11-10", "note": "站长提供的品牌介绍文案，属宣传性描述；文中“¥137/年”与登记的清风套餐 ¥99/年不一致，不作为价格依据" },
+      { "sourceType": "unverified", "sourceFile": "source-materials/brands/微风网络-测速状态说明.txt", "sourceLocation": "测速状态说明（“测速与证据”区块）", "verifiedAt": "2026-11-11", "note": "站长提供的状态说明，不含测速数值；本站暂无独立实测，用户提供的未标注日期截图作为第三方记录保留" }
     ],
     "lastVerifiedAt": "2026-11-09",
     "editorialStatus": "published",

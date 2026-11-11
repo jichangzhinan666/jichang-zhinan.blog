@@ -919,6 +919,58 @@ async function main() {
         expect(s.over === 0, `${s.over} 行内容超出`);
         return `${s.rows} 条：${s.values.join('、')}`;
       });
+
+      await t('“节点表现待观察”模块：只出现在没有站长实测的品牌页，不含测速数值，第三方记录单独标注', async () => {
+        const slugs = await js(page, async () => {
+          const xml = await fetch('/sitemap.xml').then((r) => r.text());
+          return [...xml.matchAll(/<loc>[^<]*\/reviews\/([a-z0-9-]+)\/<\/loc>/g)].map((m) => m[1]);
+        });
+        const withModule = [];
+        const without = [];
+        for (const slug of slugs) {
+          await open(`/reviews/${slug}/`);
+          const s = await js(page, async () => {
+            const sec = document.getElementById('speed');
+            const o = sec.querySelector('.observe');
+            const ownerBadge = [...sec.querySelectorAll('.report-card .badge')].some((b) => b.textContent.trim() === '站长实测');
+            const cards = sec.querySelectorAll('.report-card').length;
+            if (!o) return { has: false, ownerBadge, empty: !!sec.querySelector('.empty'), cards };
+            const text = o.textContent.replace(/\s+/g, ' ');
+            const links = [...o.querySelectorAll('.observe-foot a')].map((a) => a.getAttribute('href'));
+            const statuses = [];
+            for (const l of links) statuses.push((await fetch(l, { method: 'HEAD' })).status);
+            return {
+              has: true,
+              ownerBadge,
+              cards,
+              heading: o.querySelector('h3').textContent.trim(),
+              status: o.querySelector('.observe-status').textContent.replace(/\s+/g, ''),
+              paragraphs: o.querySelectorAll('.observe-body p').length,
+              numeric: /\d+(\.\d+)?\s*(Mbps|MB\/s|Kbps|ms|毫秒)/i.test(text),
+              links,
+              statuses,
+              thirdTitle: !!sec.querySelector('.third-title'),
+              oldEmpty: !!sec.querySelector('.empty'),
+              over: o.scrollWidth - o.clientWidth,
+            };
+          });
+          if (s.has) {
+            expect(!s.ownerBadge, `${slug} 已有站长实测却仍显示“待观察”模块`);
+            expect(/节点表现待观察$/.test(s.heading) && s.paragraphs >= 2, `${slug} 模块标题或正文不完整：${s.heading}`);
+            expect(/^当前状态：.+｜.+/.test(s.status), `${slug} 状态行：${s.status}`);
+            expect(!s.numeric, `${slug} 模块里出现了测速数值`);
+            expect(!s.oldEmpty, `${slug} 同时显示了旧的空状态`);
+            expect(s.cards === 0 || s.thirdTitle, `${slug} 有第三方记录但没有单独标注`);
+            expect(s.links.length === 2 && s.statuses.every((x) => x === 200), `${slug} 模块链接状态：${s.statuses.join(',')}`);
+            expect(s.over <= 1, `${slug} 模块内容溢出 ${s.over}px`);
+            withModule.push(`${slug}${s.cards ? `（第三方记录 ${s.cards} 份）` : ''}`);
+          } else {
+            expect(s.ownerBadge || s.empty || s.cards > 0, `${slug} 的测速区块是空的`);
+            without.push(slug);
+          }
+        }
+        return `显示：${withModule.join('、') || '无'}；不显示：${without.join('、') || '无'}`;
+      });
     });
 
     /* ------------------------------------------------------------ */

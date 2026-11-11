@@ -1,0 +1,267 @@
+---
+/**
+ * “节点表现待观察”状态模块：用在没有本站独立实测的品牌页“测速与证据”区块。
+ *
+ * - 标题、正文、当前状态、结语来自 brands.json 的 speedObservation（站长提供的文案，原文在
+ *   source-materials/brands/<品牌>-测速状态说明.txt）。
+ * - 下方三项事实由现有数据派生（报告数量、证据等级、品牌资料里的原始备注），不含任何测速数值。
+ * - 品牌有了站长实测报告后应删除 speedObservation，本模块随之不再显示（校验脚本会提醒）。
+ */
+import Icon from './Icon.astro';
+import { EVIDENCE_LABEL } from '@/lib/data';
+import type { Brand, SpeedTestReport } from '@/lib/types';
+
+interface Props {
+  brand: Brand;
+  reports: SpeedTestReport[];
+}
+
+const { brand, reports } = Astro.props;
+const obs = brand.speedObservation!;
+const ownerCount = reports.filter((r) => r.verificationStatus === 'owner-measured').length;
+const thirdCount = reports.length - ownerCount;
+const headingId = `observe-${brand.id}`;
+---
+
+<div class="observe" role="note" aria-labelledby={headingId}>
+  <header class="observe-head">
+    <span class="observe-icon" aria-hidden="true"><Icon name="clock" size={22} /></span>
+    <div class="observe-heading">
+      <p class="observe-eyebrow">测速状态</p>
+      <h3 id={headingId}>{obs.heading}</h3>
+    </div>
+  </header>
+
+  <div class="observe-body">
+    {obs.paragraphs.map((p) => <p>{p}</p>)}
+  </div>
+
+  <p class="observe-status">
+    <strong class="observe-status-label">当前状态：</strong>
+    <span class="badge badge-weak"><Icon name="clock" size={12} />{obs.status}</span>
+    <span class="observe-sep" aria-hidden="true">｜</span>
+    <span class="badge badge-none">{obs.statusDetail}</span>
+  </p>
+
+  <dl class="observe-facts">
+    <div>
+      <dt>本站独立实测</dt>
+      <dd>{ownerCount ? `${ownerCount} 份` : '暂无'}</dd>
+    </div>
+    <div>
+      <dt>第三方记录</dt>
+      <dd>
+        {thirdCount ? `${thirdCount} 份` : '暂无'}
+        {thirdCount > 0 && <small>{EVIDENCE_LABEL[brand.speedTests.evidenceStatus]}</small>}
+      </dd>
+    </div>
+    <div class="fact-note">
+      <dt>品牌资料中的说明</dt>
+      <dd>{brand.peakTestNote ?? '资料未提供'}</dd>
+    </div>
+  </dl>
+
+  {obs.closing && <p class="observe-closing">{obs.closing}</p>}
+
+  <p class="observe-foot small">
+    <a href="/methodology/">本站测评与测速方法 →</a>
+    <a href="/speed-tests/">全部节点测速报告 →</a>
+    {obs.source && <span class="observe-source muted">{obs.source}</span>}
+  </p>
+</div>
+
+<style>
+  .observe {
+    --ob-border: #fde3b5;
+    --ob-accent: #b54708;
+    container-type: inline-size;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    padding: 20px;
+    border: 1px solid var(--ob-border);
+    border-left: 4px solid var(--warning);
+    border-radius: var(--radius);
+    background: linear-gradient(150deg, var(--warning-bg) 0%, var(--surface) 46%);
+  }
+
+  :global(:root[data-theme="dark"]) .observe {
+    --ob-border: #5b4214;
+    --ob-accent: #fcd34d;
+  }
+
+  .observe-head {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .observe-icon {
+    flex: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+    background: var(--surface);
+    border: 1px solid var(--ob-border);
+    color: var(--ob-accent);
+  }
+
+  .observe-heading {
+    min-width: 0;
+  }
+
+  .observe-eyebrow {
+    margin: 0 0 2px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    color: var(--ob-accent);
+  }
+
+  .observe-heading h3 {
+    margin: 0;
+    font-size: 1.15rem;
+    line-height: 1.35;
+  }
+
+  .observe-body p {
+    margin: 0 0 8px;
+    max-width: 46em;
+    line-height: 1.8;
+  }
+
+  .observe-body p:last-child {
+    margin-bottom: 0;
+  }
+
+  /* 当前状态：一条醒目的状态栏，两个标签对应“状态｜补充说明” */
+  .observe-status {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 6px 8px;
+    margin: 0;
+    padding: 10px 14px;
+    border-radius: var(--radius-sm);
+    background: var(--surface);
+    border: 1px dashed var(--ob-border);
+  }
+
+  .observe-status-label {
+    font-weight: 700;
+  }
+
+  .observe-status :global(.badge) {
+    padding: 3px 12px;
+    font-size: 0.8125rem;
+  }
+
+  .observe-sep {
+    color: var(--muted);
+  }
+
+  /* 三项可核查的事实：两项短值 + 一项较长的资料备注 */
+  .observe-facts {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) minmax(0, 2fr);
+    gap: 10px;
+    margin: 0;
+  }
+
+  .observe-facts > div {
+    padding: 10px 12px;
+    border-radius: var(--radius-sm);
+    background: var(--surface);
+    border: 1px solid var(--border);
+  }
+
+  .observe-facts dt {
+    margin-bottom: 2px;
+    font-size: 0.72rem;
+    color: var(--muted);
+  }
+
+  .observe-facts dd {
+    margin: 0;
+    font-size: 0.925rem;
+    font-weight: 600;
+  }
+
+  /* 数量下面的小字说明（如“测速截图（未标注日期）”）单独一行，窄格子里不会把一个词拆成两截 */
+  .observe-facts dd small {
+    display: block;
+    margin-top: 1px;
+    font-size: 0.8rem;
+    font-weight: 400;
+    color: var(--text-2);
+  }
+
+  .observe-facts .fact-note dd {
+    font-size: 0.85rem;
+    font-weight: 400;
+    line-height: 1.6;
+    color: var(--text-2);
+  }
+
+  .observe-closing {
+    margin: 0;
+    max-width: 46em;
+    font-size: 0.95rem;
+    color: var(--text-2);
+  }
+
+  .observe-foot {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 4px 18px;
+    margin: 0;
+    padding-top: 12px;
+    border-top: 1px dashed var(--ob-border);
+  }
+
+  .observe-foot a {
+    font-weight: 600;
+  }
+
+  .observe-source {
+    margin-left: auto;
+  }
+
+  /* 模块较窄时（手机，或平板上的正文栏）：事实改为上下排列，来源说明另起一行 */
+  @container (max-width: 600px) {
+    .observe-facts {
+      grid-template-columns: minmax(0, 1fr);
+    }
+
+    .observe-source {
+      width: 100%;
+      margin-left: 0;
+    }
+
+    /* 两个状态标签在窄屏上会折成两行，分隔符不再单独悬在行尾 */
+    .observe-sep {
+      display: none;
+    }
+  }
+
+  @media (max-width: 639px) {
+    .observe {
+      padding: 16px;
+    }
+
+    .observe-heading h3 {
+      font-size: 1.05rem;
+    }
+  }
+
+  /* 触屏：底部两个独立链接补足点击高度 */
+  @media (pointer: coarse) {
+    .observe-foot a {
+      padding-block: 5px;
+    }
+  }
+</style>

@@ -365,7 +365,9 @@ export function getSourcesForBrand(brandId: string): SourceFileMeta[] {
 /** 统计数字（首页/关于页用，全部由数据派生） */
 export function getStats() {
   const published = getBrands();
-  const tiers = planTiers.length;
+  // 只统计已发布品牌的套餐：未发布品牌的档位不会出现在任何页面上，不应计入“已整理套餐”
+  const publishedIds = new Set(published.map((b) => b.id));
+  const tiers = planTiers.filter((t) => publishedIds.has(t.brandId)).length;
   const plans = flattenPlans().length;
   const reports = getSpeedReports().length;
   const ownerReports = getSpeedReports().filter((r) => r.verificationStatus === 'owner-measured').length;

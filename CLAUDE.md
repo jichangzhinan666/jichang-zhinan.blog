@@ -43,6 +43,7 @@ npm run indexnow       # IndexNow 真实提交，只推新增 / 更新 / 移除�
 | `src/content/articles/<category>/<slug>.md` | 文章，目录名必须等于 frontmatter `category` |
 | `src/lib/site.ts` | 站点常量、导航、静态页面登记（`STATIC_PAGES` 的 lastmod 供 sitemap 使用） |
 | `src/lib/data.ts` | 数据读取、拍平、榜单排序 `computeRanking()`、专题榜 |
+| `src/lib/lastmod.ts` | 内容更新日期的统一来源：Sitemap lastmod、页脚“全站内容最近更新”、榜单页“内容更新”都从这里取 |
 | `src/lib/seo.ts` | JSON-LD 构造（WebSite/Organization/Breadcrumb/Article/ItemList/FAQ） |
 | `src/pages/sitemap.xml.ts` | 自定义 Sitemap（只含可索引页，lastmod 为真实内容日期） |
 | `src/pages/search-index.json.ts` | 站内搜索索引 |
@@ -73,6 +74,10 @@ npm run indexnow       # IndexNow 真实提交，只推新增 / 更新 / 移除�
 - robots.txt 引用 `/sitemap.xml`（自定义端点，不是 `sitemap-index.xml`）。不得屏蔽 `/_astro/`。
 - IndexNow：`INDEXNOW_KEY` 只放环境变量；`scripts/write-indexnow-key.mjs` 在构建后写 `dist/<KEY>.txt`；推送只用 `scripts/indexnow.mjs` 手动执行。默认只提交发生变化的 URL：每个 URL 上次提交时的 lastmod 记在 `.indexnow/state.json`，每次真实提交的时间、数量、响应码与失败原因追加到 `.indexnow/log.jsonl`（两者都入库，作为提交记录）。全量提交需显式加 `--from-sitemap --all`，只在首次上线或更换 key 时使用。
 - 品牌页的 Sitemap lastmod、JSON-LD `dateModified` 与页面上的“本页资料与说明最近更新”都来自 `getBrandContentUpdatedAt()`：取资料核实日期、该品牌来源文件登记日期、已发布测速报告更新日期中最晚的一个。给品牌页加内容时登记来源（`sources.json` 的 `collectedAt`）即可，不要手改日期；`lastVerifiedAt` 只表示套餐与节点资料何时核对过。
+- 年度榜单页（`/rankings/2026/`）的 Sitemap lastmod、JSON-LD `dateModified` 与页首的“内容更新”都来自 `getRankingContentUpdatedAt()`（`src/lib/lastmod.ts`）：取页面文案修改日期（`STATIC_PAGES`）、已发布品牌的 `lastVerifiedAt`、套餐的 `verifiedAt`、已发布测速报告的 `updatedAt` 中最晚的一个。新增品牌、套餐或报告时照常填这些日期即可；只改了页面文案才需要手动改 `STATIC_PAGES` 的 lastmod。
+- 页脚的“全站内容最近更新”等于 Sitemap 里最大的 lastmod（`getSiteContentUpdatedAt()`），不得改成构建时间或访问时间。构建后的 `seo-audit.mjs` 会核对两者一致，也会核对带 `data-page-updated` 的页面日期与该页的 Sitemap lastmod 一致，不一致则构建失败。
+- 榜单页与页脚里的品牌数、套餐数、实测份数、测试日期一律由数据统计（`getStats()`、测速报告清单），不要写死数字。“已发布实测”只统计 `verificationStatus` 为 `owner-measured` 的已发布报告；他人提供的记录不算实测。
+- 榜单页用独立的 SEO 标题（`titleSuffix={false}`，以“ - 机场指南”结尾），H1 只写“2026 机场推荐排行榜”；地址与 canonical 固定为 `/rankings/2026/`。
 - 没有站长实测的品牌：标题末段写“测速状态”（无任何记录）或“测速记录”（只有他人提供的记录），FAQ 回答“本站暂无独立实测”，页首徽章写“未测试”或“仅有第三方记录”（“已有测试记录”只给有站长实测的品牌）；`brands.json` 的 `speedObservation` 提供“节点表现待观察”说明。拿到站长实测后删除 `speedObservation`（校验脚本会报错提醒）。
 - 带 `Article` / `TechArticle` 结构化数据的页面（文章、品牌页、测速报告、年度榜单）必须在正文里有可见署名并链接到 `/author/`；他人提供的测速记录写“整理”，不写“测试”。`npm run seo:deep` 会检查（`ld-author-invisible`）。
 - `_headers` 对 `https://:project.pages.dev/*` 设了 `X-Robots-Tag: noindex`，避免 Cloudflare Pages 的默认域名与正式域名重复收录；不要删。
@@ -106,4 +111,5 @@ npm run indexnow       # IndexNow 真实提交，只推新增 / 更新 / 移除�
 - **含「｜」、日期或“数字 + 量词”的大标题**用 `<TitleText text={…} />` 渲染（只加不折行的 `<span>`，文字内容不变）；≥768px 的 H1 只在标点和空格处折行。
 - **颜色**：实底蓝色按钮 / 选中态用 `--primary-solid`，浅底上的蓝色小字用 `--primary-strong-text`，弱化文字需要 AA 对比度时用 `--muted-strong`；按钮高度固定为 44px（`.btn`）与 36px（`.btn-sm`）。
 - **触屏点击区域**：独立成行的文字链接在 `@media (pointer: coarse)` 里补上下内边距（`global.css` 末尾的清单），新增此类链接时把选择器加进去。
+- **深色底区块**（首页首屏、榜单页页首、页脚）在两种主题下都是深蓝底：颜色在组件内固定取值，不用浅色主题的文字令牌；键盘焦点环改用浅蓝 `#9cc2ff`（全局的主色蓝在深蓝底上不足 3:1）。页脚按自身宽度切换三种布局（≥1080 左右两栏、640–1079 上下两段、<640 单栏），页脚里的站内链接每个地址只出现一次（披露链接除外）。
 - 不存在的功能不要为了“完整”而添加：站内目前没有返回顶部、分享、复制链接按钮，也没有评论区。

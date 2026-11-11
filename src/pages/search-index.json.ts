@@ -2,6 +2,7 @@ import type { APIRoute } from 'astro';
 import { getPublishedArticles, articleUrl, categoryLabel } from '@/lib/articles';
 import { getBrands, getSpeedReports } from '@/lib/data';
 import { STATIC_PAGES, NOINDEX_PATHS } from '@/lib/site';
+import { RANKING_PATH, getRankingContentUpdatedAt } from '@/lib/lastmod';
 import glossary from '@/data/glossary.json';
 
 interface IndexItem {
@@ -76,7 +77,9 @@ export const GET: APIRoute = async () => {
 
   for (const [path, meta] of Object.entries(STATIC_PAGES)) {
     if (NOINDEX_PATHS.includes(path) || path === '/') continue;
-    items.push({ title: meta.title, url: path, type: '页面', description: `${meta.title} · 更新于 ${meta.lastmod}`, keywords: [] });
+    // 榜单页的更新日期由数据派生（与页面上的“内容更新”、Sitemap lastmod 同一来源）
+    const lastmod = path === RANKING_PATH ? getRankingContentUpdatedAt() : meta.lastmod;
+    items.push({ title: meta.title, url: path, type: '页面', description: `${meta.title} · 更新于 ${lastmod}`, keywords: [] });
   }
 
   return new Response(JSON.stringify(items), {

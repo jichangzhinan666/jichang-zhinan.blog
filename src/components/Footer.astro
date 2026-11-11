@@ -1,27 +1,43 @@
 ---
+/**
+ * 全站页脚：站点介绍 + 三个说明入口 + 三组站内链接 + 日期与披露。
+ *
+ * - 页面上的数字和日期都由数据派生，不写死：
+ *   “全站内容最近更新”= Sitemap 里最大的 lastmod（src/lib/lastmod.ts），只在内容实质变更时前进，不取构建或访问时间；
+ *   “数据说明”里的品牌数与实测覆盖情况来自 brands.json / speed-tests.json，判断口径与品牌页页首的徽章一致。
+ * - 排版按页脚自身的宽度（容器查询）切换三种布局，不按视口宽度：≥1080 左右两栏、640–1079 上下两段、<640 单栏。
+ * - 页脚在浅色、深色两种主题下都是深蓝底，颜色在本组件内固定取值（对比度均 ≥ 4.5:1）。
+ */
 import Icon from './Icon.astro';
+import TitleText from './TitleText.astro';
 import { SITE, STATIC_PAGES } from '@/lib/site';
+import { getBrands, getReportsForBrand } from '@/lib/data';
+import { getSiteContentUpdatedAt, RANKING_PATH } from '@/lib/lastmod';
 
-const lastUpdated = Object.values(STATIC_PAGES)
-  .map((p) => p.lastmod)
-  .sort()
-  .at(-1);
+const lastUpdated = await getSiteContentUpdatedAt();
+const launchYear = SITE.launchedAt.slice(0, 4);
+const updatedYear = lastUpdated.slice(0, 4);
+const copyrightYears = updatedYear > launchYear ? `${launchYear}–${updatedYear}` : launchYear;
+
+// 站点介绍（站长 2026-11-11 提供的文案）。年份取 SITE.rankingYear，与全站的“年度版”保持一致
+const lead = `${SITE.name}｜${SITE.rankingYear} 机场推荐、节点实测与网络使用指南。`;
+const intro = [
+  '专注机场推荐、品牌评测、套餐价格对比、全球节点测速、线路稳定性分析、流媒体与 AI 服务兼容性，以及 Clash 客户端安装配置教程。',
+  '以可核实资料与真实测试数据为基础，持续更新实用指南，帮助用户比较不同网络服务的特点与差异，选择适合自己的网络方案。',
+];
+
+// 说明入口：只链接到确实存在的页面（登记在 STATIC_PAGES 里的才渲染）
+const trustLinks = [
+  { label: '数据来源与测试说明', href: '/methodology/', icon: 'shield' },
+  { label: '关于本站', href: '/about/', icon: 'info' },
+  { label: '联系与纠错', href: '/contact/', icon: 'mail' },
+].filter((l) => l.href in STATIC_PAGES);
 
 const columns = [
   {
-    title: '关于本站',
-    links: [
-      { label: '关于机场指南', href: '/about/' },
-      { label: '作者介绍', href: '/author/' },
-      { label: '测评、排序与测速方法', href: '/methodology/' },
-      { label: '编辑与纠错政策', href: '/editorial-policy/' },
-      { label: '推广关系披露', href: '/disclosure/' },
-    ],
-  },
-  {
     title: '栏目',
     links: [
-      { label: '2026 机场推荐榜单', href: '/rankings/2026/' },
+      { label: `${SITE.rankingYear} 机场推荐榜单`, href: RANKING_PATH },
       { label: '品牌评测', href: '/reviews/' },
       { label: '节点测速报告', href: '/speed-tests/' },
       { label: '套餐对比', href: '/compare/' },
@@ -31,82 +47,165 @@ const columns = [
     ],
   },
   {
-    title: '更新与反馈',
+    title: '作者与政策',
+    links: [
+      { label: '作者介绍', href: '/author/' },
+      { label: '编辑与纠错政策', href: '/editorial-policy/' },
+      { label: '推广关系披露', href: '/disclosure/' },
+      { label: '隐私政策', href: '/privacy/' },
+    ],
+  },
+  {
+    title: '更新与订阅',
     links: [
       { label: '资讯与更新日志', href: '/news/' },
-      { label: '联系与纠错', href: '/contact/' },
-      { label: '隐私政策', href: '/privacy/' },
       { label: '站内搜索', href: '/search/' },
       { label: 'Sitemap', href: '/sitemap.xml' },
       { label: 'RSS 订阅', href: '/rss.xml' },
     ],
   },
 ];
+
+// 实测覆盖情况：与品牌页页首徽章同一口径——有站长实测报告 / 只有他人提供的记录 / 没有任何记录
+const brands = getBrands();
+const hasOwnerReport = (brandId: string) => getReportsForBrand(brandId).some((r) => r.verificationStatus === 'owner-measured');
+const ownerTested = brands.filter((b) => hasOwnerReport(b.id)).length;
+const thirdPartyOnly = brands.filter((b) => !hasOwnerReport(b.id) && b.speedTests.evidenceStatus !== 'none').length;
+const untested = brands.length - ownerTested - thirdPartyOnly;
+const coverage = [
+  `${ownerTested} 个有站长实测报告`,
+  thirdPartyOnly > 0 ? `${thirdPartyOnly} 个仅有第三方记录` : null,
+  untested > 0 ? `${untested} 个未测试` : null,
+]
+  .filter(Boolean)
+  .join('，');
 ---
 
 <footer class="site-footer">
   <div class="container">
-    <div class="footer-grid">
-      <div class="footer-brand">
-        <a class="footer-logo" href="/">
-          <span class="footer-logo-mark" aria-hidden="true"><Icon name="plane" size={20} /></span>
-          <span>{SITE.name}</span>
-        </a>
-        <p class="footer-desc">
-          信息整理型博客：品牌资料、套餐价格、节点测速与客户端教程均注明来源与核实时间，不虚构评分与实测结论。
+    <div class="footer-inner">
+      <div class="footer-main">
+        <div class="footer-brand">
+          <div class="footer-about">
+            <a class="footer-logo" href="/">
+              <span class="footer-logo-mark" aria-hidden="true"><Icon name="plane" size={22} /></span>
+              <span class="footer-logo-name">{SITE.name}</span>
+            </a>
+            <p class="footer-lead"><TitleText text={lead} /></p>
+            {intro.map((text) => <p class="footer-desc">{text}</p>)}
+          </div>
+          {
+            trustLinks.length > 0 && (
+              <nav class="footer-trust" aria-label="了解本站">
+                <ul>
+                  {trustLinks.map((l) => (
+                    <li>
+                      <a class="footer-chip" href={l.href}>
+                        <Icon name={l.icon} size={16} class="footer-chip-icon" />
+                        <span>{l.label}</span>
+                      </a>
+                    </li>
+                  ))}
+                </ul>
+              </nav>
+            )
+          }
+        </div>
+        <div class="footer-nav">
+          {
+            columns.map((col) => (
+              <nav class="footer-col" aria-label={col.title}>
+                <h2 class="footer-title">{col.title}</h2>
+                <ul>
+                  {col.links.map((l) => (
+                    <li>
+                      <a href={l.href}>{l.label}</a>
+                    </li>
+                  ))}
+                </ul>
+              </nav>
+            ))
+          }
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <div class="fb-bar">
+          <p class="fb-copy">© {copyrightYears} {SITE.name} · {SITE.domain}</p>
+          <ul class="fb-dates">
+            <li>
+              <Icon name="calendar" size={14} class="fb-icon" />
+              <span>站点上线 <time datetime={SITE.launchedAt}>{SITE.launchedAt}</time></span>
+            </li>
+            <li>
+              <Icon name="clock" size={14} class="fb-icon" />
+              <span>全站内容最近更新 <time datetime={lastUpdated} data-site-updated>{lastUpdated}</time></span>
+            </li>
+          </ul>
+        </div>
+        <p class="fb-text">
+          本站不销售任何服务；页面中的品牌入口为推广链接，购买可能为本站带来佣金，排序与评语不受此影响，详见<a href="/disclosure/">推广关系披露</a>。
         </p>
-        <p class="footer-meta">
-          <Icon name="calendar" size={14} />
-          <span>站点上线 {SITE.launchedAt} · 内容最近更新 {lastUpdated}</span>
+        <p class="fb-text">
+          <strong>数据说明：</strong>套餐、价格与节点信息整理自品牌或推广方提供的资料；测速数据分为站长实测与他人提供的记录，页面上分别标注。目前收录的 {brands.length} 个品牌中，{coverage}。
+        </p>
+        <p class="fb-text fb-dim">
+          网络加速服务的速度、稳定性与可用性因地区、时段与网络环境而异；本站数据仅代表记录时的状态，请以各品牌结算页与实际体验为准。
         </p>
       </div>
-      {
-        columns.map((col) => (
-          <nav class="footer-col" aria-label={col.title}>
-            <h2 class="footer-title">{col.title}</h2>
-            <ul>
-              {col.links.map((l) => (
-                <li>
-                  <a href={l.href}>{l.label}</a>
-                </li>
-              ))}
-            </ul>
-          </nav>
-        ))
-      }
-    </div>
-    <div class="footer-bottom">
-      <p>
-        © 2026 {SITE.name} · {SITE.domain}。本站不销售任何服务；页面中的品牌入口为推广链接，购买可能为本站带来佣金，排序与评语不受此影响，详见<a href="/disclosure/">推广关系披露</a>。
-      </p>
-      <p class="muted small">
-        网络加速服务的速度、稳定性与可用性因地区、时段与网络环境而异；本站数据仅代表记录时的状态，请以各品牌结算页与实际体验为准。
-      </p>
     </div>
   </div>
 </footer>
 
 <style>
   .site-footer {
+    --f-text: #dbe6fb;
+    --f-soft: #c3d2f2;
+    --f-muted: #a9bbe0;
+    --f-dim: #8fa5d3;
+    --f-icon: #7fb0ff;
+    --f-line: rgba(255, 255, 255, 0.12);
     margin-top: 48px;
-    padding: 40px 0 28px;
-    background: var(--primary-dark);
-    color: #d8e3fa;
+    padding: 44px 0 28px;
+    /* 与首页首屏同一组深蓝（两种主题各有取值），自上而下略微加深 */
+    background: linear-gradient(180deg, var(--hero-from), var(--hero-to));
+    border-top: 1px solid rgba(147, 197, 253, 0.16);
+    color: var(--f-text);
   }
 
-  .footer-grid {
+  .footer-inner {
+    container-type: inline-size;
+    container-name: footer;
+  }
+
+  /* 深色底上的键盘焦点环改用浅蓝（全局的主色蓝在深蓝底上对比度不足 3:1） */
+  .site-footer a:focus-visible {
+    outline-color: #9cc2ff;
+  }
+
+  /* ---------- 上半部分：介绍 + 链接 ---------- */
+  .footer-main {
     display: grid;
-    grid-template-columns: 1.4fr repeat(3, 1fr);
+    grid-template-columns: minmax(0, 1fr);
     gap: 32px;
+  }
+
+  .footer-brand {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 18px;
+    align-content: start;
   }
 
   .footer-logo {
     display: inline-flex;
     align-items: center;
-    gap: 10px;
+    gap: 12px;
     color: #fff;
-    font-weight: 700;
-    font-size: 1.15rem;
+    text-decoration: none;
+  }
+
+  .footer-logo:hover {
     text-decoration: none;
   }
 
@@ -114,31 +213,98 @@ const columns = [
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    width: 34px;
-    height: 34px;
-    border-radius: 10px;
+    flex: none;
+    width: 40px;
+    height: 40px;
+    border-radius: 12px;
     background: linear-gradient(135deg, #3b82f6, #155eef);
+    box-shadow: 0 6px 16px rgba(21, 94, 239, 0.35);
+  }
+
+  .footer-logo-name {
+    font-size: 1.375rem;
+    font-weight: 700;
+    line-height: 1.2;
+    letter-spacing: 0.04em;
+  }
+
+  .footer-lead {
+    margin: 16px 0 0;
+    font-size: 1rem;
+    font-weight: 600;
+    line-height: 1.6;
+    color: #f1f5ff;
+    text-wrap: balance;
   }
 
   .footer-desc {
-    margin-top: 12px;
-    font-size: 0.9rem;
-    color: #b7c7ea;
-    max-width: 38ch;
+    max-width: 46em;
+    margin: 8px 0 0;
+    font-size: 0.9375rem;
+    line-height: 1.85;
+    color: var(--f-soft);
   }
 
-  .footer-meta {
-    display: inline-flex;
+  /* 说明入口：窄屏时第一项占整行、其余两项并排，宽度固定可预期，不依赖换行 */
+  .footer-trust ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+  }
+
+  .footer-trust li:first-child:nth-last-child(odd) {
+    grid-column: 1 / -1;
+  }
+
+  .footer-chip {
+    display: flex;
     align-items: center;
-    gap: 6px;
-    font-size: 0.8125rem;
-    color: #9fb3dd;
+    justify-content: center;
+    gap: 8px;
+    min-height: 40px;
+    padding: 6px 14px;
+    border: 1px solid rgba(147, 197, 253, 0.28);
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.06);
+    color: #eaf1ff;
+    font-size: 0.875rem;
+    font-weight: 600;
+    line-height: 1.3;
+    text-decoration: none;
+    transition:
+      background-color 0.15s ease,
+      border-color 0.15s ease,
+      color 0.15s ease;
+  }
+
+  .footer-chip:hover {
+    background: rgba(255, 255, 255, 0.12);
+    border-color: rgba(147, 197, 253, 0.6);
+    color: #fff;
+    text-decoration: none;
+  }
+
+  .footer-chip-icon,
+  .fb-icon {
+    color: var(--f-icon);
+  }
+
+  .footer-nav {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 28px 24px;
+    align-content: start;
   }
 
   .footer-title {
-    font-size: 0.95rem;
+    margin: 0 0 14px;
+    font-size: 0.9375rem;
+    line-height: 1.4;
+    letter-spacing: 0.04em;
     color: #fff;
-    margin-bottom: 12px;
   }
 
   .footer-col ul {
@@ -147,45 +313,146 @@ const columns = [
     padding: 0;
     display: flex;
     flex-direction: column;
-    gap: 8px;
+    gap: 10px;
   }
 
   .footer-col a {
     color: #c7d6f5;
     font-size: 0.9rem;
+    line-height: 1.5;
   }
 
   .footer-col a:hover {
     color: #fff;
   }
 
+  /* ---------- 下半部分：日期、披露与数据说明 ---------- */
   .footer-bottom {
-    margin-top: 32px;
-    padding-top: 20px;
-    border-top: 1px solid rgba(255, 255, 255, 0.12);
-    font-size: 0.875rem;
-    color: #b7c7ea;
+    margin-top: 36px;
+    padding-top: 22px;
+    border-top: 1px solid var(--f-line);
+    font-size: 0.8125rem;
+    line-height: 1.75;
+    color: var(--f-muted);
   }
 
-  .footer-bottom a {
+  .fb-bar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px 24px;
+    margin-bottom: 14px;
+  }
+
+  .fb-copy {
+    margin: 0;
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--f-text);
+  }
+
+  .fb-dates {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px 20px;
+  }
+
+  .fb-dates li {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    white-space: nowrap;
+  }
+
+  .fb-dates time {
+    color: var(--f-text);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .fb-text {
+    max-width: 72em;
+    margin: 0 0 6px;
+  }
+
+  .fb-text:last-child {
+    margin-bottom: 0;
+  }
+
+  .fb-text strong {
+    font-weight: 600;
+    color: var(--f-text);
+  }
+
+  .fb-text a {
     color: #fff;
     text-decoration: underline;
   }
 
-  .footer-bottom .muted {
-    color: #8fa5d3;
+  .fb-dim {
+    color: var(--f-dim);
   }
 
-  @media (max-width: 1023px) {
-    .footer-grid {
-      grid-template-columns: 1fr 1fr;
+  /* ---------- 按页脚自身宽度切换布局 ---------- */
+
+  /* 手机（容器 ≥ 280px，即 320px 宽的屏幕起）：链接分两列，“栏目”独占左列，另外两组叠在右列 */
+  @container footer (min-width: 280px) {
+    .footer-nav {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .footer-col:first-child {
+      grid-row: span 2;
     }
   }
 
-  @media (max-width: 639px) {
-    .footer-grid {
-      grid-template-columns: 1fr;
-      gap: 24px;
+  /* 平板与小屏电脑：介绍占一整行（右侧竖排三个说明入口），下面三组链接并排 */
+  @container footer (min-width: 640px) {
+    .footer-brand {
+      grid-template-columns: minmax(0, 1fr) auto;
+      column-gap: 40px;
+    }
+
+    .footer-trust ul {
+      grid-template-columns: minmax(0, 1fr);
+    }
+
+    .footer-chip {
+      justify-content: flex-start;
+    }
+
+    .footer-nav {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .footer-col:first-child {
+      grid-row: auto;
+    }
+  }
+
+  /* 电脑：左侧介绍，右侧三组链接 */
+  @container footer (min-width: 1080px) {
+    .footer-main {
+      grid-template-columns: minmax(0, 1.25fr) minmax(0, 2fr);
+      column-gap: 56px;
+    }
+
+    .footer-brand {
+      grid-template-columns: minmax(0, 1fr);
+    }
+
+    .footer-trust ul {
+      display: flex;
+      flex-wrap: wrap;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .footer-chip {
+      transition: none;
     }
   }
 </style>

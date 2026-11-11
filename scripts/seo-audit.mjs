@@ -180,7 +180,13 @@ for (const file of htmlFiles) {
 
   for (const d of DEMO_STRINGS) if (html.includes(d)) err(`${tag}: 页面含演示/占位字符串 "${d}"`);
 
-  pages.push({ urlPath, noindex });
+  pages.push({
+    urlPath,
+    noindex,
+    // 页脚的“全站内容最近更新”与页面自己标出的“内容更新”，稍后与 Sitemap 的 lastmod 核对
+    siteUpdated: doc.querySelector('time[data-site-updated]')?.getAttribute('datetime') ?? null,
+    pageUpdated: doc.querySelector('time[data-page-updated]')?.getAttribute('datetime') ?? null,
+  });
 }
 
 /* ---------------- sitemap & robots ---------------- */
@@ -216,6 +222,25 @@ if (sitemapFile) {
   }
   for (const p of indexable) if (!sitemapPaths.has(p)) err(`sitemap: 可索引页面未收录 ${p}`);
   if (new Set(locs).size !== locs.length) err('sitemap: 存在重复 URL');
+
+  /* 页面上显示的更新日期必须与 Sitemap 一致（两者同出 src/lib/lastmod.ts）：
+     - 页脚的“全站内容最近更新”= Sitemap 中最大的 lastmod，每个页面都相同；
+     - 页面自己标出的“内容更新”（time[data-page-updated]）= 该页在 Sitemap 中的 lastmod。
+     这样页面上不可能出现随构建或访问变化、与真实内容日期脱节的“更新日期”。 */
+  const lastmodByPath = new Map(locs.map((loc, i) => [loc.replace(SITE, ''), lastmods[i]]));
+  const maxLastmod = [...lastmods].sort().at(-1) ?? null;
+  const footerDates = new Map();
+  for (const p of pages) {
+    const key = p.siteUpdated ?? '(缺失)';
+    if (!footerDates.has(key)) footerDates.set(key, []);
+    footerDates.get(key).push(p.urlPath);
+    if (p.pageUpdated && lastmodByPath.has(p.urlPath) && p.pageUpdated !== lastmodByPath.get(p.urlPath)) {
+      err(`${p.urlPath}: 页面显示的内容更新日期 ${p.pageUpdated} 与 Sitemap lastmod ${lastmodByPath.get(p.urlPath)} 不一致`);
+    }
+  }
+  for (const [date, list] of footerDates) {
+    if (date !== maxLastmod) err(`页脚“全站内容最近更新”为 ${date}，应等于 Sitemap 中最大的 lastmod ${maxLastmod}（${list.length} 个页面，如 ${list[0]}）`);
+  }
 }
 
 /* ---------------- 孤岛页 ---------------- */

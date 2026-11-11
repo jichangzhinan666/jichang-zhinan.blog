@@ -135,7 +135,7 @@ export type CategoryKey = keyof typeof CATEGORY_META;
 export const STATIC_PAGES: Record<string, { title: string; lastmod: string; changefreq: string }> = {
   '/': { title: '首页', lastmod: '2026-11-10', changefreq: 'weekly' },
   '/rankings/': { title: '2026 机场分类榜单', lastmod: '2026-11-10', changefreq: 'monthly' },
-  '/rankings/2026/': { title: '2026 机场推荐榜单', lastmod: '2026-11-10', changefreq: 'weekly' },
+  '/rankings/2026/': { title: '2026 机场推荐榜单', lastmod: '2026-11-11', changefreq: 'weekly' },
   '/reviews/': { title: '2026 机场品牌测评大全', lastmod: '2026-11-10', changefreq: 'weekly' },
   '/speed-tests/': { title: '2026 机场节点测速报告', lastmod: '2026-11-10', changefreq: 'weekly' },
   '/compare/': { title: '2026 机场套餐价格对比', lastmod: '2026-11-10', changefreq: 'weekly' },

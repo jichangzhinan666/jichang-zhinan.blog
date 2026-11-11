@@ -5,13 +5,46 @@ import RankCards from '@/components/RankCards.astro';
 import FAQ from '@/components/FAQ.astro';
 import Icon from '@/components/Icon.astro';
 import TitleText from '@/components/TitleText.astro';
-import { SITE, STATIC_PAGES } from '@/lib/site';
-import { computeRanking, getEntryPlan, getTopPlan, formatPrice, formatTraffic, formatPerGB, getStats } from '@/lib/data';
+import { SITE } from '@/lib/site';
+import { computeRanking, getEntryPlan, getTopPlan, getReportsForBrand, formatPrice, formatTraffic, formatPerGB, getStats } from '@/lib/data';
+import { getRankingContentUpdatedAt } from '@/lib/lastmod';
 import { articleLd, breadcrumbLd, faqLd, itemListLd } from '@/lib/seo';
 
 const ranking = computeRanking();
+// 品牌数、套餐档数、实测份数全部由数据文件统计；新增品牌、套餐或测速报告后页面上的数字自动变化
 const stats = getStats();
-const lastmod = STATIC_PAGES['/rankings/2026/'].lastmod;
+// 榜单内容最近一次实质更新的日期：页面文案、品牌资料核实、套餐核实、测速报告四类日期中最晚的一个（见 src/lib/lastmod.ts）
+const lastmod = getRankingContentUpdatedAt();
+
+/* ---- 由数据派生的实测与记录清单（按编辑推荐顺序）：页面里不写死份数、日期与品牌名 ---- */
+const reportsInOrder = ranking.flatMap((r) => getReportsForBrand(r.brand.id).map((report) => ({ brand: r.brand, report })));
+const ownerTests = reportsInOrder.filter((x) => x.report.verificationStatus === 'owner-measured');
+const thirdPartyRecords = reportsInOrder.filter((x) => x.report.verificationStatus !== 'owner-measured');
+const range = (values: string[], joiner: string) => {
+  const sorted = [...new Set(values)].sort();
+  return sorted.length === 0 ? '' : sorted.length === 1 ? sorted[0] : `${sorted[0]}${joiner}${sorted.at(-1)}`;
+};
+// testedAt 形如 2026-11-10T11:43:00+08:00，资料均为北京时间，直接取字符串里的日期与时分
+const ownerDates = ownerTests.map((x) => x.report.testedAt?.slice(0, 10)).filter((d): d is string => !!d);
+const ownerDateText = range(ownerDates, ' 至 ');
+const ownerTimes = ownerTests.filter((x) => x.report.testedAtPrecision === 'datetime' && x.report.testedAt).map((x) => x.report.testedAt!.slice(11, 16));
+const ownerTimeText = new Set(ownerDates).size === 1 && ownerTimes.length === ownerTests.length ? range(ownerTimes, '–') : '';
+const ownerTools = [...new Set(ownerTests.map((x) => x.report.tool.split(/[（(+]/)[0].trim()))].join('、');
+const nodeLabel = (node: string | null | undefined) => (node ?? '').replace(/（.*?）/g, '').replace(/节点$/, '').trim();
+const ownerTestsPerBrand = new Map<string, number>();
+for (const x of ownerTests) ownerTestsPerBrand.set(x.brand.id, (ownerTestsPerBrand.get(x.brand.id) ?? 0) + 1);
+const oneOwnerTestEach = ownerTestsPerBrand.size > 0 && [...ownerTestsPerBrand.values()].every((n) => n === 1);
+const verifiedRange = range(
+  ranking.map((r) => r.brand.lastVerifiedAt).filter((d): d is string => !!d),
+  ' 至 ',
+);
+const recordLabel = (x: (typeof thirdPartyRecords)[number]) => {
+  const r = x.report;
+  const kind = r.verificationStatus === 'user-supplied-record' ? '文字记录' : '截图';
+  const tool = r.tool.startsWith('资料未注明') ? null : r.tool.split(/[（( ]/)[0];
+  const isp = r.isp ? r.isp.split('（')[0] : null;
+  return `${x.brand.displayName} ${r.testedAt ? r.testedAt.slice(0, 10) : '未标注日期'}（${[kind, tool, isp].filter(Boolean).join('，')}）`;
+};
 
 const cheapest = [...ranking].filter((r) => r.entry).sort((a, b) => a.entry!.price - b.entry!.price)[0];
 const bestPerGB = [...ranking].filter((r) => r.pricePerGB !== null).sort((a, b) => a.pricePerGB! - b.pricePerGB!)[0];
@@ -27,7 +60,7 @@ const withEvidence = ranking.filter((r) => r.brand.speedTests.evidenceStatus ===
 const faq = [
   {
     q: '这个榜单的名次代表速度快慢吗？',
-    a: '不代表。名次是站长的编辑推荐顺序，不是速度测试结果。四份站长实测分别连接不同品牌的不同地区节点，测速服务器与时段都不同，不能用来比较品牌速度。要看速度，请进入各品牌页的测速报告并注意其局限说明。',
+    a: `不代表。名次是站长的编辑推荐顺序，不是速度测试结果。现有的 ${ownerTests.length} 份站长实测连接的是不同品牌的不同节点，测速服务器与时段也各不相同，不能用来比较品牌速度。要看速度，请进入各品牌页的测速报告并注意其局限说明。`,
   },
   {
     q: '“2026 年度版”的数据范围是什么？',
@@ -48,12 +81,17 @@ const crumbs = [
   { name: '机场推荐', href: '/rankings/' },
   { name: '2026 机场推荐榜单', href: '/rankings/2026/' },
 ];
-const title = '2026 机场推荐排行榜｜套餐价格、线路与真实测速指南';
-const description = `2026 机场推荐排行榜：${stats.brands} 个品牌、${stats.tiers} 档套餐的可筛选对比卡片，列出最低月付、入门流量、每 GB 单价、覆盖地区、线路类型与实测证据状态（本站实测 / 第三方记录 / 暂无证据）。站长编辑推荐顺序，不含评分，资料更新 ${lastmod}。`;
+// 页面年份取 SITE.rankingYear（当前为 2026 年度版）；地址与 canonical 固定为 /rankings/2026/，不随品牌数量或文案变化
+const h1 = `${SITE.rankingYear} 机场推荐排行榜`;
+const subtitle = ['机场评测', '套餐价格对比', '线路与节点实测'];
+const intro = '持续收录热门机场品牌，系统整理套餐价格、入门流量、覆盖地区、线路类型、节点测速、流媒体及 AI 服务兼容性等信息，为用户提供清晰透明的机场推荐与比较指南。';
+// 独立的 SEO 标题（不走全站“｜机场指南”后缀）
+const title = `${h1}｜套餐价格对比与节点实测 - ${SITE.name}`;
+const description = '机场指南持续整理机场推荐排行榜、品牌评测、套餐价格、节点测速与线路分析，提供可核实的服务资料和实测报告，帮助用户比较不同机场的价格、功能与使用体验。';
 const jsonLd = [
   articleLd({
     type: 'Article',
-    headline: title,
+    headline: h1,
     description,
     url: '/rankings/2026/',
     datePublished: '2026-11-10',
@@ -74,27 +112,60 @@ const jsonLd = [
 <BaseLayout title={title} titleSuffix={false} description={description} jsonLd={jsonLd} ogType="article" publishedTime="2026-11-10" modifiedTime={lastmod}>
   <div class="container">
     <Breadcrumbs crumbs={crumbs} />
-    <header class="page-hero rank-hero">
-      <h1><TitleText text={title} /></h1>
-      <p class="lead">
-        {stats.brands} 个品牌、{stats.tiers} 档套餐的可筛选对比：最低月付、入门流量、覆盖地区、线路类型与实测证据一目了然。资料核实 2026-11-09 / 2026-11-10，页面更新 {lastmod}，由<a href={SITE.author.url} rel="author">{SITE.author.name}</a>编辑整理。
-      </p>
-      <div class="rank-meta">
-        <span class="pill"><Icon name="trophy" size={14} />站长编辑推荐 · 非测速排名</span>
-        <span class="pill"><Icon name="layers" size={14} />{stats.brands} 个品牌</span>
-        <span class="pill"><Icon name="tag" size={14} />{stats.tiers} 档套餐</span>
-        <span class="pill"><Icon name="speed" size={14} />{stats.ownerReports} 份本站实测</span>
-        <span class="pill"><Icon name="calendar" size={14} />更新于 {lastmod}</span>
+    <header class="rank-hero">
+      <div class="rh-body">
+        <span class="pill pill-dark rh-eyebrow"><Icon name="trophy" size={14} />站长编辑推荐榜 · 非测速排名</span>
+        <h1><TitleText text={h1} /></h1>
+        {/* 副标题只在“·”之后折行，各段文字不拆开 */}
+        <p class="rh-sub">
+          {subtitle.map((part, i) => (
+            <>
+              {i > 0 && ' '}
+              <span class="nowrap">{i < subtitle.length - 1 ? `${part} ·` : part}</span>
+            </>
+          ))}
+        </p>
+        <p class="rh-intro">{intro}</p>
+        <dl class="rh-stats">
+          <div class="rh-stat">
+            <dt><Icon name="layers" size={15} class="rh-stat-icon" />已收录品牌</dt>
+            <dd><strong>{stats.brands}</strong> 个</dd>
+          </div>
+          <div class="rh-stat">
+            <dt><Icon name="tag" size={15} class="rh-stat-icon" />已整理套餐</dt>
+            <dd><strong>{stats.tiers}</strong> 档</dd>
+          </div>
+          <div class="rh-stat">
+            <dt><Icon name="speed" size={15} class="rh-stat-icon" />已发布实测</dt>
+            {/* 与页面下方“数据时间范围”里的清单同一来源：榜单内品牌的、站长完成并已发布的实测报告 */}
+            <dd><strong>{ownerTests.length}</strong> 份</dd>
+          </div>
+          <div class="rh-stat">
+            <dt><Icon name="calendar" size={15} class="rh-stat-icon" />内容更新</dt>
+            <dd><time datetime={lastmod} data-page-updated>{lastmod}</time></dd>
+          </div>
+        </dl>
+        <p class="rh-byline">
+          由<a href={SITE.author.url} rel="author">{SITE.author.name}</a>编辑整理。名次为编辑推荐，价格与节点来自品牌资料，实测只统计站长完成并有报告的测试。
+        </p>
+        <details class="method">
+          <summary>
+            <Icon name="info" size={16} class="method-icon" />
+            <span class="method-title">评选方法与资料来源</span>
+            <span class="method-hint method-hint-open">点击展开</span>
+            <span class="method-hint method-hint-close">点击收起</span>
+            <Icon name="chevron" size={16} class="method-chev" />
+          </summary>
+          <ol class="small">
+            <li><strong>名次是编辑评价：</strong>由站长综合资料完整度、套餐性价比、线路类型与客户端政策后指定，属于<strong>站长编辑推荐</strong>，不是算法评分，也不是实测排名；名次不代表速度或稳定性。</li>
+            <li><strong>价格与节点来自品牌资料：</strong>价格、流量、地区、线路均来自各品牌/推广方提供的资料（核实日期见品牌页），本站不自行推算或补全；价格以结算页为准。</li>
+            <li>
+              <strong>实测单独标注：</strong>测速证据分三类——<strong>有本站实测</strong>（{ownerTests.length > 0 ? `站长${ownerDateText ? ` ${ownerDateText} ` : ''}使用 ${ownerTools} 完成，报告注明出口与时间` : '目前暂无'}）、<strong>有第三方记录</strong>（资料方文字记录或用户提供的 MiaoKo / SpeedCentre 截图，含未标注日期者）、<strong>暂无测速证据</strong>。只有第一类才算“已实测”；现有实测的网络环境、节点与时段不统一，不能横向比较。
+            </li>
+            <li><strong>推广关系：</strong>品牌入口为推广链接，购买可能为本站带来佣金；名次不因佣金调整，不接受付费排名。详见<a href="/disclosure/">推广关系披露</a>与<a href="/methodology/">方法说明</a>。</li>
+          </ol>
+        </details>
       </div>
-      <details class="method card-flat">
-        <summary><Icon name="info" size={16} />评选方法与资料来源（点击展开）</summary>
-        <ol class="small">
-          <li>名次为<strong>站长编辑推荐</strong>：综合资料完整度、套餐性价比、线路类型与客户端政策后指定，不是算法评分，也不是实测排名；名次不代表速度或稳定性。</li>
-          <li>价格、流量、地区、线路均来自各品牌/推广方提供的资料（核实日期见品牌页），本站不自行推算或补全；价格以结算页为准。</li>
-          <li>实测证据分三类：<strong>有本站实测</strong>（站长 2026-11-10 使用 IPCheck.ing 完成，报告注明出口与时间）、<strong>有第三方记录</strong>（资料方文字记录或用户提供的 MiaoKo / SpeedCentre 截图，含未标注日期者）、<strong>暂无测速证据</strong>。现有实测的网络环境、节点与时段不统一，不能横向比较。</li>
-          <li>品牌入口为推广链接，购买可能为本站带来佣金；名次不因佣金调整，不接受付费排名。详见<a href="/disclosure/">推广关系披露</a>与<a href="/methodology/">方法说明</a>。</li>
-        </ol>
-      </details>
     </header>
 
     <section class="card section" aria-label="完整榜单">
@@ -160,7 +231,15 @@ const jsonLd = [
         <div class="scenario">
           <h3>想看有实测报告的</h3>
           <p>
-            目前有站长实测报告（2026-11-10）的品牌：{withEvidence.map((r, i) => <>{i > 0 && '、'}<a href={`/reviews/${r.brand.slug}/`}>{r.brand.displayName}</a></>)}，各一份，均为单次单节点测试。
+            {
+              withEvidence.length > 0 ? (
+                <>
+                  目前有站长实测报告{ownerDateText && `（${ownerDateText}）`}的品牌：{withEvidence.map((r, i) => <>{i > 0 && '、'}<a href={`/reviews/${r.brand.slug}/`}>{r.brand.displayName}</a></>)}{oneOwnerTestEach && '，各一份'}，均为单次单节点测试。
+                </>
+              ) : (
+                '目前还没有站长实测报告。'
+              )
+            }
           </p>
         </div>
       </div>
@@ -217,9 +296,25 @@ const jsonLd = [
     <section class="card section" aria-labelledby="preview-title">
       <h2 class="section-title" id="preview-title"><Icon name="calendar" size={20} />关于“2026 年度版”的数据时间范围</h2>
       <ul class="small">
-        <li>品牌资料整理日期：2026-11-09 至 2026-11-10；套餐价格以品牌结算页实时显示为准。</li>
-        <li>站长实测：2026-11-10 上午至下午，共 4 份单节点报告（隐形人 香港03、飞V 新加坡、浪网 香港、灵动云 日本5）。</li>
-        <li>用户提供的截图：浪网 2026-07-19（MiaoKo，珠海联通）；微风网络与飞猫云的截图未标注日期。</li>
+        <li>品牌资料整理日期：{verifiedRange || '资料未提供'}；套餐价格以品牌结算页实时显示为准。</li>
+        <li>
+          {
+            ownerTests.length > 0 ? (
+              <>
+                站长实测：{ownerDateText}{ownerTimeText && ` ${ownerTimeText}（北京时间）`}，共 {ownerTests.length} 份单节点报告（{ownerTests.map((x, i) => <>{i > 0 && '、'}<a href={`/speed-tests/${x.report.slug}/`}>{x.brand.displayName} {nodeLabel(x.report.ownerReport?.testedNode)}</a></>)}）。
+              </>
+            ) : (
+              '站长实测：目前暂无。'
+            )
+          }
+        </li>
+        {
+          thirdPartyRecords.length > 0 && (
+            <li>
+              他人提供的记录（非本站实测）：共 {thirdPartyRecords.length} 份——{thirdPartyRecords.map((x, i) => <>{i > 0 && '；'}<a href={`/speed-tests/${x.report.slug}/`}>{recordLabel(x)}</a></>)}。
+            </li>
+          )
+        }
         <li>本页在同一 URL 持续更新，每次变化记录在<a href="/news/#changelog">更新日志</a>；2027 年榜单另建 /rankings/2027/。</li>
       </ul>
     </section>
@@ -229,8 +324,182 @@ const jsonLd = [
 </BaseLayout>
 
 <style>
-  .rank-hero .lead {
-    margin-bottom: 12px;
+  /* ---------- 页首：深蓝底，与首页首屏同一组色值 ---------- */
+  .rank-hero {
+    position: relative;
+    margin-top: 12px;
+    padding: 40px 48px 36px;
+    border-radius: var(--radius-xl);
+    background:
+      radial-gradient(900px 400px at 88% 0%, rgba(59, 130, 246, 0.42), transparent 60%),
+      radial-gradient(600px 300px at 0% 100%, rgba(14, 165, 233, 0.26), transparent 60%),
+      linear-gradient(135deg, var(--hero-from), var(--hero-to));
+    color: var(--hero-text);
+    /* clip 不会形成可滚动容器（与首页首屏同样的处理） */
+    overflow: hidden;
+    overflow: clip;
+    box-shadow: var(--shadow-lg);
+  }
+
+  /* 右上角一层很淡的网格底纹，纯装饰 */
+  .rank-hero::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(147, 197, 253, 0.1) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(147, 197, 253, 0.1) 1px, transparent 1px);
+    background-size: 36px 36px;
+    -webkit-mask-image: radial-gradient(ellipse 70% 95% at 100% 0%, #000 0%, transparent 72%);
+    mask-image: radial-gradient(ellipse 70% 95% at 100% 0%, #000 0%, transparent 72%);
+    pointer-events: none;
+  }
+
+  .rh-body {
+    position: relative;
+    container-type: inline-size;
+    container-name: rankhero;
+  }
+
+  /* 深色底上的键盘焦点环改用浅蓝 */
+  .rank-hero a:focus-visible,
+  .rank-hero summary:focus-visible {
+    outline-color: #9cc2ff;
+  }
+
+  .rank-hero h1 {
+    margin: 14px 0 10px;
+    color: #fff;
+    font-size: clamp(1.75rem, 1.2rem + 2.4vw, 2.75rem);
+    line-height: 1.25;
+    letter-spacing: 0.02em;
+  }
+
+  .rh-sub {
+    margin: 0 0 14px;
+    font-size: clamp(1rem, 0.92rem + 0.5vw, 1.25rem);
+    font-weight: 600;
+    line-height: 1.6;
+    color: #e4edff;
+  }
+
+  .rh-intro {
+    max-width: 46em;
+    margin: 0 0 20px;
+    font-size: 1rem;
+    line-height: 1.8;
+    color: var(--hero-muted);
+  }
+
+  /* 四个统计标签：一行一个胶囊，放不下时折行 */
+  .rh-stats {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin: 0 0 14px;
+  }
+
+  .rh-stat {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 7px 16px 7px 12px;
+    border: 1px solid rgba(255, 255, 255, 0.22);
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.1);
+    font-size: 0.875rem;
+    line-height: 1.4;
+    white-space: nowrap;
+  }
+
+  .rh-stat dt {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-weight: 500;
+    color: #cfdcf7;
+  }
+
+  .rh-stat dd {
+    margin: 0;
+    font-weight: 600;
+    color: #fff;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .rh-stat dd strong {
+    font-size: 1.0625rem;
+    font-weight: 700;
+  }
+
+  .rh-stat-icon {
+    color: #8fc0ff;
+  }
+
+  .rh-byline {
+    max-width: 920px;
+    margin: 0 0 16px;
+    font-size: 0.8125rem;
+    line-height: 1.7;
+    color: #a9bde6;
+  }
+
+  .rh-byline a {
+    color: #e4edff;
+    text-decoration: underline;
+  }
+
+  /* 平板：一行放不下四个胶囊时排成整齐的两行两列，不出现“三个加一个” */
+  @container rankhero (max-width: 759px) {
+    .rh-stats {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 250px));
+    }
+
+    .rh-stat {
+      display: flex;
+      justify-content: space-between;
+    }
+  }
+
+  /* 手机：两列占满宽度，每个标签上下两行（名称 / 数值），四个标签宽度一致 */
+  @container rankhero (max-width: 519px) {
+    .rh-stats {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 8px;
+    }
+
+    .rh-stat {
+      flex-direction: column;
+      align-items: flex-start;
+      justify-content: flex-start;
+      gap: 2px;
+      padding: 8px 14px;
+      border-radius: 16px;
+    }
+  }
+
+  /* 小屏手机：折叠块标题一行放不下提示语时省去“点击展开 / 收起”，右侧箭头仍表示状态 */
+  @container rankhero (max-width: 359px) {
+    .method-hint {
+      display: none;
+    }
+  }
+
+  @media (max-width: 1023px) {
+    .rank-hero {
+      padding: 32px 28px 28px;
+    }
+  }
+
+  @media (max-width: 639px) {
+    .rank-hero {
+      padding: 24px 20px 20px;
+    }
+
+    .rh-intro {
+      font-size: 0.9375rem;
+    }
   }
 
   .quick-table th,
@@ -247,25 +516,23 @@ const jsonLd = [
     white-space: normal;
   }
 
-  .rank-meta {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-    margin-bottom: 14px;
-  }
-
+  /* “评选方法与资料来源”折叠块：深色底上的半透明面板 */
   .method {
-    padding: 10px 16px;
     max-width: 920px;
+    padding: 0 16px;
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    border-radius: var(--radius-lg);
+    background: rgba(255, 255, 255, 0.07);
   }
 
   .method summary {
     display: flex;
     align-items: center;
-    gap: 6px;
+    gap: 8px;
+    min-height: 46px;
     cursor: pointer;
     font-weight: 600;
-    color: var(--primary);
+    color: #e4edff;
     list-style: none;
   }
 
@@ -273,10 +540,59 @@ const jsonLd = [
     display: none;
   }
 
+  .method-icon {
+    color: #8fc0ff;
+  }
+
+  .method-title {
+    white-space: nowrap;
+  }
+
+  .method-hint {
+    font-size: 0.8125rem;
+    font-weight: 500;
+    color: #a9bde6;
+  }
+
+  .method[open] .method-hint-open,
+  .method:not([open]) .method-hint-close {
+    display: none;
+  }
+
+  .method-chev {
+    margin-left: auto;
+    color: #a9bde6;
+    transition: transform 0.2s ease;
+  }
+
+  .method[open] .method-chev {
+    transform: rotate(180deg);
+  }
+
   .method ol {
-    margin: 10px 0 4px;
+    margin: 2px 0 14px;
     padding-left: 1.3em;
-    color: var(--text-2);
+    line-height: 1.75;
+    color: #d0dcf5;
+  }
+
+  .method li + li {
+    margin-top: 6px;
+  }
+
+  .method strong {
+    color: #fff;
+  }
+
+  .method a {
+    color: #a8c8ff;
+    text-decoration: underline;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .method-chev {
+      transition: none;
+    }
   }
 
   .scenario-grid {

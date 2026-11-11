@@ -54,10 +54,10 @@ function lineTags(b) {
   if (/直连/.test(text)) tags.push('直连');
   return tags;
 }
-/** 测速证据三类，与榜单卡片上的标签一致 */
+/** 测速证据三类，与榜单卡片上的标签一致；有站长实测时在第二行附测试日期 */
 function evidence(b) {
   const s = b.speedTests.evidenceStatus;
-  if (s === 'owner-report') return `有本站实测${b.speedTests.latestDatedTest ? `（${b.speedTests.latestDatedTest}）` : ''}`;
+  if (s === 'owner-report') return `有本站实测${b.speedTests.latestDatedTest ? `<br><sub>${esc(b.speedTests.latestDatedTest)}</sub>` : ''}`;
   if (s === 'none') return '暂无测速证据';
   return '有第三方记录';
 }
@@ -65,21 +65,62 @@ const range = (values) => {
   const sorted = [...new Set(values.filter(Boolean).map((d) => String(d).slice(0, 10)))].sort();
   return sorted.length === 0 ? '资料未提供' : sorted.length === 1 ? sorted[0] : `${sorted[0]} 至 ${sorted.at(-1)}`;
 };
-const cell = (s) => String(s).replace(/\|/g, '\\|');
+const esc = (s) => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 
 const ranked = [...brands].sort((a, b) => a.editorialRank - b.editorialRank || a.slug.localeCompare(b.slug));
 const ownerReports = reports.filter((r) => r.verificationStatus === 'owner-measured');
 const ownerBrands = ranked.filter((b) => b.speedTests.evidenceStatus === 'owner-report');
 const thirdOnly = ranked.filter((b) => !['owner-report', 'none'].includes(b.speedTests.evidenceStatus));
 const untested = ranked.filter((b) => b.speedTests.evidenceStatus === 'none');
+/** 所有品牌都覆盖的地区，按第一名品牌资料里的顺序 */
+const commonRegions = ranked.length ? ranked[0].nodeRegions.filter((r) => ranked.every((b) => b.nodeRegions.includes(r))) : [];
 
+/*
+ * 表格用 HTML 写而不是 Markdown：GitHub 会保留单元格上的 nowrap 属性，除“线路”一列外都不折行，
+ * 窄窗口里品牌名、价格不会被拆成两行（Markdown 表格做不到）。表格内不能有空行。
+ */
+/** 线路标签最多折成两行：前后两半各自用不换行空格连接，只在两半之间允许折行 */
+function lineCell(tags) {
+  if (!tags.length) return '资料未说明';
+  const half = Math.ceil(tags.length / 2);
+  const join = (part) => part.map(esc).join('&nbsp;/&nbsp;');
+  return tags.length <= 2 ? join(tags) : `${join(tags.slice(0, half))}&nbsp;/ ${join(tags.slice(half))}`;
+}
 const rows = ranked.map((b, i) => {
   const e = entryPlan(b.id);
-  const entry = e ? `${cell(e.name)}：${formatPrice(e.price)}/月 · ${formatTraffic(e.trafficGB)} · ${formatPerGB(e.perGB)}` : '资料未提供';
-  const regions = `${b.nodeRegions.length} 个：${b.nodeRegions.slice(0, 5).join('、')}${b.nodeRegions.length > 5 ? ' 等' : ''}`;
-  const lines = lineTags(b).join(' / ') || '资料未说明';
-  return `| ${i + 1} | [${cell(b.displayName)}](${SITE_URL}/reviews/${b.slug}/) | ${entry} | ${regions} | ${lines} | ${evidence(b)} |`;
+  const lines = lineCell(lineTags(b));
+  return [
+    '<tr>',
+    `<td nowrap align="center">${i + 1}</td>`,
+    `<td nowrap><a href="${SITE_URL}/reviews/${b.slug}/"><b>${esc(b.displayName)}</b></a></td>`,
+    `<td nowrap align="right">${e ? `${formatPrice(e.price)}<br><sub>${esc(e.name)}</sub>` : '资料未提供'}</td>`,
+    `<td nowrap align="right">${e ? formatTraffic(e.trafficGB) : '—'}</td>`,
+    `<td nowrap align="right">${e ? formatPerGB(e.perGB).replace('/GB', '') : '—'}</td>`,
+    `<td nowrap align="right">${b.nodeRegions.length} 个</td>`,
+    `<td>${lines}</td>`,
+    `<td nowrap>${evidence(b)}</td>`,
+    '</tr>',
+  ].join('\n');
 });
+const table = [
+  '<table>',
+  '<thead>',
+  '<tr>',
+  '<th nowrap>名次</th>',
+  '<th nowrap align="left">品牌</th>',
+  '<th nowrap align="right">入门档月付</th>',
+  '<th nowrap align="right">月流量</th>',
+  '<th nowrap align="right">每 GB</th>',
+  '<th nowrap align="right">地区</th>',
+  '<th align="left">线路</th>',
+  '<th nowrap align="left">测速证据</th>',
+  '</tr>',
+  '</thead>',
+  '<tbody>',
+  ...rows,
+  '</tbody>',
+  '</table>',
+];
 
 const coverage = [
   `${ownerBrands.length} 个有站长实测报告`,
@@ -96,13 +137,13 @@ const block = [
   '',
   `目前收录 ${ranked.length} 个机场品牌、${tiers.length} 档套餐。下表的名次是**站长编辑推荐顺序**，综合资料完整度、套餐性价比、线路类型与客户端政策后指定，不是测速排名，也不含评分。每个名次旁列出可以核查的事实，点品牌名进入站内的品牌资料页。`,
   '',
-  '| 名次 | 品牌 | 入门档（月付 · 月流量 · 每 GB） | 节点地区 | 线路 | 测速证据 |',
-  '| :-: | --- | --- | --- | --- | --- |',
-  ...rows,
+  ...table,
   '',
   '说明：',
   '',
+  '- **入门档**指各品牌月付价格最低的周期套餐，价格下方的小字是档位名称；“每 GB”是这一档的月付除以月流量。',
   `- **价格**是品牌资料里的名义价格（人民币，不含优惠码），以各品牌结算页为准。品牌资料核实日期：${range(ranked.map((b) => b.lastVerifiedAt))}。`,
+  `- **地区**是品牌资料列出的节点地区数。${commonRegions.length ? `${ranked.length} 个品牌都覆盖${commonRegions.join('、')}。` : ''}`,
   `- **测速证据**分三类：有本站实测、有第三方记录、暂无测速证据。${ranked.length} 个品牌里，${coverage}。${ownerReports.length ? `站长实测共 ${ownerReports.length} 份（${range(ownerReports.map((r) => r.testedAt))}），都是单次、单节点的测试，节点与时段各不相同，不能用来比较品牌之间的快慢。` : ''}`,
   `- **推广关系**：站内品牌页里的官网入口是推广链接，购买可能为本站带来佣金；名次不因佣金调整，不接受付费排名。见[推广关系披露](${SITE_URL}/disclosure/)。`,
   `- 完整榜单可按价格、流量、地区、线路筛选，并附每个品牌的套餐表与测速报告：[${YEAR} 机场推荐榜单](${SITE_URL}/rankings/${YEAR}/)；评选方法见[测评、排序与测速方法](${SITE_URL}/methodology/)。`,

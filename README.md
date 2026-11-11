@@ -8,20 +8,108 @@
 
 目前收录 8 个机场品牌、66 档套餐。下表的名次是**站长编辑推荐顺序**，综合资料完整度、套餐性价比、线路类型与客户端政策后指定，不是测速排名，也不含评分。每个名次旁列出可以核查的事实，点品牌名进入站内的品牌资料页。
 
-| 名次 | 品牌 | 入门档（月付 · 月流量 · 每 GB） | 节点地区 | 线路 | 测速证据 |
-| :-: | --- | --- | --- | --- | --- |
-| 1 | [灵动云](https://jichang-zhinan.blog/reviews/lingdongyun/) | 拂风：¥20/月 · 100 GB · ¥0.20/GB | 5 个：香港、台湾、日本、新加坡、美国 | IEPL / IPLC / BGP | 有本站实测（2026-11-10） |
-| 2 | [暮光加速](https://jichang-zhinan.blog/reviews/twilight/) | 基础版：¥20/月 · 120 GB · ¥0.167/GB | 5 个：香港、台湾、日本、新加坡、美国 | IPLC / BGP | 暂无测速证据 |
-| 3 | [微风网络](https://jichang-zhinan.blog/reviews/breezenet/) | 乘风（Riding）：¥25/月 · 200 GB · ¥0.125/GB | 5 个：香港、台湾、日本、新加坡、美国 | IPLC | 有第三方记录 |
-| 4 | [飞猫云](https://jichang-zhinan.blog/reviews/flycat/) | 星耀版：¥25/月 · 150 GB · ¥0.167/GB | 15 个：香港、台湾、日本、新加坡、美国 等 | IPLC | 有第三方记录 |
-| 5 | [大佬云](https://jichang-zhinan.blog/reviews/dalaoyun/) | 初云·福利版：¥19.99/月 · 120 GB · ¥0.167/GB | 6 个：香港、台湾、日本、新加坡、美国 等 | IEPL | 暂无测速证据 |
-| 6 | [飞V](https://jichang-zhinan.blog/reviews/flyv/) | 入门方案：¥25/月 · 150 GB · ¥0.167/GB | 5 个：香港、台湾、日本、新加坡、美国 | IEPL / IPLC / BGP / 直连 | 有本站实测（2026-11-10） |
-| 7 | [隐形人](https://jichang-zhinan.blog/reviews/invisible/) | 白银纪元：¥24/月 · 144 GB · ¥0.167/GB | 6 个：香港、台湾、日本、新加坡、马来西亚 等 | IEPL / BGP | 有本站实测（2026-11-10） |
-| 8 | [浪网](https://jichang-zhinan.blog/reviews/langwang/) | 入口：¥30/月 · 150 GB · ¥0.20/GB | 5 个：香港、台湾、日本、新加坡、美国 | IEPL | 有本站实测（2026-11-10） |
+<table>
+<thead>
+<tr>
+<th nowrap>名次</th>
+<th nowrap align="left">品牌</th>
+<th nowrap align="right">入门档月付</th>
+<th nowrap align="right">月流量</th>
+<th nowrap align="right">每 GB</th>
+<th nowrap align="right">地区</th>
+<th align="left">线路</th>
+<th nowrap align="left">测速证据</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td nowrap align="center">1</td>
+<td nowrap><a href="https://jichang-zhinan.blog/reviews/lingdongyun/"><b>灵动云</b></a></td>
+<td nowrap align="right">¥20<br><sub>拂风</sub></td>
+<td nowrap align="right">100 GB</td>
+<td nowrap align="right">¥0.20</td>
+<td nowrap align="right">5 个</td>
+<td>IEPL&nbsp;/&nbsp;IPLC&nbsp;/ BGP</td>
+<td nowrap>有本站实测<br><sub>2026-11-10</sub></td>
+</tr>
+<tr>
+<td nowrap align="center">2</td>
+<td nowrap><a href="https://jichang-zhinan.blog/reviews/twilight/"><b>暮光加速</b></a></td>
+<td nowrap align="right">¥20<br><sub>基础版</sub></td>
+<td nowrap align="right">120 GB</td>
+<td nowrap align="right">¥0.167</td>
+<td nowrap align="right">5 个</td>
+<td>IPLC&nbsp;/&nbsp;BGP</td>
+<td nowrap>暂无测速证据</td>
+</tr>
+<tr>
+<td nowrap align="center">3</td>
+<td nowrap><a href="https://jichang-zhinan.blog/reviews/breezenet/"><b>微风网络</b></a></td>
+<td nowrap align="right">¥25<br><sub>乘风（Riding）</sub></td>
+<td nowrap align="right">200 GB</td>
+<td nowrap align="right">¥0.125</td>
+<td nowrap align="right">5 个</td>
+<td>IPLC</td>
+<td nowrap>有第三方记录</td>
+</tr>
+<tr>
+<td nowrap align="center">4</td>
+<td nowrap><a href="https://jichang-zhinan.blog/reviews/flycat/"><b>飞猫云</b></a></td>
+<td nowrap align="right">¥25<br><sub>星耀版</sub></td>
+<td nowrap align="right">150 GB</td>
+<td nowrap align="right">¥0.167</td>
+<td nowrap align="right">15 个</td>
+<td>IPLC</td>
+<td nowrap>有第三方记录</td>
+</tr>
+<tr>
+<td nowrap align="center">5</td>
+<td nowrap><a href="https://jichang-zhinan.blog/reviews/dalaoyun/"><b>大佬云</b></a></td>
+<td nowrap align="right">¥19.99<br><sub>初云·福利版</sub></td>
+<td nowrap align="right">120 GB</td>
+<td nowrap align="right">¥0.167</td>
+<td nowrap align="right">6 个</td>
+<td>IEPL</td>
+<td nowrap>暂无测速证据</td>
+</tr>
+<tr>
+<td nowrap align="center">6</td>
+<td nowrap><a href="https://jichang-zhinan.blog/reviews/flyv/"><b>飞V</b></a></td>
+<td nowrap align="right">¥25<br><sub>入门方案</sub></td>
+<td nowrap align="right">150 GB</td>
+<td nowrap align="right">¥0.167</td>
+<td nowrap align="right">5 个</td>
+<td>IEPL&nbsp;/&nbsp;IPLC&nbsp;/ BGP&nbsp;/&nbsp;直连</td>
+<td nowrap>有本站实测<br><sub>2026-11-10</sub></td>
+</tr>
+<tr>
+<td nowrap align="center">7</td>
+<td nowrap><a href="https://jichang-zhinan.blog/reviews/invisible/"><b>隐形人</b></a></td>
+<td nowrap align="right">¥24<br><sub>白银纪元</sub></td>
+<td nowrap align="right">144 GB</td>
+<td nowrap align="right">¥0.167</td>
+<td nowrap align="right">6 个</td>
+<td>IEPL&nbsp;/&nbsp;BGP</td>
+<td nowrap>有本站实测<br><sub>2026-11-10</sub></td>
+</tr>
+<tr>
+<td nowrap align="center">8</td>
+<td nowrap><a href="https://jichang-zhinan.blog/reviews/langwang/"><b>浪网</b></a></td>
+<td nowrap align="right">¥30<br><sub>入口</sub></td>
+<td nowrap align="right">150 GB</td>
+<td nowrap align="right">¥0.20</td>
+<td nowrap align="right">5 个</td>
+<td>IEPL</td>
+<td nowrap>有本站实测<br><sub>2026-11-10</sub></td>
+</tr>
+</tbody>
+</table>
 
 说明：
 
+- **入门档**指各品牌月付价格最低的周期套餐，价格下方的小字是档位名称；“每 GB”是这一档的月付除以月流量。
 - **价格**是品牌资料里的名义价格（人民币，不含优惠码），以各品牌结算页为准。品牌资料核实日期：2026-11-09 至 2026-11-10。
+- **地区**是品牌资料列出的节点地区数。8 个品牌都覆盖香港、台湾、日本、新加坡、美国。
 - **测速证据**分三类：有本站实测、有第三方记录、暂无测速证据。8 个品牌里，4 个有站长实测报告，2 个只有第三方记录，2 个暂无测速证据。站长实测共 4 份（2026-11-10），都是单次、单节点的测试，节点与时段各不相同，不能用来比较品牌之间的快慢。
 - **推广关系**：站内品牌页里的官网入口是推广链接，购买可能为本站带来佣金；名次不因佣金调整，不接受付费排名。见[推广关系披露](https://jichang-zhinan.blog/disclosure/)。
 - 完整榜单可按价格、流量、地区、线路筛选，并附每个品牌的套餐表与测速报告：[2026 机场推荐榜单](https://jichang-zhinan.blog/rankings/2026/)；评选方法见[测评、排序与测速方法](https://jichang-zhinan.blog/methodology/)。

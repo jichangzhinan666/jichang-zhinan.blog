@@ -20,7 +20,9 @@ const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const dist = path.join(root, 'dist');
 const SITE = 'https://jichang-zhinan.blog';
 const warnOnly = process.argv.includes('--warn-only');
-const today = new Date().toISOString().slice(0, 10);
+// “今天”按北京时间算：站内日期都是北京时间，而构建机（Cloudflare）在 UTC 时区。
+// 用 UTC 日期的话，北京时间 0–8 点之间构建会把当天的内容误判为“未来日期”而失败
+const today = new Intl.DateTimeFormat('en-CA', { timeZone: 'Asia/Shanghai', year: 'numeric', month: '2-digit', day: '2-digit' }).format(new Date());
 
 const errors = [];
 const warnings = [];

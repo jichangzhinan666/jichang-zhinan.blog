@@ -37,7 +37,8 @@ const val = (f, d) => {
 const live = has('--live');
 const outFile = path.resolve(root, val('--out', 'seo-deep-audit.json'));
 const csvFile = path.resolve(root, val('--csv', 'URL-INDEX-AUDIT.csv'));
-const today = new Date().toISOString().slice(0, 10);
+// “今天”按北京时间算（站内日期都是北京时间；构建机与审计机可能在 UTC 时区）
+const today = new Intl.DateTimeFormat('en-CA', { timeZone: 'Asia/Shanghai', year: 'numeric', month: '2-digit', day: '2-digit' }).format(new Date());
 
 if (!fs.existsSync(dist)) {
   console.error('[seo-deep] dist 不存在，请先 npm run build');

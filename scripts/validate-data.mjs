@@ -18,7 +18,9 @@ const err = (m) => errors.push(m);
 const warn = (m) => warnings.push(m);
 
 const today = new Date();
-const todayStr = today.toISOString().slice(0, 10);
+// “今天”的日期按北京时间算：数据里的日期都是北京时间，而构建机（Cloudflare）在 UTC 时区。
+// 用 UTC 日期的话，北京时间 0–8 点之间构建会把当天登记的资料误判为“未来日期”而失败
+const todayStr = new Intl.DateTimeFormat('en-CA', { timeZone: 'Asia/Shanghai', year: 'numeric', month: '2-digit', day: '2-digit' }).format(today);
 const DATE_RE = /^\d{4}-\d{2}-\d{2}$/;
 const isDate = (s) => typeof s === 'string' && DATE_RE.test(s) && !Number.isNaN(Date.parse(s));
 const notFuture = (s) => isDate(s) && s <= todayStr;

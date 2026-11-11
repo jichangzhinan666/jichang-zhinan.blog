@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "type": "module",
-  "description": "机场指南 jichang-zhinan.blog —— 2027 机场指南大全（Astro 静态站点）",
+  "description": "机场指南 jichang-zhinan.blog —— 2026 机场指南大全（Astro 静态站点）",
   "engines": {
     "node": ">=20.0.0"
   },

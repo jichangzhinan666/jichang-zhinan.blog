@@ -4,7 +4,7 @@ import { defineConfig } from 'astro/config';
 /**
  * 机场指南 jichang-zhinan.blog
  * - 纯静态预渲染，部署到 Cloudflare Pages（构建命令 npm run build，输出目录 dist）
- * - URL 策略：统一 https + 目录式 URL + 尾部斜杠（/rankings/2027/）
+ * - URL 策略：统一 https + 目录式 URL + 尾部斜杠（/rankings/2026/）
  * - Sitemap 由 src/pages/sitemap.xml.ts 自行生成（只包含可索引页面，lastmod 取自真实内容日期）
  */
 export default defineConfig({

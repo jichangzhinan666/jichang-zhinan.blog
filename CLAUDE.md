@@ -90,7 +90,9 @@ npm run indexnow       # IndexNow 真实提交，只推新增 / 更新 / 移除�
 - 环境变量：`INDEXNOW_KEY`（可选）、`PUBLIC_CONTACT_EMAIL`（可选）、`PUBLIC_BING_SITE_VERIFICATION`、`PUBLIC_GOOGLE_SITE_VERIFICATION`（拿到后再填）。
 - 404：Cloudflare Pages 自动使用 `dist/404.html` 并返回 404 状态码。
 - `_headers` 提供安全头与缓存策略；`_redirects` 提供 `/rankings/latest/` 别名与未来的 301 对照。
-- **未经站长批准不得部署生产、推送远端仓库或执行真实的 IndexNow 提交。**
+- 远端仓库：`origin` 指向 GitHub 的 `jichangzhinan666/jichang-zhinan.blog`。仓库应保持**私有**——里面有品牌原始资料、站内注明“未公开”的截图与内部 SEO 报告；推送前先确认它不是公开仓库。Cloudflare Pages 可以连接私有仓库。
+- 提交身份：本仓库的 git 配置已固定为 `jichangzhinan666`（GitHub 隐私邮箱）。不要用其他账号的名字或邮箱提交；新克隆的副本要先设置同样的 `user.name` / `user.email` 再提交。
+- **未经站长批准不得部署生产、推送远端仓库或执行真实的 IndexNow 提交。**每次推送都要站长明确同意，上一次的同意不延续到下一次。
 
 ## 6. 新增品牌 / 报告的步骤
 
